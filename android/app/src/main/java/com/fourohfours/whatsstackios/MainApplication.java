@@ -1,4 +1,4 @@
-package com.invertase.rnfirebasestarter;
+package com.fourohfours.whatsstackios;
 
 import android.app.Application;
 

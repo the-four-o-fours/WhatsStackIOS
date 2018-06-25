@@ -102,7 +102,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        applicationId "com.invertase.rnfirebasestarter"
+        applicationId "com.fourohfours.whatsstackios"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
