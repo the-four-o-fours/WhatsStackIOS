@@ -7,10 +7,10 @@ import Login from './auth/Login';
 
 const Main = () => {
   const user = firebase.auth().currentUser;
-  if (!user) {
-    return <Login />;
-  } else {
+  if (user) {
     return <Text> someday, a real chat app will be here </Text>;
+  } else {
+    return <Login />;
   }
 };
 
