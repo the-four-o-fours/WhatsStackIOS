@@ -3,10 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^8.2.5",
     "babel-jest": "22.0.6",
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "eslint": "^5.0.1",
+    "eslint-config-fullstack": "^5.0.0",
+    "eslint-config-prettier": "2.9.0",
+    "eslint-plugin-prettier": "2.6.1",
+    "eslint-plugin-react": "^7.10.0",
     "fs-extra": "^4.0.2",
+    "husky": "0.14.3",
     "jest": "22.0.6",
+    "lint-staged": "7.2.0",
+    "npm-merge-driver": "^2.3.5",
+    "prettier": "1.13.6",
     "react-test-renderer": "16.2.0",
     "replace-in-file": "^3.0.0"
   },
@@ -15,7 +25,24 @@
     "ios": "react-native run-ios",
     "rename": "node ./bin/rename.js",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "fix:other": "npm run prettier --write",
+    "fix:js": "npm run test:js --fix",
+    "fix": "npm run fix:js && npm run fix:other",
+    "prettier": "prettier \"**/*.{json,md,scss}\"",
+    "test:other": "npm run prettier --list-different",
+    "test:js": "eslint --ignore-path .gitignore --ignore-path .prettierignore \"**/*.{js,jsx}\"",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{json,md,scss}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "jest": {
     "preset": "react-native"

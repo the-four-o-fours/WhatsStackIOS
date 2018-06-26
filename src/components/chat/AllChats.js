@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Text, TextInput, Image } from 'react-native';
+import {View, Button, Text, TextInput, Image} from 'react-native';
 
 import firebase from 'react-native-firebase';
 
