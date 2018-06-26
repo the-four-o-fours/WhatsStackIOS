@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import firebase from 'react-native-firebase';
-import { StyleSheet, Text } from 'react-native';
-import { Container, Button, Form, Item, Input } from 'native-base';
+import {StyleSheet, Text, AsyncStorage} from 'react-native';
+import {Container, Button, Form, Item, Input} from 'native-base';
 const RSAKey = require('react-native-rsa');
 
 class CreateUser extends Component {
   state = {
     displayName: '',
     publicKey: '',
-    uid: '',
+    uid: ''
   };
 
   componentDidMount() {
-    const { uid } = firebase.auth().currentUser;
-    this.setState({ uid });
+    const {uid} = firebase
+      .auth()
+      .currentUser;
+    this.setState({uid});
   }
 
   generateRSAKey = () => {
@@ -26,22 +28,47 @@ class CreateUser extends Component {
     return [privateKey, publicKey];
   };
 
-  addUserToDB = async () => {
-    const fireBaseUser = firebase.database().ref(`/Users/${this.state.uid}`);
+  savePrivKey(privateKey) {
+    const privKey = privateKey
+    AsyncStorage.setItem('privateKey', privKey)
+  }
+
+  getPrivKey = async() => {
+    try {
+      let key = await
+      AsyncStorage.getItem('privateKey');
+      console.log('private key', key)
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  addUserToDB = async() => {
+    const fireBaseUser = firebase
+      .database()
+      .ref(`/Users/${this.state.uid}`);
     const user = await fireBaseUser.once('value');
     const exists = await user.exists();
     if (exists) {
       console.log('exists');
       console.log('whatdfdf is this', exists);
     } else {
-      const [privateKey, publicKey] = this.generateRSAKey();
+      const [privateKey,
+        publicKey] = this.generateRSAKey();
       const user = {
         uid: this.state.uid,
         displayName: this.state.displayName,
-        publicKey,
+        publicKey
       };
+
+      //set private keys to async storage
+      this.savePrivKey(privateKey)
+      this.getPrivKey()
+
       fireBaseUser.set(user);
+
     }
+
   };
 
   render() {
@@ -51,12 +78,13 @@ class CreateUser extends Component {
           <Item>
             <Input
               value={this.state.displayName}
-              onChangeText={displayName => this.setState({ displayName })}
-              placeholder="Display Name"
-            />
+              onChangeText={displayName => this.setState({displayName})}
+              placeholder="Display Name"/>
           </Item>
           <Button full rounded primary success onPress={this.addUserToDB}>
-            <Text style={{ color: 'white' }}>Submit</Text>
+            <Text style={{
+              color: 'white'
+            }}>Submit</Text>
           </Button>
         </Form>
       </Container>
@@ -69,8 +97,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    padding: 10,
-  },
+    padding: 10
+  }
 });
 
 export default CreateUser;
