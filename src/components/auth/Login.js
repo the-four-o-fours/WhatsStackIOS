@@ -3,6 +3,8 @@ import { View, Button, Text, TextInput, Image } from 'react-native';
 
 import firebase from 'react-native-firebase';
 
+import CreateUser from './CreateUser';
+
 const successImageUri =
   'https://cdn.pixabay.com/photo/2015/06/09/16/12/icon-803718_1280.png';
 
@@ -16,13 +18,15 @@ export default class PhoneAuthTest extends Component {
       codeInput: '',
       phoneNumber: '+1',
       confirmResult: null,
+      database: false,
     };
   }
 
   componentDidMount() {
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({ user: user.toJSON() });
+        const database = this.userInDatabase(user.uid);
+        this.setState({ user: user.toJSON(), database });
       } else {
         // User has been signed out, reset the state
         this.setState({
@@ -39,6 +43,13 @@ export default class PhoneAuthTest extends Component {
   componentWillUnmount() {
     if (this.unsubscribe) this.unsubscribe();
   }
+
+  userInDatabase = async uid => {
+    const firebaseUser = firebase.database().ref(`/Users/${uid}`);
+    const user = await firebaseUser.once('value');
+    const exists = await user.exists();
+    return exists;
+  };
 
   signIn = () => {
     const { phoneNumber } = this.state;
@@ -129,7 +140,7 @@ export default class PhoneAuthTest extends Component {
   }
 
   render() {
-    const { user, confirmResult } = this.state;
+    const { user, confirmResult, database } = this.state;
     return (
       <View style={{ flex: 1 }}>
         {!user && !confirmResult && this.renderPhoneNumberInput()}
@@ -137,6 +148,8 @@ export default class PhoneAuthTest extends Component {
         {this.renderMessage()}
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
+
+        {user && !database}
 
         {user && (
           <View
