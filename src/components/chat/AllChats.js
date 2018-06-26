@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Button, Text, TextInput, Image } from 'react-native';
 
 import firebase from 'react-native-firebase';
 
-AllChats = () => {
-  componentDidMount();
-
+const AllChats = () => {
   return (
     <View>
-      <Text>Chats</Text>
-      firebase
+      <Text>AllChats Component</Text>
     </View>
   );
 };
+
+export default AllChats;

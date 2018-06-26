@@ -5,12 +5,16 @@ import firebase from 'react-native-firebase';
 
 import Login from './auth/Login';
 
-const Main = () => {
+const Main = props => {
   const user = firebase.auth().currentUser;
   if (user) {
-    return <Text> someday, a real chat app will be here </Text>;
+    return (
+      <Text navigation={props.navigation}>
+        someday, a real chat app will be here
+      </Text>
+    );
   } else {
-    return <Login />;
+    return <Login navigation={props.navigation} />;
   }
 };
 

@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { View, Button, Text, TextInput, Image } from 'react-native';
+import { View, Button, Text, TextInput } from 'react-native';
 
 import firebase from 'react-native-firebase';
 
 import CreateUser from './CreateUser';
-
-const successImageUri =
-  'https://cdn.pixabay.com/photo/2015/06/09/16/12/icon-803718_1280.png';
 
 export default class PhoneAuthTest extends Component {
   constructor(props) {
@@ -18,15 +15,16 @@ export default class PhoneAuthTest extends Component {
       codeInput: '',
       phoneNumber: '+1',
       confirmResult: null,
-      database: false,
+      inDatabase: false,
     };
   }
 
   componentDidMount() {
+    console.log('this.props.navigation', this.props.navigation);
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        const database = this.userInDatabase(user.uid);
-        this.setState({ user: user.toJSON(), database });
+        const inDatabase = this.userInDatabase(user.uid);
+        this.setState({ user: user.toJSON(), inDatabase });
       } else {
         // User has been signed out, reset the state
         this.setState({
@@ -43,13 +41,6 @@ export default class PhoneAuthTest extends Component {
   componentWillUnmount() {
     if (this.unsubscribe) this.unsubscribe();
   }
-
-  userInDatabase = async uid => {
-    const firebaseUser = firebase.database().ref(`/Users/${uid}`);
-    const user = await firebaseUser.once('value');
-    const exists = await user.exists();
-    return exists;
-  };
 
   signIn = () => {
     const { phoneNumber } = this.state;
@@ -68,14 +59,27 @@ export default class PhoneAuthTest extends Component {
       );
   };
 
+  userInDatabase = async () => {
+    console.log('>>>userInDatabase hit<<<');
+    const { uid } = firebase.auth().currentUser;
+    const firebaseUser = firebase.database().ref(`/Users/${uid}`);
+    const user = await firebaseUser.once('value');
+    const exists = await user.exists();
+    console.log('exists in DB', exists);
+    if (exists) this.props.navigation.navigate('Chat');
+    else this.props.navigation.navigate('CreateUser');
+  };
+
   confirmCode = () => {
     const { codeInput, confirmResult } = this.state;
-
+    console.log('>>>confirmCode hit<<<');
     if (confirmResult && codeInput.length) {
       confirmResult
         .confirm(codeInput)
         .then(user => {
           this.setState({ message: 'Code Confirmed!' });
+          console.log('>>>confirmCode accepted hit<<<');
+          this.userInDatabase();
         })
         .catch(error =>
           this.setState({ message: `Code Confirm Error: ${error.message}` })
@@ -140,7 +144,7 @@ export default class PhoneAuthTest extends Component {
   }
 
   render() {
-    const { user, confirmResult, database } = this.state;
+    const { user, confirmResult, inDatabase } = this.state;
     return (
       <View style={{ flex: 1 }}>
         {!user && !confirmResult && this.renderPhoneNumberInput()}
@@ -149,24 +153,10 @@ export default class PhoneAuthTest extends Component {
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
 
-        {user && !database}
+        {user && !inDatabase && <CreateUser />}
 
         {user && (
-          <View
-            style={{
-              padding: 15,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: '#77dd77',
-              flex: 1,
-            }}
-          >
-            <Image
-              source={{ uri: successImageUri }}
-              style={{ width: 100, height: 100, marginBottom: 25 }}
-            />
-            <Text style={{ fontSize: 25 }}>Signed In!</Text>
-            <Text>{JSON.stringify(user)}</Text>
+          <View>
             <Button title="Sign Out" color="red" onPress={this.signOut} />
           </View>
         )}
