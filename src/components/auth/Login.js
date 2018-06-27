@@ -73,7 +73,7 @@ export default class PhoneAuthTest extends Component {
     const user = await firebaseUser.once('value')
     const exists = await user.exists()
     console.log('exists in DB', exists)
-    if (exists) this.props.navigation.navigate('Chat')
+    if (exists) this.props.navigation.navigate('Contacts')
     else this.props.navigation.navigate('CreateUser')
   }
 
