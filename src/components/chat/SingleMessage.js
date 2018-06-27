@@ -3,32 +3,28 @@ import {View, Text} from 'react-native';
 
 import firebase from 'react-native-firebase';
 
-const messages = [
-  {
+const messages = {
+  msg1: {
     text: "message 1",
     sender: true,
     group: false,
-    time: "some bs",
   },
-  {
+  msg2: {
     text: "message 2",
     sender: true,
     group: false,
-    time: "some bs",
   },
-  {
+  msg3: {
     text: "message 3",
     sender: true,
     group: false,
-    time: "some bs",
   },
-  {
+  msg4: {
     text: "message 4",
     sender: true,
     group: false,
-    time: "some bs",
   },
-]
+}
 
 const SingleMessage = () => {
   return (

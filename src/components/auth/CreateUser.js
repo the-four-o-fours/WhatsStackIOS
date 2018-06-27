@@ -7,15 +7,16 @@ const RSAKey = require('react-native-rsa');
 class CreateUser extends Component {
   state = {
     displayName: '',
-    publicKey: '',
+    phoneNumber: '',
     uid: ''
   };
 
   componentDidMount() {
-    const {uid} = firebase
+    const {uid, phoneNumber} = firebase
       .auth()
       .currentUser;
-    this.setState({uid});
+    this.setState({uid, phoneNumber});
+
   }
 
   generateRSAKey = () => {
@@ -37,7 +38,6 @@ class CreateUser extends Component {
     try {
       let key = await
       AsyncStorage.getItem('privateKey');
-      console.log('private key', key)
     } catch (error) {
       alert(error)
     }
@@ -49,17 +49,16 @@ class CreateUser extends Component {
       .ref(`/Users/${this.state.uid}`);
     const user = await fireBaseUser.once('value');
     const exists = await user.exists();
-    if (exists) {
-      console.log('exists');
-      console.log('whatdfdf is this', exists);
-    } else {
+    if (!exists) {
       const [privateKey,
         publicKey] = this.generateRSAKey();
       const user = {
         uid: this.state.uid,
         displayName: this.state.displayName,
+        phoneNumber: this.state.phoneNumber,
         publicKey
-      };
+
+      }
 
       //set private keys to async storage
       this.savePrivKey(privateKey)
@@ -69,6 +68,11 @@ class CreateUser extends Component {
 
     }
 
+    // redirect to AllChats
+    this
+      .props
+      .navigation
+      .navigate('Chat')
   };
 
   render() {
