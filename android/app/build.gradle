@@ -147,6 +147,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-contacts')
     implementation(project(':react-native-firebase')) {
         transitive = false
     }

@@ -27,7 +27,6 @@ export default class PhoneAuthTest extends Component {
   }
 
   componentDidMount() {
-    console.log('this.props.navigation', this.props.navigation)
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         const inDatabase = this.userInDatabase(user.uid)
@@ -67,25 +66,21 @@ export default class PhoneAuthTest extends Component {
   }
 
   userInDatabase = async () => {
-    console.log('>>>userInDatabase hit<<<')
     const {uid} = firebase.auth().currentUser
     const firebaseUser = firebase.database().ref(`/Users/${uid}`)
     const user = await firebaseUser.once('value')
     const exists = await user.exists()
-    console.log('exists in DB', exists)
     if (exists) this.props.navigation.navigate('Contacts')
     else this.props.navigation.navigate('CreateUser')
   }
 
   confirmCode = () => {
     const {codeInput, confirmResult} = this.state
-    console.log('>>>confirmCode hit<<<')
     if (confirmResult && codeInput.length) {
       confirmResult
         .confirm(codeInput)
         .then(user => {
           this.setState({message: 'Code Confirmed!'})
-          console.log('>>>confirmCode accepted hit<<<')
           this.userInDatabase()
         })
         .catch(error =>
