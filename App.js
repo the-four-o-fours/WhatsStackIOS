@@ -4,6 +4,7 @@ import Main from './src/components/Main';
 import Login from './src/components/auth/Login';
 import CreateUser from './src/components/auth/CreateUser';
 import AllChats from './src/components/chat/AllChats';
+import AllChatsList from './src/components/chat/SectionList/AllChatsList'
 
 const RootNavigator = createStackNavigator(
   {
@@ -26,7 +27,7 @@ const RootNavigator = createStackNavigator(
       }),
     },
     Chat: {
-      screen: AllChats,
+      screen: AllChatsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Chat',
       }),
