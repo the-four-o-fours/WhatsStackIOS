@@ -6,6 +6,7 @@ import {
   TextInput,
   Image,
   AsyncStorage,
+  Button,
 } from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
@@ -69,9 +70,15 @@ class ContactsComponent extends Component {
     return users
   }
 
+  signOut = () => {
+    firebase.auth().signOut()
+    this.props.navigation.navigate('Main')
+  }
+
   render() {
     return (
       <View style={styles.container}>
+        <Button title="Sign Out" color="red" onPress={this.signOut} />
         {this.state.contacts.length && (
           <View>
             {this.state.contacts.map(contact => (

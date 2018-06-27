@@ -1,5 +1,4 @@
 import React from 'react'
-import {StyleSheet, Text} from 'react-native'
 
 import firebase from 'react-native-firebase'
 
