@@ -8,58 +8,54 @@ class ContactsComponent extends Component {
     contacts: {},
   }
 
-  componentDidMount() {
-    this.getContacts()
+  async componentDidMount() {
+    const phoneContacts = await this.getContacts()
+    phoneContacts['+19178647990'] = 'Chloe Chong'
+    phoneContacts['+19292923456'] = 'Gabriel Lebec'
+    console.log(phoneContacts)
   }
 
   getContacts = () => {
+    const phoneContacts = {}
     Contacts.getContacts((err, contacts) => {
-      if (err) {
-        throw err
-      } else {
-        contacts = contacts.map(contact => {
-          const keep = {}
-          keep.displayName = contact.givenName
-          keep.phoneNumber = `+1` + contact.phoneNumbers[0].digits
-          return keep
-        })
-        this.setState({contacts})
-      }
+      if (err) return console.error(err)
+      contacts.filter(contact => contact.phoneNumbers[0]).forEach(contact => {
+        const phoneNumber = `+1` + contact.phoneNumbers[0].digits
+        phoneContacts[phoneNumber] = contact.fullName
+      })
     })
+    return phoneContacts
+  }
+
+  checkDatabaseContacts = async () => {
+    const firebaseUsers = firebase.database().ref(`/Users/`)
+    const firebaseContacts = []
+    await firebaseUsers.once('value', snapshot =>
+      snapshot.forEach(childSnap => {
+        const childData = childSnap.val()
+        firebaseContacts.push({...childData})
+      }),
+    )
+    console.log('dtabase', firebaseContacts)
+  }
+
+  whatsStackUser = (database, phone) => {
+    const users = []
   }
 
   render() {
     console.log(Contacts)
-    console.log(firebase.auth().currentUser)
     return (
       <View>
-        <Button title="Get Contacts" color="red" onPress={this.getContacts} />
+        <Button
+          title="Get Contacts"
+          color="red"
+          onPress={this.checkDatabaseContacts}
+        />
         <Text>Contacts Component</Text>
       </View>
     )
   }
 }
-// = () => {
-//   const signOut = () => {
-//     firebase.auth().signOut()
-//   }
-//   const getContacts = () => {
-//     Contacts.getContacts((err, contacts) => {
-//       if (err) {
-//         console.error(err)
-//       } else {
-//         console.log(contacts)
-//       }
-//     })
-//   }
-//   console.log('Contactss?', Contacts)
-//   return (
-//     <View>
-//       <Button title="contacts" onPress={getContacts} />
-//       <Button title="Sign Out" color="red" onPress={signOut} />
-//       <Text>Contacts Component</Text>
-//     </View>
-//   )
-// }
 
 export default ContactsComponent
