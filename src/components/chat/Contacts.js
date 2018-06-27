@@ -1,5 +1,12 @@
 import React, {Component} from 'react'
-import {View, StyleSheet, Text, TextInput, Image} from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  Image,
+  AsyncStorage,
+} from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 
@@ -16,6 +23,7 @@ class ContactsComponent extends Component {
 
     const databaseContacts = await this.checkDatabaseContacts()
     const contacts = this.whatsStackUser(databaseContacts, phoneContacts)
+
     this.setState({contacts}, () => console.log(this.state.contacts))
   }
 
@@ -37,7 +45,12 @@ class ContactsComponent extends Component {
     await firebaseUsers.once('value', snapshot =>
       snapshot.forEach(childSnap => {
         const childData = childSnap.val()
-        firebaseContacts.push({...childData})
+        firebaseContacts.push({
+          displayName: childData.displayName,
+          phoneNumber: childData.phoneNumber,
+          uid: childData.uid,
+          publicKey: childData.publicKey,
+        })
       }),
     )
     return firebaseContacts
@@ -50,6 +63,7 @@ class ContactsComponent extends Component {
       if (phoneContacts[number]) {
         user.phoneName = phoneContacts[number]
         users.push(user)
+        AsyncStorage.setItem(user.displayName, JSON.stringify(user))
       }
     })
     return users
