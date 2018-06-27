@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Button, Text, TextInput, Image} from 'react-native'
+import {View, StyleSheet, Text, TextInput, Image} from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 
@@ -10,9 +10,13 @@ class ContactsComponent extends Component {
 
   async componentDidMount() {
     const phoneContacts = await this.getContacts()
+    // manually adding contacts to test
     phoneContacts['+19178647990'] = 'Chloe Chong'
     phoneContacts['+19292923456'] = 'Gabriel Lebec'
-    console.log(phoneContacts)
+
+    const databaseContacts = await this.checkDatabaseContacts()
+    const contacts = this.whatsStackUser(databaseContacts, phoneContacts)
+    this.setState({contacts}, () => console.log(this.state.contacts))
   }
 
   getContacts = () => {
@@ -36,26 +40,47 @@ class ContactsComponent extends Component {
         firebaseContacts.push({...childData})
       }),
     )
-    console.log('dtabase', firebaseContacts)
+    return firebaseContacts
   }
 
-  whatsStackUser = (database, phone) => {
+  whatsStackUser = (databaseContacts, phoneContacts) => {
     const users = []
+    databaseContacts.forEach(user => {
+      const number = user.phoneNumber
+      if (phoneContacts[number]) {
+        user.phoneName = phoneContacts[number]
+        users.push(user)
+      }
+    })
+    return users
   }
 
   render() {
-    console.log(Contacts)
     return (
-      <View>
-        <Button
-          title="Get Contacts"
-          color="red"
-          onPress={this.checkDatabaseContacts}
-        />
-        <Text>Contacts Component</Text>
+      <View style={styles.container}>
+        {this.state.contacts.length && (
+          <View>
+            {this.state.contacts.map(contact => (
+              <Text key={contact.uid}>
+                {contact.displayName} ({contact.phoneName
+                  ? contact.phoneName
+                  : ''})
+              </Text>
+            ))}
+          </View>
+        )}
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+})
 
 export default ContactsComponent
