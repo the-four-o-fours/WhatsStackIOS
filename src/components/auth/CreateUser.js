@@ -1,75 +1,49 @@
-import React, {Component} from 'react';
-import firebase from 'react-native-firebase';
-import {StyleSheet, Text, AsyncStorage} from 'react-native';
-import {Container, Button, Form, Item, Input} from 'native-base';
-const RSAKey = require('react-native-rsa');
+import React, {Component} from 'react'
+import firebase from 'react-native-firebase'
+import {StyleSheet, Text, AsyncStorage} from 'react-native'
+import {Container, Button, Form, Item, Input} from 'native-base'
+const RSAKey = require('react-native-rsa')
 
 class CreateUser extends Component {
   state = {
     displayName: '',
-    publicKey: '',
-    uid: ''
-  };
+    uid: '',
+    phoneNumber: '',
+  }
 
   componentDidMount() {
-    const {uid} = firebase
-      .auth()
-      .currentUser;
-    this.setState({uid});
+    const {uid, phoneNumber} = firebase.auth().currentUser
+    this.setState({uid, phoneNumber})
   }
 
   generateRSAKey = () => {
-    const rsa = new RSAKey();
-    const bits = 1024;
-    const exponent = '10001'; // must be a string
-    rsa.generate(bits, exponent);
-    const privateKey = rsa.getPrivateString();
-    const publicKey = rsa.getPublicString();
-    return [privateKey, publicKey];
-  };
-
-  savePrivKey(privateKey) {
-    const privKey = privateKey
-    AsyncStorage.setItem('privateKey', privKey)
+    const rsa = new RSAKey()
+    const bits = 1024
+    const exponent = '10001' // must be a string
+    rsa.generate(bits, exponent)
+    const privateKey = rsa.getPrivateString()
+    const publicKey = rsa.getPublicString()
+    return [privateKey, publicKey]
   }
 
-  getPrivKey = async() => {
-    try {
-      let key = await
-      AsyncStorage.getItem('privateKey');
-      console.log('private key', key)
-    } catch (error) {
-      alert(error)
-    }
-  }
-
-  addUserToDB = async() => {
-    const fireBaseUser = firebase
-      .database()
-      .ref(`/Users/${this.state.uid}`);
-    const user = await fireBaseUser.once('value');
-    const exists = await user.exists();
-    if (exists) {
-      console.log('exists');
-      console.log('whatdfdf is this', exists);
-    } else {
-      const [privateKey,
-        publicKey] = this.generateRSAKey();
+  addUserToDB = async () => {
+    const fireBaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
+    const user = await fireBaseUser.once('value')
+    const exists = await user.exists()
+    if (!exists) {
+      const [privateKey, publicKey] = this.generateRSAKey()
       const user = {
+        phoneNumber: this.state.phoneNumber,
         uid: this.state.uid,
         displayName: this.state.displayName,
-        publicKey
-      };
+        publicKey,
+      }
 
-      //set private keys to async storage
-      this.savePrivKey(privateKey)
-      this.getPrivKey()
-
-      fireBaseUser.set(user);
-
+      AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
+      fireBaseUser.set(user)
     }
-
-  };
+    this.props.navigation.navigate('Contacts')
+  }
 
   render() {
     return (
@@ -79,16 +53,21 @@ class CreateUser extends Component {
             <Input
               value={this.state.displayName}
               onChangeText={displayName => this.setState({displayName})}
-              placeholder="Display Name"/>
+              placeholder="Display Name"
+            />
           </Item>
           <Button full rounded primary success onPress={this.addUserToDB}>
-            <Text style={{
-              color: 'white'
-            }}>Submit</Text>
+            <Text
+              style={{
+                color: 'white',
+              }}
+            >
+              Submit
+            </Text>
           </Button>
         </Form>
       </Container>
-    );
+    )
   }
 }
 
@@ -97,8 +76,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    padding: 10
-  }
-});
+    padding: 10,
+  },
+})
 
-export default CreateUser;
+export default CreateUser

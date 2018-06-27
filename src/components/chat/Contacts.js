@@ -1,5 +1,13 @@
 import React, {Component} from 'react'
-import {View, Button, Text, TextInput, Image} from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  Image,
+  AsyncStorage,
+  Button,
+} from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 
@@ -8,52 +16,92 @@ class ContactsComponent extends Component {
     contacts: {},
   }
 
-  getContacts = () => {
-    Contacts.getContacts((err, contacts) => {
-      if (err) throw err
-      else console.log(contacts)
-    })
+  async componentDidMount() {
+    const phoneContacts = await this.getContacts()
+    // manually adding contacts to test
+    phoneContacts['+19178647990'] = 'Chloe Chong'
+    phoneContacts['+19292923456'] = 'Gabriel Lebec'
+
+    const databaseContacts = await this.checkDatabaseContacts()
+    const contacts = this.whatsStackUser(databaseContacts, phoneContacts)
+
+    this.setState({contacts}, () => console.log(this.state.contacts))
   }
 
-  checkPermission = () => {
-    Contacts.checkPermission((err, permission) => {
-      if (err) throw err
-      console.log('permission', permission)
-      console.log('error', err)
+  getContacts = () => {
+    const phoneContacts = {}
+    Contacts.getContacts((err, contacts) => {
+      if (err) return console.error(err)
+      contacts.filter(contact => contact.phoneNumbers[0]).forEach(contact => {
+        const phoneNumber = `+1` + contact.phoneNumbers[0].digits
+        phoneContacts[phoneNumber] = contact.fullName
+      })
     })
+    return phoneContacts
   }
+
+  checkDatabaseContacts = async () => {
+    const firebaseUsers = firebase.database().ref(`/Users/`)
+    const firebaseContacts = []
+    await firebaseUsers.once('value', snapshot =>
+      snapshot.forEach(childSnap => {
+        const childData = childSnap.val()
+        firebaseContacts.push({
+          displayName: childData.displayName,
+          phoneNumber: childData.phoneNumber,
+          uid: childData.uid,
+          publicKey: childData.publicKey,
+        })
+      }),
+    )
+    return firebaseContacts
+  }
+
+  whatsStackUser = (databaseContacts, phoneContacts) => {
+    const users = []
+    databaseContacts.forEach(user => {
+      const number = user.phoneNumber
+      if (phoneContacts[number]) {
+        user.phoneName = phoneContacts[number]
+        users.push(user)
+        AsyncStorage.setItem(user.displayName, JSON.stringify(user))
+      }
+    })
+    return users
+  }
+
+  signOut = () => {
+    firebase.auth().signOut()
+    this.props.navigation.navigate('Main')
+  }
+
   render() {
-    console.log(Contacts)
     return (
-      <View>
-        <Button title="Permission" color="red" onPress={this.checkPermission} />
-        <Button title="Get Contacts" color="red" onPress={this.getContacts} />
-        <Text>Contacts Component</Text>
+      <View style={styles.container}>
+        <Button title="Sign Out" color="red" onPress={this.signOut} />
+        {this.state.contacts.length && (
+          <View>
+            {this.state.contacts.map(contact => (
+              <Text key={contact.uid}>
+                {contact.displayName} ({contact.phoneName
+                  ? contact.phoneName
+                  : ''})
+              </Text>
+            ))}
+          </View>
+        )}
       </View>
     )
   }
 }
-// = () => {
-//   const signOut = () => {
-//     firebase.auth().signOut()
-//   }
-//   const getContacts = () => {
-//     Contacts.getContacts((err, contacts) => {
-//       if (err) {
-//         console.error(err)
-//       } else {
-//         console.log(contacts)
-//       }
-//     })
-//   }
-//   console.log('Contactss?', Contacts)
-//   return (
-//     <View>
-//       <Button title="contacts" onPress={getContacts} />
-//       <Button title="Sign Out" color="red" onPress={signOut} />
-//       <Text>Contacts Component</Text>
-//     </View>
-//   )
-// }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+})
 
 export default ContactsComponent

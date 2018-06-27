@@ -1,5 +1,7 @@
 import React from 'react'
-import {View, Button, Text, TextInput, Image} from 'react-native'
+import {View, Button} from 'react-native'
+
+import Chat from './Chat'
 
 import firebase from 'react-native-firebase'
 
@@ -7,10 +9,11 @@ const AllChats = () => {
   const signOut = () => {
     firebase.auth().signOut()
   }
+
   return (
     <View>
       <Button title="Sign Out" color="red" onPress={signOut} />
-      <Text>AllChats Component</Text>
+      <Chat />
     </View>
   )
 }
