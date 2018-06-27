@@ -63,6 +63,7 @@ class CreateUser extends Component {
 
       fireBaseUser.set(user)
     }
+    this.props.navigation.navigate('Contacts')
   }
 
   render() {
