@@ -8,14 +8,16 @@ class CreateUser extends Component {
   state = {
     displayName: '',
     publicKey: '',
+    phoneNumber: '',
     uid: ''
   };
 
   componentDidMount() {
-    const {uid} = firebase
+    const {uid, phoneNumber} = firebase
       .auth()
       .currentUser;
-    this.setState({uid});
+    this.setState({uid, phoneNumber});
+
   }
 
   generateRSAKey = () => {
@@ -58,6 +60,7 @@ class CreateUser extends Component {
       const user = {
         uid: this.state.uid,
         displayName: this.state.displayName,
+        phoneNumber: this.state.phoneNumber,
         publicKey
       };
 
@@ -72,6 +75,7 @@ class CreateUser extends Component {
   };
 
   render() {
+    console.log('we gots here', firebase.auth().currentUser.phoneNumber)
     return (
       <Container style={styles.container}>
         <Form>
