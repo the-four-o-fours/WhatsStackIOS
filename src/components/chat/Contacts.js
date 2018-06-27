@@ -24,6 +24,7 @@ class ContactsComponent extends Component {
   }
   render() {
     console.log(Contacts)
+    console.log(firebase.auth().currentUser)
     return (
       <View>
         <Button title="Permission" color="red" onPress={this.checkPermission} />
