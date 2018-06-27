@@ -8,26 +8,31 @@ class ContactsComponent extends Component {
     contacts: {},
   }
 
+  componentDidMount() {
+    this.getContacts()
+  }
+
   getContacts = () => {
     Contacts.getContacts((err, contacts) => {
-      if (err) throw err
-      else console.log(contacts)
+      if (err) {
+        throw err
+      } else {
+        contacts = contacts.map(contact => {
+          const keep = {}
+          keep.displayName = contact.givenName
+          keep.phoneNumber = `+1` + contact.phoneNumbers[0].digits
+          return keep
+        })
+        this.setState({contacts})
+      }
     })
   }
 
-  checkPermission = () => {
-    Contacts.checkPermission((err, permission) => {
-      if (err) throw err
-      console.log('permission', permission)
-      console.log('error', err)
-    })
-  }
   render() {
     console.log(Contacts)
     console.log(firebase.auth().currentUser)
     return (
       <View>
-        <Button title="Permission" color="red" onPress={this.checkPermission} />
         <Button title="Get Contacts" color="red" onPress={this.getContacts} />
         <Text>Contacts Component</Text>
       </View>

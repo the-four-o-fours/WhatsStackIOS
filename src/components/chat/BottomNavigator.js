@@ -5,7 +5,7 @@ import ChatList from './ChatList'
 
 export default createMaterialBottomTabNavigator(
   {
-    Contacts: {screen: Contacts},
+    // Contacts: {screen: Contacts},
     ChatList: {screen: ChatList},
   },
   {
