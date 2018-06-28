@@ -1,5 +1,7 @@
+import React from 'react'
 import {createStackNavigator} from 'react-navigation'
-
+import {Provider} from 'react-redux'
+import store from './src/store'
 import Main from './src/components/Main'
 import Login from './src/components/auth/Login'
 import CreateUser from './src/components/auth/CreateUser'
@@ -45,4 +47,10 @@ const RootNavigator = createStackNavigator(
   },
 )
 
-export default RootNavigator
+const App = () => (
+  <Provider store={store}>
+    <RootNavigator />
+  </Provider>
+)
+
+export default App

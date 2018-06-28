@@ -11,6 +11,7 @@ import {
 import firebase from 'react-native-firebase'
 
 import CreateUser from './CreateUser'
+import {getUser} from '../../store/actions'
 
 export default class PhoneAuthTest extends Component {
   constructor(props) {
