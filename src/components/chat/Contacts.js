@@ -8,6 +8,7 @@ import {getContacts} from '../../store/actions'
 
 class ContactsComponent extends Component {
   async componentDidMount() {
+    if (!this.props.contacts.length) console.log('it was zero')
     const firebaseUsers = await this.getAllUsers()
     const contactsObj = await this.getAllContacts()
     const contacts = this.findOverlap(firebaseUsers, contactsObj)

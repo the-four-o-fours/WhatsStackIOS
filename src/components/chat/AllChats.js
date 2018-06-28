@@ -1,21 +1,40 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {View, Button} from 'react-native'
+import {connect} from 'react-redux'
 
 import Chat from './Chat'
 
 import firebase from 'react-native-firebase'
 
-const AllChats = () => {
-  const signOut = () => {
+class AllChats extends Component {
+  componentDidMount() {
+    const uid = this.props.user.uid
+    const firebaseRef = firebase.database().ref(`/Users/${uid}`)
+  }
+
+  signOut = () => {
     firebase.auth().signOut()
   }
 
-  return (
-    <View>
-      <Button title="Sign Out" color="red" onPress={signOut} />
-      <Chat />
-    </View>
-  )
+  componentWillUnmount() {}
+
+  render() {
+    return (
+      <View>
+        <Button title="Sign Out" color="red" onPress={this.signOut} />
+        <Chat />
+      </View>
+    )
+  }
 }
 
-export default AllChats
+const mapStateToProps = state => ({
+  user: state.user,
+})
+
+const mapDispatchToProps = dispatch => ({})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AllChats)
