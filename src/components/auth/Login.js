@@ -172,15 +172,6 @@ class Login extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  getUser: user => dispatch(getUser(user)),
-})
-
-export default connect(
-  null,
-  mapDispatchToProps,
-)(Login)
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -189,3 +180,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 })
+
+const mapDispatchToProps = dispatch => ({
+  getUser: user => dispatch(getUser(user)),
+})
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Login)
