@@ -9,7 +9,7 @@ class Chat extends Component {
     super()
 
     this.state = {
-      messages: '',
+      messages: [],
       uid: '',
     }
   }
@@ -51,14 +51,28 @@ class Chat extends Component {
       .database()
       .ref('Users/ME8NBZ125PbgVrJVCWVma2mCbnF2/P0xLKKiHwNfP1asdgX8blSq8pMa2') //chloe-me convo
     conversationRef.on('value', snapshot => {
-      console.log(snapshot.val())
+      const messages = []
+      snapshot.forEach(message => {
+        const messageObj = {}
+        messageObj[message.key] = message.val()
+        messages.push(messageObj)
+      })
+      this.setState({
+        messages,
+      })
     })
   }
 
   render() {
     return (
       <View>
-        <Text>Chat Component {this.sendMessage('Hello1')}</Text>
+        {/* <Text>{this.sendMessage('Hello1')}<Text> */}
+        <Text>Chat Component</Text>
+        {this.state.messages.map(message => (
+          <Text key={Object.keys(message)[0]}>
+            {message[Object.keys(message)[0]].text}
+          </Text>
+        ))}
       </View>
     )
   }
