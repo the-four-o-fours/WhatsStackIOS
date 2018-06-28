@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
 import {
   View,
   StyleSheet,
@@ -17,6 +18,7 @@ class ContactsComponent extends Component {
   }
 
   async componentDidMount() {
+    console.log('user on state', this.props.user)
     const phoneContacts = await this.getContacts()
     // manually adding contacts to test
     phoneContacts['+19178647990'] = 'Chloe Chong'
@@ -104,4 +106,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ContactsComponent
+const mapStateToProps = state => ({
+  user: state.user,
+})
+
+export default connect(mapStateToProps)(ContactsComponent)
