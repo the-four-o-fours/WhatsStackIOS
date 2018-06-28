@@ -69,7 +69,7 @@ class ContactsComponent extends Component {
         {this.props.contacts.length && (
           <View>
             {this.props.contacts.map(contact => (
-              <Text key={contact.phoneName}>
+              <Text key={contact.uid}>
                 {contact.displayName} ({contact.phoneName
                   ? contact.phoneName
                   : ''})
