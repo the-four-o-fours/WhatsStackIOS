@@ -1,70 +1,57 @@
 import React, {Component} from 'react'
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  Image,
-  AsyncStorage,
-  Button,
-} from 'react-native'
+import {connect} from 'react-redux'
+import {View, StyleSheet, Text, TextInput, Image, Button} from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 
+import {getContacts} from '../../store/actions'
+
 class ContactsComponent extends Component {
-  state = {
-    contacts: {},
-  }
-
   async componentDidMount() {
-    const phoneContacts = await this.getContacts()
-    // manually adding contacts to test
-    phoneContacts['+19178647990'] = 'Chloe Chong'
-    phoneContacts['+19292923456'] = 'Gabriel Lebec'
-
-    const databaseContacts = await this.checkDatabaseContacts()
-    const contacts = this.whatsStackUser(databaseContacts, phoneContacts)
-
-    this.setState({contacts}, () => console.log(this.state.contacts))
+    const firebaseUsers = await this.getAllUsers()
+    const contactsObj = await this.getAllContacts()
+    const contacts = this.findOverlap(firebaseUsers, contactsObj)
+    this.props.getContacts(contacts)
   }
 
-  getContacts = () => {
-    const phoneContacts = {}
-    Contacts.getContacts((err, contacts) => {
-      if (err) return console.error(err)
-      contacts.filter(contact => contact.phoneNumbers[0]).forEach(contact => {
-        const phoneNumber = `+1` + contact.phoneNumbers[0].digits
-        phoneContacts[phoneNumber] = contact.fullName
+  getAllContacts = () => {
+    return new Promise((resolve, reject) => {
+      Contacts.getContacts((err, contacts) => {
+        if (err) return reject(err)
+        const contactsObj = {}
+        contacts.filter(contact => contact.phoneNumbers[0]).forEach(contact => {
+          const phoneNumber = `+1` + contact.phoneNumbers[0].digits
+          contactsObj[phoneNumber] = contact.fullName
+        })
+        resolve(contactsObj)
       })
     })
-    return phoneContacts
   }
 
-  checkDatabaseContacts = async () => {
-    const firebaseUsers = firebase.database().ref(`/Users/`)
-    const firebaseContacts = []
-    await firebaseUsers.once('value', snapshot =>
-      snapshot.forEach(childSnap => {
-        const childData = childSnap.val()
-        firebaseContacts.push({
-          displayName: childData.displayName,
-          phoneNumber: childData.phoneNumber,
-          uid: childData.uid,
-          publicKey: childData.publicKey,
-        })
-      }),
-    )
-    return firebaseContacts
+  getAllUsers = async () => {
+    const firebaseUsers = []
+    const snapshot = await firebase
+      .database()
+      .ref(`/Users/`)
+      .once('value')
+    snapshot.forEach(childSnap => {
+      const childData = childSnap.val()
+      firebaseUsers.push({
+        displayName: childData.displayName,
+        phoneNumber: childData.phoneNumber,
+        uid: childData.uid,
+        publicKey: childData.publicKey,
+      })
+    })
+    return firebaseUsers
   }
 
-  whatsStackUser = (databaseContacts, phoneContacts) => {
+  findOverlap = (firebaseUsers, contactsObj) => {
     const users = []
-    databaseContacts.forEach(user => {
-      const number = user.phoneNumber
-      if (phoneContacts[number]) {
-        user.phoneName = phoneContacts[number]
+    firebaseUsers.forEach(user => {
+      if (contactsObj[user.phoneNumber]) {
+        user.phoneName = contactsObj[user.phoneNumber]
         users.push(user)
-        AsyncStorage.setItem(user.displayName, JSON.stringify(user))
       }
     })
     return users
@@ -79,10 +66,10 @@ class ContactsComponent extends Component {
     return (
       <View style={styles.container}>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
-        {this.state.contacts.length && (
+        {this.props.contacts.length && (
           <View>
-            {this.state.contacts.map(contact => (
-              <Text key={contact.uid}>
+            {this.props.contacts.map(contact => (
+              <Text key={contact.phoneName}>
                 {contact.displayName} ({contact.phoneName
                   ? contact.phoneName
                   : ''})
@@ -104,4 +91,16 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ContactsComponent
+const mapStateToProps = state => ({
+  user: state.user,
+  contacts: state.contacts,
+})
+
+const mapDispatchToProps = dispatch => ({
+  getContacts: contacts => dispatch(getContacts(contacts)),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ContactsComponent)

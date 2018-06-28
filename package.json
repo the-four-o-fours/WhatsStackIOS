@@ -57,6 +57,9 @@
     "react-native-firebase": "^4.1.0",
     "react-native-rsa": "0.0.3",
     "react-native-unified-contacts": "^1.6.2",
-    "react-navigation": "^2.5.3"
+    "react-navigation": "^2.5.3",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
   }
 }
