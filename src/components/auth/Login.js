@@ -7,12 +7,13 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native'
-
 import firebase from 'react-native-firebase'
+import {connect} from 'react-redux'
 
 import CreateUser from './CreateUser'
+import {getUser} from '../../store/actions'
 
-export default class PhoneAuthTest extends Component {
+class Login extends Component {
   constructor(props) {
     super(props)
     this.unsubscribe = null
@@ -73,8 +74,13 @@ export default class PhoneAuthTest extends Component {
     const firebaseUser = firebase.database().ref(`/Users/${uid}`)
     const user = await firebaseUser.once('value')
     const exists = await user.exists()
-    if (exists) this.props.navigation.navigate('Chat')
-    else this.props.navigation.navigate('CreateUser')
+    if (exists) {
+      const userData = user.val()
+      this.props.getUser(userData)
+      this.props.navigation.navigate('Chat')
+    } else {
+      this.props.navigation.navigate('CreateUser')
+    }
   }
 
   confirmCode = () => {
@@ -174,3 +180,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 })
+
+const mapDispatchToProps = dispatch => ({
+  getUser: user => dispatch(getUser(user)),
+})
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Login)

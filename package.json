@@ -61,6 +61,9 @@
     "react-native-rsa": "0.0.3",
     "react-native-unified-contacts": "^1.6.2",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "^2.5.5"
+    "react-navigation": "^2.5.5",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
   }
 }

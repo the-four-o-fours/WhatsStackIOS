@@ -10,19 +10,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
     flexDirection: 'column',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    height: '100%'
   },
-  text: {
-    marginLeft: 12,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  photo: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-  },
+
 })
 const rows = [
   {

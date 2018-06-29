@@ -1,8 +1,12 @@
 import React, {Component} from 'react'
-import firebase from 'react-native-firebase'
 import {StyleSheet, Text, AsyncStorage} from 'react-native'
 import {Container, Button, Form, Item, Input} from 'native-base'
 const RSAKey = require('react-native-rsa')
+
+import firebase from 'react-native-firebase'
+import {connect} from 'react-redux'
+
+import {getUser} from '../../store/actions'
 
 class CreateUser extends Component {
   state = {
@@ -38,9 +42,9 @@ class CreateUser extends Component {
         displayName: this.state.displayName,
         publicKey,
       }
-
       AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
       fireBaseUser.set(user)
+      this.props.getUser(user)
     }
     this.props.navigation.navigate('Contacts')
   }
@@ -80,4 +84,11 @@ const styles = StyleSheet.create({
   },
 })
 
-export default CreateUser
+const mapDispatchToProps = dispatch => ({
+  getUser: user => dispatch(getUser(user)),
+})
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(CreateUser)
