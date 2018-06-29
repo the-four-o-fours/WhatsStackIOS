@@ -55,6 +55,7 @@
     "react-native": "^0.55.4",
     "react-native-easy-grid": "^0.1.17",
     "react-native-firebase": "^4.1.0",
+    "react-native-gifted-chat": "^0.4.3",
     "react-native-rsa": "0.0.3",
     "react-navigation": "^2.5.3"
   }

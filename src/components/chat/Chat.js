@@ -1,8 +1,16 @@
 import React, {Component} from 'react'
 import firebase from 'react-native-firebase'
 import {StyleSheet, Text, View, FlatList, TextInput} from 'react-native'
-import {Content, Button, Form, Item, Input} from 'native-base'
+import {
+  Content,
+  Button,
+  Form,
+  Item,
+  Input,
+  Footer
+} from 'native-base'
 import {Col, Row, Grid} from "react-native-easy-grid";
+import {GiftedChat} from 'react-native-gifted-chat'
 const moment = require('moment')
 
 import ChatItem from './ChatItem'
@@ -67,12 +75,14 @@ class Chat extends Component {
     })
   }
 
-  onChangeHandler = (message) => {
-    this.setState({message})
+  onChangeHandler = (val) => {
+    this.setState({message: val})
+    console.log('here we are', this.state.message)
   }
 
   onSubmitHandler = () => {
-    console.log('hello!')
+    //sendMessage(this.state.message)
+    alert(this.state.messasge)
   }
 
   render() {
@@ -110,7 +120,6 @@ class Chat extends Component {
             </Grid>
           </Row>
         </Grid>
-
       </View>
     )
   }
