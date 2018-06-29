@@ -65,8 +65,8 @@ class Chat extends Component {
     conversationRef.on('value', snapshot => {
       const messages = []
       snapshot.forEach(message => {
-        const messageObj = {}
-        messageObj[message.key] = message.val()
+        const messageObj = {...message.val()}
+        messageObj.timeStamp = message.key
         messages.push(messageObj)
       })
       this.setState({messages})
@@ -86,38 +86,12 @@ class Chat extends Component {
   render() {
     console.log('uid', this.state.uid)
     return (
-      <View style={styles.container}>
-        <Grid>
-          <Row size={90}>
-            <View>
-              <ChatItem messages={this.state.messages}/>
-            </View>
-          </Row>
-          <Row size={10}>
-            <Grid>
-              <Row>
-                <Col size={85}>
-                  <Content>
-                    <Item>
-                      <Input placeholder="Enter Message" onChange={this.onChangeHandler}/>
-                    </Item>
-                  </Content>
-                </Col>
-                <Col size={15}>
-                  <Button
-                    block
-                    success
-                    style={styles.submitBtn}
-                    onPress={this.placeSubmnitHandler}>
-                    <Text style={{
-                      color: '#fff'
-                    }}>Send</Text>
-                  </Button>
-                </Col>
-              </Row>
-            </Grid>
-          </Row>
-        </Grid>
+      <View>
+        {/* <Text>{this.sendMessage('Hello1')}<Text> */}
+        <Text>Chat Component</Text>
+        {this.state.messages.map(message => (
+          <Text key={message.timeStamp}>{message.text}</Text>
+        ))}
       </View>
     )
   }

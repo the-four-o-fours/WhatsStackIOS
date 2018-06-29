@@ -15,6 +15,7 @@ import {getContacts} from '../../store/actions'
 
 class ContactsComponent extends Component {
   async componentDidMount() {
+    if (!this.props.contacts.length) console.log('it was zero')
     const firebaseUsers = await this.getAllUsers()
     const contactsObj = await this.getAllContacts()
     const contacts = this.findOverlap(firebaseUsers, contactsObj)
@@ -79,17 +80,13 @@ class ContactsComponent extends Component {
       <View style={styles.container}>
         <Button title="Sign Out" color="red" onPress={this.signOut}/> {this.props.contacts.length && (
           <View>
-            {this
-              .props
-              .contacts
-              .map(contact => (
-                <Text key={contact.phoneName}>
-                  {contact.displayName}
-                  ({contact.phoneName
-                    ? contact.phoneName
-                    : ''})
-                </Text>
-              ))}
+            {this.props.contacts.map(contact => (
+              <Text key={contact.uid}>
+                {contact.displayName} ({contact.phoneName
+                  ? contact.phoneName
+                  : ''})
+              </Text>
+            ))}
           </View>
         )}
       </View>

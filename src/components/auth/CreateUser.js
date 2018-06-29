@@ -1,12 +1,8 @@
 import React, {Component} from 'react'
 import {StyleSheet, Text, AsyncStorage} from 'react-native'
 import {Container, Button, Form, Item, Input} from 'native-base'
-const RSAKey = require('react-native-rsa')
-
 import firebase from 'react-native-firebase'
-import {connect} from 'react-redux'
-
-import {getUser} from '../../store/actions'
+const RSAKey = require('react-native-rsa')
 
 class CreateUser extends Component {
   state = {
@@ -31,22 +27,16 @@ class CreateUser extends Component {
   }
 
   addUserToDB = async () => {
-    const fireBaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
-    const user = await fireBaseUser.once('value')
+    const firebaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
+    const user = await firebaseUser.once('value')
     const exists = await user.exists()
     if (!exists) {
       const [privateKey, publicKey] = this.generateRSAKey()
-      const user = {
-        phoneNumber: this.state.phoneNumber,
-        uid: this.state.uid,
-        displayName: this.state.displayName,
-        publicKey,
-      }
+      const user = {...this.state, publicKey}
       AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
-      fireBaseUser.set(user)
-      this.props.getUser(user)
+      firebaseUser.set(user)
     }
-    this.props.navigation.navigate('Contacts')
+    this.props.userCreated()
   }
 
   render() {
@@ -84,11 +74,4 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapDispatchToProps = dispatch => ({
-  getUser: user => dispatch(getUser(user)),
-})
-
-export default connect(
-  null,
-  mapDispatchToProps,
-)(CreateUser)
+export default CreateUser

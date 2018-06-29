@@ -1,28 +1,69 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {View, Button} from 'react-native'
-
-import Chat from './Chat'
-
+import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
-import AllChatsList from './SectionList/AllChatsList'
-import BottomNav from './BottomNavigator'
+import AllChatList from './SectionList/AllChatsList'
+import {getNewMessage} from '../../store/actions'
 
-const AllChats = () => {
-  const signOut = () => {
-    firebase
-      .auth()
-      .signOut()
+class AllChats extends Component {
+  componentDidMount() {
+    const uid = this.props.user.uid
+    // const userRef = firebase.database().ref(`/Users/${uid}`)
+    // userRef.off()
+    // userRef.on('child_added', snapshot => {
+    //   console.log('key', snapshot.key)
+    //   console.log('child added', snapshot.val())
+    // })
+    // userRef.on('child_changed', snapshot => {
+    //   console.log('Child changed', snapshot.val())
+    // })
+
+    // Get chatIds from user object in redux then listen to each one
+    // userRef.once('value', snapshot => {
+    //   const user = snapshot.val()
+    //   for (let key in user) {
+    //     if (typeof user[key] === 'object') {
+    //       const ref = firebase.database().ref(`/Users/${uid}/${key}`)
+    //       ref.off()
+    //       ref.on('child_added', this.getNewMessageCallBack())
+    //     }
+    //   }
+    // })
   }
 
-  return (
-    <View>
-      <Button title="Sign Out" color="red" onPress={signOut}/> {/* <AllChatsList /> */}
-      <Text>hi</Text>
-      <Chat/>
+  getNewMessageCallBack = (snapshot, prevChildKey) => {
+    const messageObj = {...snapshot.val()}
+    messageObj.timeStamp = snapshot.key
+    console.log(messageObj)
+    console.log('prevChild', prevChildKey)
+  }
 
-    </View>
-  )
+  // signOut = () => {
+  //   firebase.auth().signOut()
+  // }
+
+  componentWillUnmount() {}
+
+  render() {
+    return (
+      <View>
+        {/* <Button title="Sign Out" color="red" onPress={this.signOut} /> */}
+         <AllChatList /> 
+      </View>
+    )
+  }
 }
 
-export default AllChats
+const mapStateToProps = state => ({
+  user: state.user,
+})
+
+const mapDispatchToProps = dispatch => ({
+  getNewMessage: (message, chatId) => dispatch(getNewMessage(message, chatId)),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AllChats)
