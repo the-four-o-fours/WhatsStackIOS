@@ -57,12 +57,9 @@ class Chat extends Component {
         messageObj.timeStamp = message.key
         messages.push(messageObj)
       })
-      this.setState(
-        {
-          messages,
-        },
-        () => console.log(messages),
-      )
+      this.setState({
+        messages,
+      })
     })
   }
 
