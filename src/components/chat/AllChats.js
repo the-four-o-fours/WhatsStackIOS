@@ -1,23 +1,23 @@
-import React from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import React from 'react'
+import {View, Button} from 'react-native'
+
 import Chat from './Chat'
 
-import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase'
 
 const AllChats = () => {
+  const signOut = () => {
+    firebase
+      .auth()
+      .signOut()
+  }
+
   return (
-    <View style={styles.container}>
+    <View>
+      <Button title="Sign Out" color="red" onPress={signOut}/>
       <Chat/>
     </View>
-  );
-};
+  )
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 5,
-    backgroundColor: "#fff"
-  }
-});
-
-export default AllChats;
+export default AllChats

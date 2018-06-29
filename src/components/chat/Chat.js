@@ -1,16 +1,7 @@
 import React, {Component} from 'react'
 import firebase from 'react-native-firebase'
-import {StyleSheet, Text, View, FlatList, TextInput} from 'react-native'
-import {
-  Content,
-  Button,
-  Form,
-  Item,
-  Input,
-  Footer
-} from 'native-base'
-import {Col, Row, Grid} from "react-native-easy-grid";
-import {GiftedChat} from 'react-native-gifted-chat'
+import {StyleSheet, Text, AsyncStorage, View} from 'react-native'
+import {Container, Button, Form, Item, Input} from 'native-base'
 const moment = require('moment')
 
 import ChatItem from './ChatItem'
@@ -20,7 +11,6 @@ class Chat extends Component {
     super()
 
     this.state = {
-      message: '',
       messages: [],
       uid: ''
     }
