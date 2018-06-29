@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
-import {FlatList, Text, StyleSheet, Image, View} from 'react-native'
+import {FlatList, Text, StyleSheet, Image, View, Button} from 'react-native'
 // import {Divider, Card, ListItem} from 'react-native-material-ui'
 import {ListItem, Avatar} from 'react-native-elements'
+import firebase from 'react-native-firebase'
+
 
 import BottomNav from '../BottomNavigator'
 
@@ -93,10 +95,14 @@ const rows = [
 //   }
 ]
 
+const signOut = () => {
+  firebase.auth().signOut()
+}
 
 const extractKey = ({id}) => id
 
 export default class AllChatView extends Component {
+  
   renderItem = ({item}) => {
     return (
       <View>
@@ -124,6 +130,7 @@ export default class AllChatView extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Button title="Sign Out" color="red" onPress={signOut} />
         
         <FlatList
           // style={styles.container}

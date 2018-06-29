@@ -44,6 +44,7 @@ const RootNavigator = createStackNavigator(
         title: 'Contacts',
       }),
     },
+    
   },
   {
     initialRouteName: 'Main',
