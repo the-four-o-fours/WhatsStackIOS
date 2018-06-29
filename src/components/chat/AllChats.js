@@ -7,7 +7,7 @@ import firebase from 'react-native-firebase'
 
 
 import AllChatsList from './SectionList/AllChatsList'
-import Header from './AllChats/Header';
+import BottomNav from './BottomNavigator'
 
 const AllChats = () => {
   const signOut = () => {
@@ -17,8 +17,10 @@ const AllChats = () => {
   return (
     <View>
       <Button title="Sign Out" color="red" onPress={signOut} />
-      <AllChatsList />
+      {/* <AllChatsList /> */}
+     <Text>hi</Text>
       <Chat />
+      
     </View>
   )
 }
