@@ -1,25 +1,47 @@
 import React, {Component} from 'react'
 import firebase from 'react-native-firebase'
-import {Text, View} from 'react-native'
+import {Text, View, TextInput, TouchableOpacity} from 'react-native'
+
+import {connect} from 'react-redux'
 
 class Chat extends Component {
-  constructor() {
-    super()
-
+  constructor(props) {
+    super(props)
     this.state = {
+      receiverUid: '',
       messages: [],
-      uid: '',
+      newMessage: '',
     }
   }
 
   componentDidMount() {
-    console.log(this.props.navigation.getParam('uid', 'failed'))
-    const {uid, phoneNumber} = firebase.auth().currentUser
-    this.setState({uid})
-    this.listener()
+    console.log(this.props.user)
+    const receiverUid = this.props.navigation.getParam('uid', false)
+    const messages = this.convertToArr(this.props.user[receiverUid])
+    this.setState({
+      receiverUid,
+      messages,
+    })
   }
 
-  sendMessage = text => {
+  convertToArr = obj => {
+    const arr = []
+    for (let key in obj) {
+      const message = {...obj[key]}
+      message.timeStamp = key
+      arr.push(message)
+    }
+    arr.sort((a, b) => a.timeStamp - b.timeStamp)
+    return arr
+  }
+
+  sendMessage = () => {
+    const text = this.state.newMessage
+    const user = this.props.user
+    const receiverUid = this.state.receiverUid
+    if (!receiverUid) {
+      console.log("could not get receiver's uid")
+    }
     const senderMessage = {
       text,
       sender: true,
@@ -31,48 +53,61 @@ class Chat extends Component {
       group: false,
     }
     const sentAt = Date.now()
-    const chloeRef = firebase
+    const senderRef = firebase
       .database()
-      .ref('Users/ME8NBZ125PbgVrJVCWVma2mCbnF2/P0xLKKiHwNfP1asdgX8blSq8pMa2') //chloe's ID / my ID //un-hard-code eventually
-    const spencerRef = firebase
+      .ref(`Users/${user.uid}/${receiverUid}`)
+    const receiverRef = firebase
       .database()
-      .ref('Users/P0xLKKiHwNfP1asdgX8blSq8pMa2/ME8NBZ125PbgVrJVCWVma2mCbnF2') //my ID / chloe's ID //un-hard-code eventually
+      .ref(`Users/${receiverUid}/${user.uid}`)
     const senderMessageObj = {}
     const receiverMessageObj = {}
     senderMessageObj[sentAt] = senderMessage
     receiverMessageObj[sentAt] = receiverMessage
-    chloeRef.update(senderMessageObj)
-    spencerRef.update(receiverMessageObj)
+    senderRef.update(senderMessageObj)
+    receiverRef.update(receiverMessageObj)
+    this.setState({
+      newMessage: '',
+    })
   }
 
-  listener = () => {
-    const conversationRef = firebase
-      .database()
-      .ref('Users/ME8NBZ125PbgVrJVCWVma2mCbnF2/P0xLKKiHwNfP1asdgX8blSq8pMa2') //chloe-me convo
-    conversationRef.on('value', snapshot => {
-      const messages = []
-      snapshot.forEach(message => {
-        const messageObj = {...message.val()}
-        messageObj.timeStamp = message.key
-        messages.push(messageObj)
-      })
-      this.setState({
-        messages,
-      })
+  handleChange = event => {
+    console.log(event)
+    this.setState({
+      [event.target.name]: event.target.value,
     })
   }
 
   render() {
+    console.log(this.state.messages)
     return (
       <View>
-        {/* <Text>{this.sendMessage('Hello1')}<Text> */}
         <Text>Chat Component</Text>
         {this.state.messages.map(message => (
-          <Text key={message.timeStamp}>{message.text}</Text>
+          <Text key={message.timeStamp} style={{color: 'black'}}>
+            {message.text}
+          </Text>
         ))}
+        <TextInput
+          placeholder="Do I exist"
+          name="newMessage"
+          value={this.state.newMessage}
+          onChangeText={newMessage => this.setState({newMessage})}
+        />
+        <TouchableOpacity onPress={this.sendMessage}>
+          <Text>SEND THAT MESSAGE</Text>
+        </TouchableOpacity>
       </View>
     )
   }
 }
 
-export default Chat
+const mapStateToProps = state => ({
+  user: state.user,
+})
+
+const mapDispatchToProps = dispatch => ({})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Chat)
