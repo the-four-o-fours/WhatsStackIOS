@@ -51,7 +51,7 @@ class AllChats extends Component {
     return (
       <View>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
-        <Chat />
+        {/* <Chat /> */}
       </View>
     )
   }

@@ -1,55 +1,14 @@
 import React, {Component} from 'react'
-import {
-  View,
-  Button,
-  Text,
-  TextInput,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native'
+import {View, Button, Text, TextInput} from 'react-native'
 import firebase from 'react-native-firebase'
-import {connect} from 'react-redux'
-
-import CreateUser from './CreateUser'
-import {getUser} from '../../store/actions'
 
 class Login extends Component {
-  constructor(props) {
-    super(props)
-    this.unsubscribe = null
-    this.state = {
-      user: null,
-      message: '',
-      codeInput: '',
-      phoneNumber: '+1',
-      confirmResult: null,
-      inDatabase: false,
-    }
-  }
-
-  componentDidMount() {
-    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        const inDatabase = this.userInDatabase(user.uid)
-        this.setState({
-          user: user.toJSON(),
-          inDatabase,
-        })
-      } else {
-        // User has been signed out, reset the state
-        this.setState({
-          user: null,
-          message: '',
-          codeInput: '',
-          phoneNumber: '+1',
-          confirmResult: null,
-        })
-      }
-    })
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribe) this.unsubscribe()
+  state = {
+    user: null,
+    message: '',
+    codeInput: '',
+    phoneNumber: '+1',
+    confirmResult: null,
   }
 
   signIn = () => {
@@ -69,28 +28,13 @@ class Login extends Component {
       )
   }
 
-  userInDatabase = async () => {
-    const {uid} = firebase.auth().currentUser
-    const firebaseUser = firebase.database().ref(`/Users/${uid}`)
-    const user = await firebaseUser.once('value')
-    const exists = await user.exists()
-    if (exists) {
-      const userData = user.val()
-      this.props.getUser(userData)
-      this.props.navigation.goBack()
-    } else {
-      this.props.navigation.navigate('CreateUser')
-    }
-  }
-
   confirmCode = () => {
     const {codeInput, confirmResult} = this.state
     if (confirmResult && codeInput.length) {
       confirmResult
         .confirm(codeInput)
-        .then(user => {
+        .then(_ => {
           this.setState({message: 'Code Confirmed!'})
-          this.userInDatabase()
         })
         .catch(error =>
           this.setState({message: `Code Confirm Error: ${error.message}`}),
@@ -151,7 +95,7 @@ class Login extends Component {
   }
 
   render() {
-    const {user, confirmResult, inDatabase} = this.state
+    const {user, confirmResult} = this.state
     return (
       <View style={{flex: 1}}>
         {!user && !confirmResult && this.renderPhoneNumberInput()}
@@ -159,33 +103,9 @@ class Login extends Component {
         {this.renderMessage()}
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
-
-        {user && !inDatabase && <CreateUser />}
-
-        {user && (
-          <View style={styles.container}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    padding: 10,
-  },
-})
-
-const mapDispatchToProps = dispatch => ({
-  getUser: user => dispatch(getUser(user)),
-})
-
-export default connect(
-  null,
-  mapDispatchToProps,
-)(Login)
+export default Login

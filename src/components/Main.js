@@ -1,19 +1,53 @@
 import React, {Component} from 'react'
-
 import firebase from 'react-native-firebase'
-import MainContainer from './chat/MainContainer'
-import {Text} from 'react-native'
+
+import Login from './auth/Login'
+import CreateUser from './auth/CreateUser'
+import MainContainer from './MainContainer'
 
 class Main extends Component {
-  componentDidMount() {
-    const user = firebase.auth().currentUser
-    if (!user) this.props.navigation.navigate('Login')
+  constructor(props) {
+    super(props)
+    this.unsubscribe = null
+    this.state = {
+      isLoggedIn: false,
+      isInDatabase: false,
+      uid: '',
+    }
   }
+
+  userCreated = () => {
+    this.setState({isInDatabase: true})
+  }
+
+  componentDidMount() {
+    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const isInDatabase = this.userInDatabase()
+        this.setState({isLoggedIn: true, isInDatabase, uid: user.uid})
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) this.unsubscribe()
+  }
+
+  userInDatabase = async () => {
+    const {uid} = firebase.auth().currentUser
+    const firebaseUser = firebase.database().ref(`/Users/${uid}`)
+    const user = await firebaseUser.once('value')
+    const exists = await user.exists()
+    return exists
+  }
+
   render() {
-    if (firebase.auth().currentUser) {
-      return <MainContainer />
+    if (this.state.isLoggedIn && this.state.isInDatabase) {
+      return <MainContainer uid={this.state.uid} />
+    } else if (this.state.isLoggedIn) {
+      return <CreateUser userCreated={this.userCreated} />
     } else {
-      return <Text>WhatsStack</Text>
+      return <Login />
     }
   }
 }
