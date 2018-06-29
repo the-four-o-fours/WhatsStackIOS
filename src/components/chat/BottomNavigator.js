@@ -1,6 +1,6 @@
 import React from 'react'
 import {View, StyleSheet, Image} from 'react-native'
-import BottomNavigation, {
+import TopNavigation, {
   IconTab,
   Badge,
 } from 'react-native-material-bottom-navigation'
@@ -24,33 +24,34 @@ export default class BottomNav extends React.Component {
   }
 
   tabs = [
-    {
-      key: 'games',
-      label: 'Games',
-      barColor: '#388E3C',
-      pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'rocket',
-    },
+    // {
+    //   key: 'games',
+    //   label: 'Games',
+    //   barColor: '#388E3C',
+    //   pressColor: 'rgba(255, 255, 255, 0.16)',
+    //   icon: 'rocket',
+    // },
     {
       key: 'movies-tv',
-      label: 'Movies & TV',
+      label: '',
       barColor: '#00695C',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'envelope',
+      icon: 'bars',
     },
     {
       key: 'music',
       label: 'Music',
       barColor: '#6A1B9A',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'book',
+      icon: 'reddit-alien',
     },
+ 
     {
-      key: 'books',
-      label: 'Books',
+      key: 'newChat',
+      label: 'newChat',
       barColor: '#1565C0',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'gear',
+      icon: 'plus-square',
     },
   ]
 
@@ -76,18 +77,8 @@ export default class BottomNav extends React.Component {
   render() {
     return (
       <View >
-        {/* <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <Image
-            source={require('./cut.png')}
-            style={{
-              resizeMode: 'contain',
-              width: 412,
-              bottom: -120,
-              opacity: 0.5
-            }}
-          />
-        </View> */}
-        <BottomNavigation
+       
+        <TopNavigation
           tabs={this.tabs}
           activeTab={this.state.activeTab}
           onTabPress={newTab => this.setState({activeTab: newTab.key})}
