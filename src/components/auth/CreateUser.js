@@ -32,12 +32,7 @@ class CreateUser extends Component {
     const exists = await user.exists()
     if (!exists) {
       const [privateKey, publicKey] = this.generateRSAKey()
-      const user = {
-        phoneNumber: this.state.phoneNumber,
-        uid: this.state.uid,
-        displayName: this.state.displayName,
-        publicKey,
-      }
+      const user = {...this.state, publicKey}
       AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
       firebaseUser.set(user)
     }

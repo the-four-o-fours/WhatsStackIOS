@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import {View, Button, Text, TextInput, Image} from 'react-native'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 import MainNavigator from './MainNavigator'

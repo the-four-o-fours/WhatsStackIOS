@@ -16,14 +16,10 @@ class Main extends Component {
     }
   }
 
-  userCreated = () => {
-    this.setState({isInDatabase: true})
-  }
-
   componentDidMount() {
-    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+    this.unsubscribe = firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        const isInDatabase = this.userInDatabase()
+        const isInDatabase = await this.userInDatabase(user.uid)
         this.setState({isLoggedIn: true, isInDatabase, uid: user.uid})
       }
     })
@@ -33,18 +29,21 @@ class Main extends Component {
     if (this.unsubscribe) this.unsubscribe()
   }
 
-  userInDatabase = async () => {
-    const {uid} = firebase.auth().currentUser
+  userInDatabase = async uid => {
     const firebaseUser = firebase.database().ref(`/Users/${uid}`)
     const user = await firebaseUser.once('value')
     const exists = await user.exists()
     return exists
   }
 
+  userCreated = () => {
+    this.setState({isInDatabase: true})
+  }
+
   render() {
     if (this.state.isLoggedIn && this.state.isInDatabase) {
       return <MainContainer uid={this.state.uid} />
-    } else if (this.state.isLoggedIn) {
+    } else if (this.state.isLoggedIn && !this.state.isInDatabase) {
       return <CreateUser userCreated={this.userCreated} />
     } else {
       return <Login />
