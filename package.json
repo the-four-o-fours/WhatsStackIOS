@@ -48,6 +48,7 @@
     "preset": "react-native"
   },
   "dependencies": {
+    "expo": "^28.0.0",
     "fbjs": "^0.8.16",
     "native-base": "^2.6.1",
     "react": "^16.3.1",
@@ -55,9 +56,11 @@
     "react-native-contacts": "^2.2.1",
     "react-native-elements": "^0.19.1",
     "react-native-firebase": "^4.1.0",
+    "react-native-material-bottom-navigation": "^1.0.0",
     "react-native-rsa": "0.0.3",
     "react-native-unified-contacts": "^1.6.2",
-    "react-navigation": "^2.5.3",
+    "react-native-vector-icons": "^4.6.0",
+    "react-navigation": "^2.5.5",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "redux-persist": "^5.10.0",
