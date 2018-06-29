@@ -1,10 +1,23 @@
 import React, {Component} from 'react'
 import {View, Button} from 'react-native'
+import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
 
 import firebase from 'react-native-firebase'
 
 import {getNewMessage} from '../../store/actions'
+
+const dummyData = [
+  {
+    displayName: 'Chloe',
+    phoneNumber: '+19178647990',
+    uid: 'mcMNuTXzK5aFP1znT9WfPPttVxH2',
+  },
+  {
+    uid: 'rdMKINrxayVThCXWmKu2OtkniIT2',
+    displayName: 'Nousit',
+  },
+]
 
 class AllChats extends Component {
   componentDidMount() {}
@@ -32,8 +45,13 @@ class AllChats extends Component {
     return (
       <View>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
-        <Button title="Sign Out" color="red" onPress={this.goToConvo} />
-        <Button title="Sign Out" color="red" onPress={this.goToConvo} />
+        {dummyData.map(ele => (
+          <ListItem
+            key={ele.uid}
+            title={ele.displayName}
+            onPress={() => this.props.goToConvo(ele.uid)}
+          />
+        ))}
       </View>
     )
   }

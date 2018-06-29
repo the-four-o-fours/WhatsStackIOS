@@ -13,6 +13,7 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props.navigation.getParam('uid', 'failed'))
     const {uid, phoneNumber} = firebase.auth().currentUser
     this.setState({uid})
     this.listener()

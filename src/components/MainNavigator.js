@@ -1,6 +1,7 @@
 import {createStackNavigator} from 'react-navigation'
 
 import AllChats from './chat/AllChats'
+import Chat from './chat/Chat'
 
 const MainNavigator = createStackNavigator({
   Main: {
@@ -10,7 +11,7 @@ const MainNavigator = createStackNavigator({
     }),
   },
   Chat: {
-    screen: AllChats,
+    screen: Chat,
     navigationOptions: ({navigation}) => ({
       headerLeft: '<-',
     }),
