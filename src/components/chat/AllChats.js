@@ -49,7 +49,7 @@ class AllChats extends Component {
           <ListItem
             key={ele.uid}
             title={ele.displayName}
-            onPress={() => this.props.goToConvo(ele.uid)}
+            onPress={() => this.goToConvo(ele.uid)}
           />
         ))}
       </View>
