@@ -46,7 +46,7 @@ class CreateUser extends Component {
       fireBaseUser.set(user)
       this.props.getUser(user)
     }
-    this.props.navigation.navigate('Contacts')
+    this.props.navigation.goBack('Login')
   }
 
   render() {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {View, Button, Text, TextInput, Image} from 'react-native'
 
-class ChatList extends Component {
+class MainContainer extends Component {
   render() {
     return (
       <View>
@@ -11,4 +11,4 @@ class ChatList extends Component {
   }
 }
 
-export default ChatList
+export default MainContainer

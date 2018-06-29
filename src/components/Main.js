@@ -1,16 +1,20 @@
-import React from 'react'
+import React, {Component} from 'react'
 
 import firebase from 'react-native-firebase'
+import MainContainer from './chat/MainContainer'
+import {Text} from 'react-native'
 
-import Login from './auth/Login'
-import AllChats from './chat/AllChats'
-
-const Main = props => {
-  const user = firebase.auth().currentUser
-  if (user) {
-    return <AllChats navigation={props.navigation} />
-  } else {
-    return <Login navigation={props.navigation} />
+class Main extends Component {
+  componentDidMount() {
+    const user = firebase.auth().currentUser
+    if (!user) this.props.navigation.navigate('Login')
+  }
+  render() {
+    if (firebase.auth().currentUser) {
+      return <MainContainer />
+    } else {
+      return <Text>WhatsStack</Text>
+    }
   }
 }
 

@@ -6,8 +6,7 @@ import {store, persistor} from './src/store'
 import Main from './src/components/Main'
 import Login from './src/components/auth/Login'
 import CreateUser from './src/components/auth/CreateUser'
-import AllChats from './src/components/chat/AllChats'
-import Contacts from './src/components/chat/Contacts'
+import MainContainer from './src/components/chat/MainContainer'
 import {ActivityIndicator} from 'react-native'
 
 const RootNavigator = createStackNavigator(
@@ -22,25 +21,24 @@ const RootNavigator = createStackNavigator(
       screen: Login,
       navigationOptions: ({navigation}) => ({
         title: 'Login',
+        headerLeft: null,
+        gesturesEnabled: false,
       }),
     },
     CreateUser: {
       screen: CreateUser,
       navigationOptions: ({navigation}) => ({
         title: 'Set display name',
-      }),
-    },
-    Chat: {
-      screen: AllChats,
-      navigationOptions: ({navigation}) => ({
-        title: 'Chat',
         headerLeft: null,
+        gesturesEnabled: false,
       }),
     },
-    Contacts: {
-      screen: Contacts,
+    MainContainer: {
+      screen: MainContainer,
       navigationOptions: ({navigation}) => ({
-        title: 'Contacts',
+        title: 'WhatsStack',
+        headerLeft: null,
+        gesturesEnabled: false,
       }),
     },
   },
