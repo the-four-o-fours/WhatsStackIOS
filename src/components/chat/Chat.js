@@ -1,7 +1,15 @@
 import React, {Component} from 'react'
 import firebase from 'react-native-firebase'
 import {StyleSheet, Text, AsyncStorage, View} from 'react-native'
-import {Container, Button, Form, Item, Input} from 'native-base'
+import {
+  Container,
+  Button,
+  Form,
+  Item,
+  Input,
+  Content
+} from 'native-base'
+import {Col, Row, Grid} from "react-native-easy-grid"
 const moment = require('moment')
 
 import ChatItem from './ChatItem'

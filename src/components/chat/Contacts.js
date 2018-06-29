@@ -1,6 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {View, StyleSheet, Text, TextInput, Image, Button} from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  Image,
+  Button
+} from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 
@@ -11,24 +18,29 @@ class ContactsComponent extends Component {
     const firebaseUsers = await this.getAllUsers()
     const contactsObj = await this.getAllContacts()
     const contacts = this.findOverlap(firebaseUsers, contactsObj)
-    this.props.getContacts(contacts)
+    this
+      .props
+      .getContacts(contacts)
   }
 
   getAllContacts = () => {
     return new Promise((resolve, reject) => {
       Contacts.getContacts((err, contacts) => {
-        if (err) return reject(err)
+        if (err) 
+          return reject(err)
         const contactsObj = {}
-        contacts.filter(contact => contact.phoneNumbers[0]).forEach(contact => {
-          const phoneNumber = `+1` + contact.phoneNumbers[0].digits
-          contactsObj[phoneNumber] = contact.fullName
-        })
+        contacts
+          .filter(contact => contact.phoneNumbers[0])
+          .forEach(contact => {
+            const phoneNumber = `+1` + contact.phoneNumbers[0].digits
+            contactsObj[phoneNumber] = contact.fullName
+          })
         resolve(contactsObj)
       })
     })
   }
 
-  getAllUsers = async () => {
+  getAllUsers = async() => {
     const firebaseUsers = []
     const snapshot = await firebase
       .database()
@@ -36,12 +48,7 @@ class ContactsComponent extends Component {
       .once('value')
     snapshot.forEach(childSnap => {
       const childData = childSnap.val()
-      firebaseUsers.push({
-        displayName: childData.displayName,
-        phoneNumber: childData.phoneNumber,
-        uid: childData.uid,
-        publicKey: childData.publicKey,
-      })
+      firebaseUsers.push({displayName: childData.displayName, phoneNumber: childData.phoneNumber, uid: childData.uid, publicKey: childData.publicKey})
     })
     return firebaseUsers
   }
@@ -58,23 +65,31 @@ class ContactsComponent extends Component {
   }
 
   signOut = () => {
-    firebase.auth().signOut()
-    this.props.navigation.navigate('Main')
+    firebase
+      .auth()
+      .signOut()
+    this
+      .props
+      .navigation
+      .navigate('Main')
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Button title="Sign Out" color="red" onPress={this.signOut} />
-        {this.props.contacts.length && (
+        <Button title="Sign Out" color="red" onPress={this.signOut}/> {this.props.contacts.length && (
           <View>
-            {this.props.contacts.map(contact => (
-              <Text key={contact.phoneName}>
-                {contact.displayName} ({contact.phoneName
-                  ? contact.phoneName
-                  : ''})
-              </Text>
-            ))}
+            {this
+              .props
+              .contacts
+              .map(contact => (
+                <Text key={contact.phoneName}>
+                  {contact.displayName}
+                  ({contact.phoneName
+                    ? contact.phoneName
+                    : ''})
+                </Text>
+              ))}
           </View>
         )}
       </View>
@@ -87,20 +102,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: '#fff',
-    padding: 10,
-  },
+    padding: 10
+  }
 })
 
-const mapStateToProps = state => ({
-  user: state.user,
-  contacts: state.contacts,
-})
+const mapStateToProps = state => ({user: state.user, contacts: state.contacts})
 
 const mapDispatchToProps = dispatch => ({
-  getContacts: contacts => dispatch(getContacts(contacts)),
+  getContacts: contacts => dispatch(getContacts(contacts))
 })
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ContactsComponent)
+export default connect(mapStateToProps, mapDispatchToProps,)(ContactsComponent)
