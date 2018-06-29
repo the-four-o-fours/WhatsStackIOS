@@ -77,7 +77,7 @@ class Login extends Component {
     if (exists) {
       const userData = user.val()
       this.props.getUser(userData)
-      this.props.navigation.navigate('Contacts')
+      this.props.navigation.navigate('Chat')
     } else {
       this.props.navigation.navigate('CreateUser')
     }

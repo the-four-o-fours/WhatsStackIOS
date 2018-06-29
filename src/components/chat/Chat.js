@@ -53,13 +53,16 @@ class Chat extends Component {
     conversationRef.on('value', snapshot => {
       const messages = []
       snapshot.forEach(message => {
-        const messageObj = {}
-        messageObj[message.key] = message.val()
+        const messageObj = {...message.val()}
+        messageObj.timeStamp = message.key
         messages.push(messageObj)
       })
-      this.setState({
-        messages,
-      })
+      this.setState(
+        {
+          messages,
+        },
+        () => console.log(messages),
+      )
     })
   }
 
@@ -69,9 +72,7 @@ class Chat extends Component {
         {/* <Text>{this.sendMessage('Hello1')}<Text> */}
         <Text>Chat Component</Text>
         {this.state.messages.map(message => (
-          <Text key={Object.keys(message)[0]}>
-            {message[Object.keys(message)[0]].text}
-          </Text>
+          <Text key={message.timeStamp}>{message.text}</Text>
         ))}
       </View>
     )
