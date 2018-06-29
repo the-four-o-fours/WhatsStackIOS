@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import firebase from 'react-native-firebase'
-import {StyleSheet, Text, AsyncStorage, View} from 'react-native'
-import {Container, Button, Form, Item, Input} from 'native-base'
+import {Text, View} from 'react-native'
 
 class Chat extends Component {
   constructor() {
