@@ -8,13 +8,12 @@ const MainNavigator = createStackNavigator({
     screen: AllChats,
     navigationOptions: ({navigation}) => ({
       title: 'WhatsStack',
+      headerBackTitle: null,
     }),
   },
   Chat: {
     screen: Chat,
-    navigationOptions: ({navigation}) => ({
-      headerLeft: '<-',
-    }),
+    navigationOptions: ({navigation}) => ({}),
   },
 })
 
