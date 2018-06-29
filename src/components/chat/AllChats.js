@@ -1,38 +1,26 @@
 import React, {Component} from 'react'
 import {View, Button} from 'react-native'
+import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
-
-import Chat from './Chat'
 
 import firebase from 'react-native-firebase'
 
 import {getNewMessage} from '../../store/actions'
 
-class AllChats extends Component {
-  componentDidMount() {
-    const uid = this.props.user.uid
-    // const userRef = firebase.database().ref(`/Users/${uid}`)
-    // userRef.off()
-    // userRef.on('child_added', snapshot => {
-    //   console.log('key', snapshot.key)
-    //   console.log('child added', snapshot.val())
-    // })
-    // userRef.on('child_changed', snapshot => {
-    //   console.log('Child changed', snapshot.val())
-    // })
+const dummyData = [
+  {
+    displayName: 'Chloe',
+    phoneNumber: '+19178647990',
+    uid: 'mcMNuTXzK5aFP1znT9WfPPttVxH2',
+  },
+  {
+    uid: 'rdMKINrxayVThCXWmKu2OtkniIT2',
+    displayName: 'Nousit',
+  },
+]
 
-    // Get chatIds from user object in redux then listen to each one
-    // userRef.once('value', snapshot => {
-    //   const user = snapshot.val()
-    //   for (let key in user) {
-    //     if (typeof user[key] === 'object') {
-    //       const ref = firebase.database().ref(`/Users/${uid}/${key}`)
-    //       ref.off()
-    //       ref.on('child_added', this.getNewMessageCallBack())
-    //     }
-    //   }
-    // })
-  }
+class AllChats extends Component {
+  componentDidMount() {}
 
   getNewMessageCallBack = (snapshot, prevChildKey) => {
     const messageObj = {...snapshot.val()}
@@ -41,17 +29,29 @@ class AllChats extends Component {
     console.log('prevChild', prevChildKey)
   }
 
+  componentWillUnmount() {}
+
   signOut = () => {
     firebase.auth().signOut()
   }
 
-  componentWillUnmount() {}
+  goToConvo = uid => {
+    this.props.navigation.navigate('Chat', {
+      uid,
+    })
+  }
 
   render() {
     return (
       <View>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
-        {/* <Chat /> */}
+        {dummyData.map(ele => (
+          <ListItem
+            key={ele.uid}
+            title={ele.displayName}
+            onPress={() => this.goToConvo(ele.uid)}
+          />
+        ))}
       </View>
     )
   }
