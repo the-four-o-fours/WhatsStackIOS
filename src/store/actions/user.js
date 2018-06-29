@@ -6,8 +6,8 @@ export const getUser = user => ({
   user,
 })
 
-export const getNewMessage = (message, chatId) => ({
+export const getNewMessage = (conversation, chatId) => ({
   type: GOT_NEW_MESSAGE,
   chatId,
-  message,
+  conversation,
 })

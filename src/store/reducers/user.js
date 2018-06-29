@@ -5,15 +5,9 @@ const initialState = {}
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case GOT_USER:
-      return action.user
-    case GOT_NEW_MESSAGE: {
-      const chat = [...state[action.chatId]]
-      chat.push(action.message)
-      const copy = {...state}
-      copy[action.chatId] = chat
-      return copy
-      //fix it later
-    }
+      return {...state, ...action.user}
+    case GOT_NEW_MESSAGE:
+      return {...state, [action.chatId]: action.conversation}
     default:
       return state
   }

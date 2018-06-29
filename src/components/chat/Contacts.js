@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {View, StyleSheet, Text, TextInput, Image, Button} from 'react-native'
+import {View, StyleSheet, Text, Button} from 'react-native'
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 
