@@ -1,3 +1,5 @@
+console.disableYellowBox = true
+
 import React from 'react'
 import {createStackNavigator} from 'react-navigation'
 import {Provider} from 'react-redux'
@@ -7,6 +9,7 @@ import Login from './src/components/auth/Login'
 import CreateUser from './src/components/auth/CreateUser'
 import AllChats from './src/components/chat/AllChats'
 import Contacts from './src/components/chat/Contacts'
+import AllChatsList from './src/components/chat/SectionList/AllChatsList'
 
 const RootNavigator = createStackNavigator(
   {
@@ -29,7 +32,7 @@ const RootNavigator = createStackNavigator(
       }),
     },
     Chat: {
-      screen: AllChats,
+      screen: AllChatsList,
       navigationOptions: ({navigation}) => ({
         title: 'Chat',
         headerLeft: null,
