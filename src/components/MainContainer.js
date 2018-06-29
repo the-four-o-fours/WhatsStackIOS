@@ -6,6 +6,13 @@ import MainNavigator from './MainNavigator'
 import {getNewMessage, getUser, populateContacts} from '../store/actions'
 
 class MainContainer extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      userRef: null,
+    }
+  }
+
   componentDidMount() {
     this.props.populateContacts()
     const uid = this.props.uid
@@ -21,9 +28,14 @@ class MainContainer extends Component {
       const chatId = snapshot.key
       this.props.getNewMessage(conversation, chatId)
     })
+    this.setState({
+      userRef,
+    })
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    this.state.userRef.off()
+  }
 
   render() {
     return <MainNavigator />
@@ -31,7 +43,6 @@ class MainContainer extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user,
   contacts: state.contacts,
 })
 
