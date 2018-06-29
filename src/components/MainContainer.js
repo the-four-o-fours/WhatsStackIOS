@@ -7,17 +7,23 @@ import {getNewMessage} from '../store/actions'
 
 class MainContainer extends Component {
   componentDidMount() {
-    const uid = this.props.user.uid
+    const uid = this.props.uid
     const userRef = firebase.database().ref(`/Users/${uid}`)
     userRef.off()
     userRef.on('child_added', snapshot => {
-      if (snapshot.key.length > 12)
-        // check child is a new conversation
-        console.log('key', snapshot.key)
+      if (Object.keys(snapshot).length > 1) {
+        // a redux function to set the user in the store to snapshot.val()
+      } else {
+        //a redux function to add a new conversation to the user in the store, set to snapshot.val()
+      }
       console.log('child added', snapshot.val())
+      console.log('key', snapshot.key)
     })
     userRef.on('child_changed', snapshot => {
+      // add something to take only the last child
+      // add that last child to the correct conversation in user in store using parent's key
       console.log('Child changed', snapshot.val())
+      console.log("Parent's key", snapshot.key)
     })
   }
 

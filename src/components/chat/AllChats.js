@@ -11,15 +11,15 @@ import {getNewMessage} from '../../store/actions'
 class AllChats extends Component {
   componentDidMount() {
     const uid = this.props.user.uid
-    const userRef = firebase.database().ref(`/Users/${uid}`)
-    userRef.off()
-    userRef.on('child_added', snapshot => {
-      console.log('key', snapshot.key)
-      console.log('child added', snapshot.val())
-    })
-    userRef.on('child_changed', snapshot => {
-      console.log('Child changed', snapshot.val())
-    })
+    // const userRef = firebase.database().ref(`/Users/${uid}`)
+    // userRef.off()
+    // userRef.on('child_added', snapshot => {
+    //   console.log('key', snapshot.key)
+    //   console.log('child added', snapshot.val())
+    // })
+    // userRef.on('child_changed', snapshot => {
+    //   console.log('Child changed', snapshot.val())
+    // })
 
     // Get chatIds from user object in redux then listen to each one
     // userRef.once('value', snapshot => {
