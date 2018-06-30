@@ -5,8 +5,8 @@ import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
 import AllChatsList from './AllChatsList'
-// import BottomNavigationBar from './BottomNavigationBar' AllChatsContainer will
-// just render these two components in a view
+// import BottomNavigationBar from './BottomNavigationBar' AllChatsContainer
+// will just render these two components in a view
 
 import {getNewMessage} from '../../../store/actions'
 
@@ -40,14 +40,14 @@ class AllChats extends React.Component {
   render() {
     return (
       <View>
-        <Button title="Sign Out" color="red" onPress={this.signOut}/>
-        <Button
+        {/* <Button title="Sign Out" color="red" onPress={this.signOut}/> */}
+        <AllChatsList/> {/* <Button
           title="Go to contacts"
           color="blue"
           onPress={() => this.props.navigation.navigate('Contacts')}/> {dummyData.map(ele => (<ListItem
           key={ele.uid}
           title={ele.displayName}
-          onPress={() => this.goToConvo(ele.uid)}/>))}
+          onPress={() => this.goToConvo(ele.uid)}/>))} */}
       </View>
     )
   }
