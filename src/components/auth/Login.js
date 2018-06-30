@@ -1,5 +1,17 @@
 import React, {Component} from 'react'
-import {View, Button, Text, TextInput} from 'react-native'
+import {
+  View,
+  Button,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native'
+import PropTypes from 'prop-types'
+import Dimensions from 'Dimensions'
 import firebase from 'react-native-firebase'
 
 class Login extends Component {
@@ -18,8 +30,14 @@ class Login extends Component {
     firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber)
-      .then(confirmResult => this.setState({confirmResult, message: 'Code has been sent!'}),)
-      .catch(error => this.setState({message: `Sign In With Phone Number Error: ${error.message}`}),)
+      .then(confirmResult =>
+        this.setState({confirmResult, message: 'Code has been sent!'}),
+      )
+      .catch(error =>
+        this.setState({
+          message: `Sign In With Phone Number Error: ${error.message}`,
+        }),
+      )
   }
 
   confirmCode = () => {
@@ -30,7 +48,9 @@ class Login extends Component {
         .then(_ => {
           this.setState({message: 'Code Confirmed!'})
         })
-        .catch(error => this.setState({message: `Code Confirm Error: ${error.message}`}),)
+        .catch(error =>
+          this.setState({message: `Code Confirm Error: ${error.message}`}),
+        )
     }
   }
 
@@ -38,38 +58,41 @@ class Login extends Component {
     const {phoneNumber} = this.state
 
     return (
-      <View style={{
-        padding: 25
-      }}>
-        <Text>Enter phone number:</Text>
-        <TextInput
-          autoFocus
-          style={{
-          height: 40,
-          marginTop: 15,
-          marginBottom: 15
-        }}
-          onChangeText={value => this.setState({phoneNumber: value})}
-          placeholder="Phone number ... "
-          value={phoneNumber}/>
-        <Button title="Sign In" color="green" onPress={this.signIn}/>
-      </View>
+      <KeyboardAvoidingView>
+        <View style={{padding: 25}}>
+          <Text style={styles.white}>Enter phone number:</Text>
+          <TextInput
+            autoFocus
+            style={{
+              height: 40,
+              marginTop: 15,
+              marginBottom: 15,
+              backgroundColor: '#fff',
+            }}
+            onChangeText={value => this.setState({phoneNumber: value})}
+            placeholder="Phone number ... "
+            value={phoneNumber}
+            color="black"
+          />
+          <Button title="Sign In" color="white" onPress={this.signIn} />
+        </View>
+      </KeyboardAvoidingView>
     )
   }
 
   renderMessage() {
     const {message} = this.state
 
-    if (!message.length) 
-      return null
+    if (!message.length) return null
 
     return (
       <Text
         style={{
-        padding: 5,
-        backgroundColor: '#000',
-        color: '#fff'
-      }}>
+          padding: 5,
+          backgroundColor: '#000',
+          color: '#fff',
+        }}
+      >
         {message}
       </Text>
     )
@@ -79,22 +102,29 @@ class Login extends Component {
     const {codeInput} = this.state
 
     return (
-      <View style={{
-        marginTop: 25,
-        padding: 25
-      }}>
+      <View
+        style={{
+          marginTop: 25,
+          padding: 25,
+        }}
+      >
         <Text>Enter verification code below:</Text>
         <TextInput
           autoFocus
           style={{
-          height: 40,
-          marginTop: 15,
-          marginBottom: 15
-        }}
+            height: 40,
+            marginTop: 15,
+            marginBottom: 15,
+          }}
           onChangeText={value => this.setState({codeInput: value})}
           placeholder="Code ... "
-          value={codeInput}/>
-        <Button title="Confirm Code" color="#841584" onPress={this.confirmCode}/>
+          value={codeInput}
+        />
+        <Button
+          title="Confirm Code"
+          color="#841584"
+          onPress={this.confirmCode}
+        />
       </View>
     )
   }
@@ -102,9 +132,12 @@ class Login extends Component {
   render() {
     const {user, confirmResult} = this.state
     return (
-      <View style={{
-        flex: 1
-      }}>
+      <View style={styles.container}>
+        <Image
+          style={{flex: 1, width: '66%', justifyContent: 'center'}}
+          source={require('../../Public/whatsStackWhiteLogo1.png')}
+          resizeMode="contain"
+        />
         {!user && !confirmResult && this.renderPhoneNumberInput()}
 
         {this.renderMessage()}
@@ -116,3 +149,28 @@ class Login extends Component {
 }
 
 export default Login
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 0,
+    backgroundColor: '#11D8B0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  formContainer: {
+    flex: 1,
+    backgroundColor: '#2c3e50',
+  },
+  loginContainer: {
+    alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 25,
+  },
+  white: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
+})

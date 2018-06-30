@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {View, Button} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
@@ -19,17 +19,8 @@ const dummyData = [
   },
 ]
 
-class AllChats extends Component {
+class AllChats extends React.Component {
   componentDidMount() {}
-
-  getNewMessageCallBack = (snapshot, prevChildKey) => {
-    const messageObj = {...snapshot.val()}
-    messageObj.timeStamp = snapshot.key
-    console.log(messageObj)
-    console.log('prevChild', prevChildKey)
-  }
-
-  componentWillUnmount() {}
 
   signOut = () => {
     firebase.auth().signOut()

@@ -86,9 +86,9 @@ const rows = [
   },
 ]
 
-// const signOut = () => {
-//   firebase.auth().signOut()
-// }
+const signOut = () => {
+  firebase.auth().signOut()
+}
 
 const extractKey = ({id}) => id
 
@@ -115,7 +115,8 @@ export default class AllChatView extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* <Button title="Sign Out" color="red" onPress={signOut} /> */}
+        <Button title="Sign Out" color="red" onPress={signOut} />
+
         <FlatList
           data={rows}
           renderItem={this.renderItem}
