@@ -1,7 +1,7 @@
 import {createStackNavigator} from 'react-navigation'
 
-import AllChats from './chat/AllChats'
-import Chat from './chat/Chat'
+import AllChats from './chat/allchats/AllChatsContainer'
+import Chat from './chat/singlechat/Chat'
 import Contacts from './chat/Contacts'
 
 const MainNavigator = createStackNavigator(
@@ -26,7 +26,7 @@ const MainNavigator = createStackNavigator(
     },
   },
   {
-    order: ['Main', 'Chat', 'Contacts'], //I changed this trying to adapt Nousit's navigator and I think I fucked it up -spencer
+    order: ['Main', 'Chat', 'Contacts'],
     animationEnabled: true,
     style: {
       backgroundColor: 'green',

@@ -1,10 +1,8 @@
 import React from 'react'
+import {Text, View, TextInput, TouchableOpacity} from 'react-native'
 import firebase from 'react-native-firebase'
-import {StyleSheet, Text, View, TextInput, TouchableOpacity} from 'react-native'
 
 import {connect} from 'react-redux'
-import {Container, Button, Form, Item, Input, Content} from 'native-base'
-import {Col, Row, Grid} from 'react-native-easy-grid'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -71,13 +69,6 @@ class Chat extends React.Component {
     })
   }
 
-  // handleChange = event => {
-  //   console.log(event)
-  //   this.setState({
-  //     [event.target.name]: event.target.value,
-  //   })
-  // }
-
   render() {
     return (
       <View>
@@ -100,26 +91,6 @@ class Chat extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  inputContainer: {
-    flex: 1,
-    // width: "100%", flexDirection: "row", justifyContent: "space-between",
-    // alignItems: "center"
-  },
-  textInput: {
-    // width: "85%"
-    margin: 5,
-  },
-  submitBtn: {
-    width: '100%',
-    color: '#fff',
-  },
-})
 
 const mapStateToProps = state => ({
   user: state.user,

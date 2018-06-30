@@ -4,7 +4,10 @@ import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
-import AllChatList from './SectionList/AllChatsList'
+import AllChatsList from './AllChatsList'
+import BottomNavigator from './BottomNavigator'
+//AllChatsContainer will just render these two components in a view
+
 import {getNewMessage} from '../../store/actions'
 
 const dummyData = [
