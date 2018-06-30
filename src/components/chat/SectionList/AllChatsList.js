@@ -5,16 +5,13 @@ import {ListItem, Avatar} from 'react-native-elements'
 import firebase from 'react-native-firebase'
 
 
-import BottomNav from '../BottomNavigator'
+import BottomNavigator from '../BottomNavigator'
 import TopNav from '../../navigation/navigators'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    height: '100%'
+    justifyContent: 'flex-end'
   },
 
 })
@@ -123,7 +120,8 @@ export default class AllChatView extends Component {
           renderItem={this.renderItem}
           keyExtractor={extractKey}
         />
-        <BottomNav />
+       
+        <BottomNavigator />
         </ View>
     )
     

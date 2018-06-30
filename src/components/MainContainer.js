@@ -29,7 +29,7 @@ class MainContainer extends Component {
 
   componentWillUnmount() {}
   render() {
-    return <MainNavigator />
+    return <MainNavigator/>
   }
 }
 
