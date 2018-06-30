@@ -9,7 +9,7 @@ import TopNavigation, {
 } from 'react-native-material-bottom-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs'
-import Contacts from './Contacts'
+import Contacts from '../userscreens/Contacts'
 
 const BottomNavigator = createMaterialBottomTabNavigator(
   {

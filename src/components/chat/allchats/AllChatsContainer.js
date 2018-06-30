@@ -5,7 +5,8 @@ import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
 import AllChatsList from './AllChatsList'
-//AllChatsContainer will just render these two components in a view
+// import BottomNavigationBar from './BottomNavigationBar' AllChatsContainer will
+// just render these two components in a view
 
 import {getNewMessage} from '../../../store/actions'
 

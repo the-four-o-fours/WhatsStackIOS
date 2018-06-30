@@ -28,6 +28,10 @@ class Main extends Component {
           uid: user.uid,
           loading: false,
         })
+      } else {
+        this.setState({
+          loading: false,
+        })
       }
     })
   }

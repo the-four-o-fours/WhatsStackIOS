@@ -10,27 +10,30 @@ class Chat extends React.Component {
     this.state = {
       receiverUid: '',
       messages: [],
-      newMessage: '',
+      newMessage: ''
     }
   }
 
   componentDidMount() {
-    const receiverUid = this.props.navigation.getParam('uid', false)
+    const receiverUid = this
+      .props
+      .navigation
+      .getParam('uid', false)
     const messages = this.convertToArr(this.props.user[receiverUid])
-    this.setState({
-      receiverUid,
-      messages,
-    })
+    this.setState({receiverUid, messages})
   }
 
   convertToArr = obj => {
     const arr = []
     for (let key in obj) {
-      const message = {...obj[key]}
+      const message = {
+        ...obj[key]
+      }
       message.timeStamp = key
       arr.push(message)
     }
     arr.sort((a, b) => a.timeStamp - b.timeStamp)
+    console.log('arr', arr)
     return arr
   }
 
@@ -44,12 +47,12 @@ class Chat extends React.Component {
     const senderMessage = {
       text,
       sender: true,
-      group: false,
+      group: false
     }
     const receiverMessage = {
       text,
       sender: false,
-      group: false,
+      group: false
     }
     const sentAt = Date.now()
     const senderRef = firebase
@@ -64,26 +67,30 @@ class Chat extends React.Component {
     receiverMessageObj[sentAt] = receiverMessage
     senderRef.update(senderMessageObj)
     receiverRef.update(receiverMessageObj)
-    this.setState({
-      newMessage: '',
-    })
+    this.setState({newMessage: ''})
   }
 
   render() {
     return (
       <View>
         <Text>Chat Component</Text>
-        {this.state.messages.map(message => (
-          <Text key={message.timeStamp} style={{color: 'black'}}>
-            {message.text}
-          </Text>
-        ))}
+        {this
+          .state
+          .messages
+          .map(message => (
+            <Text
+              key={message.timeStamp}
+              style={{
+              color: 'black'
+            }}>
+              {message.text}
+            </Text>
+          ))}
         <TextInput
           placeholder="Do I exist"
           name="newMessage"
           value={this.state.newMessage}
-          onChangeText={newMessage => this.setState({newMessage})}
-        />
+          onChangeText={newMessage => this.setState({newMessage})}/>
         <TouchableOpacity onPress={this.sendMessage}>
           <Text>SEND THAT MESSAGE</Text>
         </TouchableOpacity>
@@ -92,13 +99,8 @@ class Chat extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  user: state.user,
-})
+const mapStateToProps = state => ({user: state.user})
 
 const mapDispatchToProps = dispatch => ({})
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Chat)
+export default connect(mapStateToProps, mapDispatchToProps,)(Chat)
