@@ -1,55 +1,16 @@
 import React, {Component} from 'react'
-import {
-  View,
-  Button,
-  Text,
-  TextInput,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native'
+import {View, Button, Text, TextInput, StyleSheet, Image, KeyboardAvoidingView, ActivityIndicator, TouchableOpacity} from 'react-native'
+import PropTypes from 'prop-types';
+import Dimensions from 'Dimensions';
 import firebase from 'react-native-firebase'
-import {connect} from 'react-redux'
-
-import CreateUser from './CreateUser'
-import {getUser} from '../../store/actions'
 
 class Login extends Component {
-  constructor(props) {
-    super(props)
-    this.unsubscribe = null
-    this.state = {
-      user: null,
-      message: '',
-      codeInput: '',
-      phoneNumber: '+1',
-      confirmResult: null,
-      inDatabase: false,
-    }
-  }
-
-  componentDidMount() {
-    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        const inDatabase = this.userInDatabase(user.uid)
-        this.setState({
-          user: user.toJSON(),
-          inDatabase,
-        })
-      } else {
-        // User has been signed out, reset the state
-        this.setState({
-          user: null,
-          message: '',
-          codeInput: '',
-          phoneNumber: '+1',
-          confirmResult: null,
-        })
-      }
-    })
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribe) this.unsubscribe()
+  state = {
+    user: null,
+    message: '',
+    codeInput: '',
+    phoneNumber: '+1',
+    confirmResult: null,
   }
 
   signIn = () => {
@@ -69,28 +30,13 @@ class Login extends Component {
       )
   }
 
-  userInDatabase = async () => {
-    const {uid} = firebase.auth().currentUser
-    const firebaseUser = firebase.database().ref(`/Users/${uid}`)
-    const user = await firebaseUser.once('value')
-    const exists = await user.exists()
-    if (exists) {
-      const userData = user.val()
-      this.props.getUser(userData)
-      this.props.navigation.navigate('Chat')
-    } else {
-      this.props.navigation.navigate('CreateUser')
-    }
-  }
-
   confirmCode = () => {
     const {codeInput, confirmResult} = this.state
     if (confirmResult && codeInput.length) {
       confirmResult
         .confirm(codeInput)
-        .then(user => {
+        .then(_ => {
           this.setState({message: 'Code Confirmed!'})
-          this.userInDatabase()
         })
         .catch(error =>
           this.setState({message: `Code Confirm Error: ${error.message}`}),
@@ -102,17 +48,22 @@ class Login extends Component {
     const {phoneNumber} = this.state
 
     return (
+      <KeyboardAvoidingView>
       <View style={{padding: 25}}>
-        <Text>Enter phone number:</Text>
+        <Text
+        style={styles.white}
+        >Enter phone number:</Text>
         <TextInput
           autoFocus
-          style={{height: 40, marginTop: 15, marginBottom: 15}}
+          style={{height: 40, marginTop: 15, marginBottom: 15, backgroundColor: '#fff'}}
           onChangeText={value => this.setState({phoneNumber: value})}
           placeholder="Phone number ... "
           value={phoneNumber}
+          color= 'black'
         />
-        <Button title="Sign In" color="green" onPress={this.signIn} />
+        <Button title="Sign In" color="white" onPress={this.signIn} />
       </View>
+        </ KeyboardAvoidingView>
     )
   }
 
@@ -151,41 +102,52 @@ class Login extends Component {
   }
 
   render() {
-    const {user, confirmResult, inDatabase} = this.state
+    const {user, confirmResult} = this.state
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.container}>
+      
+
+        <Image
+  style={{flex:1, width: '66%', justifyContent: 'center'}}
+  source={require('../../Public/whatsStackWhiteLogo1.png')}
+  resizeMode="contain"
+  
+/>
         {!user && !confirmResult && this.renderPhoneNumberInput()}
 
         {this.renderMessage()}
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
-
-        {user && !inDatabase && <CreateUser />}
-
-        {user && (
-          <View style={styles.container}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
       </View>
     )
   }
 }
 
+export default Login
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    padding: 0,
+    backgroundColor: '#11D8B0',
     justifyContent: 'center',
-    padding: 10,
+    alignItems: 'center'
   },
-})
+  formContainer: {
+    flex: 1,
+    backgroundColor: '#2c3e50',
+},
+  loginContainer:{
+    alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 25
+},
+  white: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
 
-const mapDispatchToProps = dispatch => ({
-  getUser: user => dispatch(getUser(user)),
 })
-
-export default connect(
-  null,
-  mapDispatchToProps,
-)(Login)

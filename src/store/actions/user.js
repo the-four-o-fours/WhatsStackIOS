@@ -1,14 +1,13 @@
 export const GOT_USER = 'GOT_USER'
+export const GOT_NEW_MESSAGE = 'GOT_NEW_MESSAGE'
 
-export const getUser = userData => {
-  const user = {
-    displayName: userData.displayName,
-    uid: userData.uid,
-    phoneNumber: userData.phoneNumber,
-    publicKey: userData.publicKey,
-  }
-  return {
-    type: GOT_USER,
-    user,
-  }
-}
+export const getUser = user => ({
+  type: GOT_USER,
+  user,
+})
+
+export const getNewMessage = (message, chatId) => ({
+  type: GOT_NEW_MESSAGE,
+  chatId,
+  message,
+})
