@@ -7,11 +7,7 @@ import {
   StyleSheet,
   Image,
   KeyboardAvoidingView,
-  ActivityIndicator,
-  TouchableOpacity,
 } from 'react-native'
-import PropTypes from 'prop-types'
-import Dimensions from 'Dimensions'
 import firebase from 'react-native-firebase'
 
 class Login extends Component {
