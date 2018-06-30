@@ -1,6 +1,7 @@
 import React from 'react'
 import {Text, View, TextInput, TouchableOpacity} from 'react-native'
 import firebase from 'react-native-firebase'
+const RSAKey = require('react-native-rsa')
 
 import {connect} from 'react-redux'
 
@@ -9,55 +10,48 @@ class Chat extends React.Component {
     super(props)
     this.state = {
       receiverUid: '',
-      messages: [],
       newMessage: '',
+      rsa: {},
     }
   }
 
   componentDidMount() {
     const receiverUid = this.props.navigation.getParam('uid', false)
-    const messages = this.convertToArr(this.props.user[receiverUid])
+    const rsa = new RSAKey()
     this.setState({
       receiverUid,
-      messages,
+      rsa,
     })
-  }
-
-  convertToArr = obj => {
-    const arr = []
-    for (let key in obj) {
-      const message = {...obj[key]}
-      message.timeStamp = key
-      arr.push(message)
-    }
-    arr.sort((a, b) => a.timeStamp - b.timeStamp)
-    return arr
   }
 
   sendMessage = () => {
     const text = this.state.newMessage
     const user = this.props.user
-    const receiverUid = this.state.receiverUid
-    if (!receiverUid) {
-      console.log("could not get receiver's uid")
-    }
+    const receiver = this.props.contacts.filter(
+      contact => contact.uid === this.state.receiverUid,
+    )[0]
+    const rsa = this.state.rsa
+    rsa.setPublicString(user.publicKey)
+    const senderCopy = rsa.encrypt(text)
+    rsa.setPublicString(receiver.publicKey)
+    const receiverCopy = rsa.encrypt(text)
     const senderMessage = {
-      text,
+      text: senderCopy,
       sender: true,
       group: false,
     }
     const receiverMessage = {
-      text,
+      text: receiverCopy,
       sender: false,
       group: false,
     }
     const sentAt = Date.now()
     const senderRef = firebase
       .database()
-      .ref(`Users/${user.uid}/${receiverUid}`)
+      .ref(`Users/${user.uid}/${receiver.uid}`)
     const receiverRef = firebase
       .database()
-      .ref(`Users/${receiverUid}/${user.uid}`)
+      .ref(`Users/${receiver.uid}/${user.uid}`)
     const senderMessageObj = {}
     const receiverMessageObj = {}
     senderMessageObj[sentAt] = senderMessage
@@ -70,10 +64,11 @@ class Chat extends React.Component {
   }
 
   render() {
+    const receiverUid = this.props.navigation.getParam('uid', false)
     return (
       <View>
         <Text>Chat Component</Text>
-        {this.state.messages.map(message => (
+        {this.props.user[receiverUid].map(message => (
           <Text key={message.timeStamp} style={{color: 'black'}}>
             {message.text}
           </Text>
@@ -94,11 +89,10 @@ class Chat extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.user,
+  contacts: state.contacts,
 })
-
-const mapDispatchToProps = dispatch => ({})
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(Chat)
