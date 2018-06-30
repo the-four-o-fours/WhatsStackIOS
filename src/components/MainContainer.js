@@ -38,7 +38,7 @@ class MainContainer extends Component {
   }
 
   render() {
-    return <MainNavigator />
+    return <MainNavigator/>
   }
 }
 

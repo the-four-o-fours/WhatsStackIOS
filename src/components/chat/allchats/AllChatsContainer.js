@@ -1,9 +1,12 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {View, Button} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
-
 import firebase from 'react-native-firebase'
+
+import AllChatsList from './AllChatsList'
+import BottomNavigator from './BottomNavigator'
+//AllChatsContainer will just render these two components in a view
 
 import {getNewMessage} from '../../store/actions'
 
@@ -19,17 +22,8 @@ const dummyData = [
   },
 ]
 
-class AllChats extends Component {
+class AllChats extends React.Component {
   componentDidMount() {}
-
-  getNewMessageCallBack = (snapshot, prevChildKey) => {
-    const messageObj = {...snapshot.val()}
-    messageObj.timeStamp = snapshot.key
-    console.log(messageObj)
-    console.log('prevChild', prevChildKey)
-  }
-
-  componentWillUnmount() {}
 
   signOut = () => {
     firebase.auth().signOut()
@@ -45,6 +39,11 @@ class AllChats extends Component {
     return (
       <View>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
+        <Button
+          title="Go to contacts"
+          color="blue"
+          onPress={() => this.props.navigation.navigate('Contacts')}
+        />
         {dummyData.map(ele => (
           <ListItem
             key={ele.uid}
