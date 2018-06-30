@@ -10,7 +10,6 @@ class Chat extends React.Component {
     super(props)
     this.state = {
       receiverUid: '',
-      messages: [],
       newMessage: '',
       rsa: {},
     }
@@ -18,11 +17,9 @@ class Chat extends React.Component {
 
   componentDidMount() {
     const receiverUid = this.props.navigation.getParam('uid', false)
-    const messages = this.props.user[receiverUid]
     const rsa = new RSAKey()
     this.setState({
       receiverUid,
-      messages,
       rsa,
     })
   }
@@ -30,11 +27,9 @@ class Chat extends React.Component {
   sendMessage = () => {
     const text = this.state.newMessage
     const user = this.props.user
-    console.log(user)
     const receiver = this.props.contacts.filter(
       contact => contact.uid === this.state.receiverUid,
     )[0]
-    console.log(receiver)
     const rsa = this.state.rsa
     rsa.setPublicString(user.publicKey)
     const senderCopy = rsa.encrypt(text)
@@ -69,11 +64,11 @@ class Chat extends React.Component {
   }
 
   render() {
-    console.log('this.state within chat comp', this.state)
+    const receiverUid = this.props.navigation.getParam('uid', false)
     return (
       <View>
         <Text>Chat Component</Text>
-        {this.state.messages.map(message => (
+        {this.props.user[receiverUid].map(message => (
           <Text key={message.timeStamp} style={{color: 'black'}}>
             {message.text}
           </Text>
@@ -97,9 +92,7 @@ const mapStateToProps = state => ({
   contacts: state.contacts,
 })
 
-const mapDispatchToProps = dispatch => ({})
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(Chat)
