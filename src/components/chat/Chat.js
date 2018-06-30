@@ -1,10 +1,12 @@
-import React, {Component} from 'react'
+import React from 'react'
 import firebase from 'react-native-firebase'
-import {Text, View, TextInput, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, View, TextInput, TouchableOpacity} from 'react-native'
 
 import {connect} from 'react-redux'
+import {Container, Button, Form, Item, Input, Content} from 'native-base'
+import {Col, Row, Grid} from 'react-native-easy-grid'
 
-class Chat extends Component {
+class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -15,7 +17,6 @@ class Chat extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.user)
     const receiverUid = this.props.navigation.getParam('uid', false)
     const messages = this.convertToArr(this.props.user[receiverUid])
     this.setState({
@@ -70,15 +71,14 @@ class Chat extends Component {
     })
   }
 
-  handleChange = event => {
-    console.log(event)
-    this.setState({
-      [event.target.name]: event.target.value,
-    })
-  }
+  // handleChange = event => {
+  //   console.log(event)
+  //   this.setState({
+  //     [event.target.name]: event.target.value,
+  //   })
+  // }
 
   render() {
-    console.log(this.state.messages)
     return (
       <View>
         <Text>Chat Component</Text>
@@ -100,6 +100,26 @@ class Chat extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  inputContainer: {
+    flex: 1,
+    // width: "100%", flexDirection: "row", justifyContent: "space-between",
+    // alignItems: "center"
+  },
+  textInput: {
+    // width: "85%"
+    margin: 5,
+  },
+  submitBtn: {
+    width: '100%',
+    color: '#fff',
+  },
+})
 
 const mapStateToProps = state => ({
   user: state.user,

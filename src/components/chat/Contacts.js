@@ -1,18 +1,19 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {connect} from 'react-redux'
-import {View, StyleSheet, Text, Button} from 'react-native'
+import {View, StyleSheet} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
-class ContactsComponent extends Component {
+class Contacts extends React.Component {
   goToConvo = uid => {
     this.props.navigation.navigate('Chat', {
       uid,
     })
   }
+
   render() {
     return (
       <View style={styles.container}>
-        {this.props.contacts.length && (
+        {this.props.contacts.length ? (
           <View>
             {this.props.contacts.map(contact => (
               <ListItem
@@ -22,6 +23,8 @@ class ContactsComponent extends Component {
               />
             ))}
           </View>
+        ) : (
+          <Text>No Contacts</Text>
         )}
       </View>
     )
@@ -42,4 +45,7 @@ const mapStateToProps = state => ({
   contacts: state.contacts,
 })
 
-export default connect(mapStateToProps)(ContactsComponent)
+export default connect(
+  mapStateToProps,
+  null,
+)(Contacts)

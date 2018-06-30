@@ -2,9 +2,9 @@ import React, {Component} from 'react'
 import {View, Button} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
-
 import firebase from 'react-native-firebase'
 
+import AllChatList from './SectionList/AllChatsList'
 import {getNewMessage} from '../../store/actions'
 
 const dummyData = [

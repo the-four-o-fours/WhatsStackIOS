@@ -1,19 +1,16 @@
 import React, {Component} from 'react'
-import {FlatList, Text, StyleSheet, Image, View} from 'react-native'
+import {FlatList, Text, StyleSheet, Image, View, Button} from 'react-native'
 // import {Divider, Card, ListItem} from 'react-native-material-ui'
 import {ListItem, Avatar} from 'react-native-elements'
+import firebase from 'react-native-firebase'
 
-import BottomNav from '../BottomNavigator'
+import BottomNavigator from '../BottomNavigator'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    height: '100%'
+    justifyContent: 'flex-end',
   },
-
 })
 const rows = [
   {
@@ -25,25 +22,29 @@ const rows = [
   {
     id: '2',
     text: 'Beer',
-    img: 'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png',
+    img:
+      'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png',
     dateLastMsg: '1/22/22',
   },
   {
     id: '3',
     text: 'Code',
-    img: 'https://cdn.psychologytoday.com/sites/default/files/styles/image-article_inline_full/public/blogs/34554/2011/01/52987-43921.jpg?itok=1-Cfw5CD',
+    img:
+      'https://cdn.psychologytoday.com/sites/default/files/styles/image-article_inline_full/public/blogs/34554/2011/01/52987-43921.jpg?itok=1-Cfw5CD',
     dateLastMsg: '1/22/22',
   },
   {
     id: '4',
     text: 'Team 404',
-    img: 'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png',
+    img:
+      'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png',
     dateLastMsg: '1/22/22',
   },
   {
     id: '5',
     text: 'Python',
-    img: 'https://wallpaper.hinaji.com/wp-content/uploads/2017/06/Black-Funny-Avatars-Free-Download.png',
+    img:
+      'https://wallpaper.hinaji.com/wp-content/uploads/2017/06/Black-Funny-Avatars-Free-Download.png',
     dateLastMsg: '1/22/22',
   },
   {
@@ -55,7 +56,8 @@ const rows = [
   {
     id: '7',
     text: 'Convex Mirrors',
-    img: 'https://wallpaper.hinaji.com/wp-content/uploads/2017/06/Black-Funny-Avatars-Free-Download.png',
+    img:
+      'https://wallpaper.hinaji.com/wp-content/uploads/2017/06/Black-Funny-Avatars-Free-Download.png',
     dateLastMsg: '1/22/22',
   },
   {
@@ -82,17 +84,11 @@ const rows = [
     img: 'https://randomuser.me/api/portraits/men/47.jpg',
     dateLastMsg: '1/22/22',
   },
-//   // conversations actually look like this
-//   {
-//     // timestamp : message object with text of message, boolean for sender, boolean for groupchat
-//     // timestamp : message object with text of message, boolean for sender, boolean for groupchat
-//     // timestamp : message object with text of message, boolean for sender, boolean for groupchat
-//     // timestamp : message object with text of message, boolean for sender, boolean for groupchat
-//     // timestamp : message object with text of message, boolean for sender, boolean for groupchat
-//     //I think the most recent message is at the bottom
-//   }
 ]
 
+// const signOut = () => {
+//   firebase.auth().signOut()
+// }
 
 const extractKey = ({id}) => id
 
@@ -101,22 +97,17 @@ export default class AllChatView extends Component {
     return (
       <View>
         <ListItem
-            roundAvatar
-            title={`${item.text}`}
-            subtitle={item.dateLastMsg}
-            avatar={{ uri: item.img} }
-            // badge={{ value: 3, textStyle: { color: 'orange' }, containerStyle: { marginTop: -20 } }}
-            // badge= '>'
-            // containerStyle={{ 
-            //  backgroundColor: '#56579B'
-              
-            onPress={() => {
-              console.log('You tapped a room!');
-            }}
-            onLongPress={() => {
-              console.log('Long press show drawer');
-            }}
-          /> 
+          roundAvatar
+          title={`${item.text}`}
+          subtitle={item.dateLastMsg}
+          avatar={{uri: item.img}}
+          onPress={() => {
+            console.log('You tapped a room!')
+          }}
+          onLongPress={() => {
+            console.log('Long press show drawer')
+          }}
+        />
       </View>
     )
   }
@@ -124,15 +115,15 @@ export default class AllChatView extends Component {
   render() {
     return (
       <View style={styles.container}>
-        
+        {/* <Button title="Sign Out" color="red" onPress={signOut} /> */}
         <FlatList
-          // style={styles.container}
           data={rows}
           renderItem={this.renderItem}
           keyExtractor={extractKey}
         />
-        <BottomNav />
-        </ View>
+
+        <BottomNavigator />
+      </View>
     )
   }
 }

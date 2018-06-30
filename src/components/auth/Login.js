@@ -18,14 +18,8 @@ class Login extends Component {
     firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber)
-      .then(confirmResult =>
-        this.setState({confirmResult, message: 'Code has been sent!'}),
-      )
-      .catch(error =>
-        this.setState({
-          message: `Sign In With Phone Number Error: ${error.message}`,
-        }),
-      )
+      .then(confirmResult => this.setState({confirmResult, message: 'Code has been sent!'}),)
+      .catch(error => this.setState({message: `Sign In With Phone Number Error: ${error.message}`}),)
   }
 
   confirmCode = () => {
@@ -36,9 +30,7 @@ class Login extends Component {
         .then(_ => {
           this.setState({message: 'Code Confirmed!'})
         })
-        .catch(error =>
-          this.setState({message: `Code Confirm Error: ${error.message}`}),
-        )
+        .catch(error => this.setState({message: `Code Confirm Error: ${error.message}`}),)
     }
   }
 
@@ -46,16 +38,21 @@ class Login extends Component {
     const {phoneNumber} = this.state
 
     return (
-      <View style={{padding: 25}}>
+      <View style={{
+        padding: 25
+      }}>
         <Text>Enter phone number:</Text>
         <TextInput
           autoFocus
-          style={{height: 40, marginTop: 15, marginBottom: 15}}
+          style={{
+          height: 40,
+          marginTop: 15,
+          marginBottom: 15
+        }}
           onChangeText={value => this.setState({phoneNumber: value})}
           placeholder="Phone number ... "
-          value={phoneNumber}
-        />
-        <Button title="Sign In" color="green" onPress={this.signIn} />
+          value={phoneNumber}/>
+        <Button title="Sign In" color="green" onPress={this.signIn}/>
       </View>
     )
   }
@@ -63,10 +60,16 @@ class Login extends Component {
   renderMessage() {
     const {message} = this.state
 
-    if (!message.length) return null
+    if (!message.length) 
+      return null
 
     return (
-      <Text style={{padding: 5, backgroundColor: '#000', color: '#fff'}}>
+      <Text
+        style={{
+        padding: 5,
+        backgroundColor: '#000',
+        color: '#fff'
+      }}>
         {message}
       </Text>
     )
@@ -76,20 +79,22 @@ class Login extends Component {
     const {codeInput} = this.state
 
     return (
-      <View style={{marginTop: 25, padding: 25}}>
+      <View style={{
+        marginTop: 25,
+        padding: 25
+      }}>
         <Text>Enter verification code below:</Text>
         <TextInput
           autoFocus
-          style={{height: 40, marginTop: 15, marginBottom: 15}}
+          style={{
+          height: 40,
+          marginTop: 15,
+          marginBottom: 15
+        }}
           onChangeText={value => this.setState({codeInput: value})}
           placeholder="Code ... "
-          value={codeInput}
-        />
-        <Button
-          title="Confirm Code"
-          color="#841584"
-          onPress={this.confirmCode}
-        />
+          value={codeInput}/>
+        <Button title="Confirm Code" color="#841584" onPress={this.confirmCode}/>
       </View>
     )
   }
@@ -97,7 +102,9 @@ class Login extends Component {
   render() {
     const {user, confirmResult} = this.state
     return (
-      <View style={{flex: 1}}>
+      <View style={{
+        flex: 1
+      }}>
         {!user && !confirmResult && this.renderPhoneNumberInput()}
 
         {this.renderMessage()}
