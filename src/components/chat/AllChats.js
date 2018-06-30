@@ -45,6 +45,11 @@ class AllChats extends Component {
     return (
       <View>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
+        <Button
+          title="Go to contacts"
+          color="blue"
+          onPress={() => this.props.navigation.navigate('Contacts')}
+        />
         {dummyData.map(ele => (
           <ListItem
             key={ele.uid}
