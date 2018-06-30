@@ -4,8 +4,6 @@ import {FlatList, Text, StyleSheet, Image, View, Button} from 'react-native'
 import {ListItem, Avatar} from 'react-native-elements'
 import firebase from 'react-native-firebase'
 
-import BottomNavigator from '../BottomNavigator'
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
