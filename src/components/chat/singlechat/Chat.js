@@ -79,7 +79,10 @@ class Chat extends React.Component {
           value={this.state.newMessage}
           onChangeText={newMessage => this.setState({newMessage})}
         />
-        <TouchableOpacity onPress={this.sendMessage}>
+        <TouchableOpacity
+          onPress={this.sendMessage}
+          disabled={!this.state.newMessage.length}
+        >
           <Text>SEND THAT MESSAGE</Text>
         </TouchableOpacity>
       </View>
