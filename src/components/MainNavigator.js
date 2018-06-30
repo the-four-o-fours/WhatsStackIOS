@@ -2,7 +2,7 @@ import {createStackNavigator} from 'react-navigation'
 
 import AllChats from './chat/allchats/AllChatsContainer'
 import Chat from './chat/singlechat/Chat'
-import Contacts from './chat/Contacts'
+import Contacts from './chat/userscreens/Contacts'
 
 const MainNavigator = createStackNavigator(
   {
