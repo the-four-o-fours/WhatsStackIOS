@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {FlatList, StyleSheet, View} from 'react-native'
+import {FlatList, StyleSheet, ScrollView, View} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 const styles = StyleSheet.create({
@@ -40,13 +40,13 @@ export default class AllChats extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <FlatList
           data={this.props.chats}
           renderItem={this.renderItem}
           keyExtractor={this.extractKey}
         />
-      </View>
+      </ScrollView>
     )
   }
 }
