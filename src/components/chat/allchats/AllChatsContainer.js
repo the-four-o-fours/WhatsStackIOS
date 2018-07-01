@@ -1,11 +1,11 @@
 import React from 'react'
-import {View, Button} from 'react-native'
+import {StyleSheet, View, Button} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
 import AllChatsList from './AllChatsList'
-import BottomNavigationBar from './BottomNavigationBar'
+import BottomNavBar from './BottomNavBar'
 //AllChatsContainer will just render these two components in a view
 
 import {getNewMessage} from '../../../store/actions'
@@ -37,7 +37,7 @@ class AllChats extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <Button title="Sign Out" color="red" onPress={this.signOut} />
         <Button
           title="Go to contacts"
@@ -51,10 +51,19 @@ class AllChats extends React.Component {
             onPress={() => this.goToConvo(ele.uid)}
           />
         ))}
+        <BottomNavBar />
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+})
 
 const mapStateToProps = state => ({
   user: state.user,
