@@ -5,7 +5,7 @@ class Contacts extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Dummy Component</Text>
+        <Text>AccountInfo Dummy Component</Text>
       </View>
     )
   }

@@ -2,19 +2,36 @@ import React from 'react'
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native'
 import {Icon} from 'react-native-elements'
 
-const BottomNavBar = () => (
-  <View style={styles.navBar}>
-    <TouchableOpacity style={styles.leftButton}>
-      <Icon name="contacts" color="white" />
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.centerButton}>
-      <Icon name="account-circle" color="white" />
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.rightButton}>
-      <Icon name="message" color="white" />
-    </TouchableOpacity>
-  </View>
-)
+class BottomNavBar extends React.Component {
+  goToScreen = screen => {
+    this.props.navigation.navigate(`${screen}`)
+  }
+
+  render() {
+    return (
+      <View style={styles.navBar}>
+        <TouchableOpacity
+          style={[styles.button, styles.leftButton]}
+          onPress={() => this.goToScreen('Contacts')}
+        >
+          <Icon name="contacts" color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.centerButton]}
+          onPress={() => this.goToScreen('AccountInfo')}
+        >
+          <Icon name="account-circle" color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.rightButton]}
+          onPress={() => this.goToScreen('NewChat')}
+        >
+          <Icon name="message" color="white" />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+}
 
 const styles = StyleSheet.create({
   navBar: {
@@ -22,30 +39,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     height: 50,
   },
-  leftButton: {
+  button: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    borderRightWidth: 1,
     borderColor: 'white',
   },
-  rightButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    borderLeftWidth: 1,
-    borderColor: 'white',
+  leftButton: {
+    borderRightWidth: 1,
   },
   centerButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    borderColor: 'white',
+  },
+  rightButton: {
+    borderLeftWidth: 1,
   },
 })
 

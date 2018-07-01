@@ -51,7 +51,7 @@ class AllChats extends React.Component {
             onPress={() => this.goToConvo(ele.uid)}
           />
         ))}
-        <BottomNavBar />
+        <BottomNavBar navigation={this.props.navigation} />
       </View>
     )
   }
@@ -60,7 +60,6 @@ class AllChats extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'space-between',
   },
 })
