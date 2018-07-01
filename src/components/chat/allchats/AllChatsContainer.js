@@ -2,7 +2,6 @@ import React from 'react'
 import {StyleSheet, View, Button} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {connect} from 'react-redux'
-import firebase from 'react-native-firebase'
 
 import AllChatsList from './AllChatsList'
 import BottomNavBar from './BottomNavBar'
@@ -25,32 +24,25 @@ const dummyData = [
 class AllChats extends React.Component {
   componentDidMount() {}
 
-  signOut = () => {
-    firebase.auth().signOut()
-  }
-
-  goToConvo = uid => {
+  goToConvo = (uid, title) => {
     this.props.navigation.navigate('Chat', {
       uid,
+      title,
     })
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Button title="Sign Out" color="red" onPress={this.signOut} />
-        <Button
-          title="Go to contacts"
-          color="blue"
-          onPress={() => this.props.navigation.navigate('Contacts')}
-        />
-        {dummyData.map(ele => (
-          <ListItem
-            key={ele.uid}
-            title={ele.displayName}
-            onPress={() => this.goToConvo(ele.uid)}
-          />
-        ))}
+        <View>
+          {dummyData.map(ele => (
+            <ListItem
+              key={ele.uid}
+              title={ele.displayName}
+              onPress={() => this.goToConvo(ele.uid, ele.displayName)}
+            />
+          ))}
+        </View>
         <BottomNavBar navigation={this.props.navigation} />
       </View>
     )

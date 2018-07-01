@@ -17,6 +17,7 @@ const MainNavigator = createStackNavigator({
   Chat: {
     screen: Chat,
     navigationOptions: ({navigation}) => ({
+      title: navigation.state.params.title,
       headerBackTitle: null,
     }),
   },
