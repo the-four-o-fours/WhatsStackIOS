@@ -10,9 +10,15 @@ const styles = StyleSheet.create({
 })
 
 export default class AllChats extends Component {
+  goToConvo = (uid, title) => {
+    this.props.navigation.navigate('Chat', {
+      uid,
+      title,
+    })
+  }
+
   extractKey = ({uid}) => uid
   renderItem = ({item}) => {
-    const goToConvo = this.props.goToConvo
     return (
       <View>
         <ListItem
@@ -20,7 +26,7 @@ export default class AllChats extends Component {
           title={`${item.displayName}`}
           subtitle={item.displayName}
           avatar={{uri: item.img}}
-          onPress={() => goToConvo(item.uid, item.displayName)}
+          onPress={() => this.goToConvo(item.uid, item.displayName)}
           onLongPress={() => {
             console.log('Long press show drawer')
           }}
