@@ -22,7 +22,34 @@ const dummyData = [
 ]
 
 class AllChats extends React.Component {
-  componentDidMount() {}
+  state = {
+    chats: [],
+  }
+
+  componentDidMount() {
+    this.findChats()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.user !== prevProps.user) {
+      this.findChats()
+    }
+  }
+
+  signOut = () => {
+    firebase.auth().signOut()
+  }
+
+  findChats = () => {
+    const friendIds = []
+    for (let key in this.props.user) {
+      if (key.length > 12) friendIds.push(key)
+    }
+    const chats = friendIds.map(id =>
+      this.props.contacts.find(ele => ele.uid === id),
+    )
+    this.setState({chats})
+  }
 
   goToConvo = (uid, title) => {
     this.props.navigation.navigate('Chat', {
@@ -33,16 +60,20 @@ class AllChats extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View>
-          {dummyData.map(ele => (
-            <ListItem
-              key={ele.uid}
-              title={ele.displayName}
-              onPress={() => this.goToConvo(ele.uid, ele.displayName)}
-            />
-          ))}
-        </View>
+      <View>
+        <Button title="Sign Out" color="red" onPress={this.signOut} />
+        <Button
+          title="Go to contacts"
+          color="blue"
+          onPress={() => this.props.navigation.navigate('Contacts')}
+        />
+        {this.state.chats.map(ele => (
+          <ListItem
+            key={ele.uid}
+            title={ele.displayName}
+            onPress={() => this.goToConvo(ele.uid, ele.displayName)}
+          />
+        ))}
         <BottomNavBar navigation={this.props.navigation} />
       </View>
     )
@@ -58,6 +89,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.user,
+  contacts: state.contacts,
 })
 
 const mapDispatchToProps = dispatch => ({
