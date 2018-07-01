@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class AllChatsList extends Component {
+export default class AllChats extends Component {
   extractKey = ({uid}) => uid
   renderItem = ({item}) => {
     const goToConvo = this.props.goToConvo

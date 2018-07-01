@@ -2,10 +2,10 @@ import React from 'react'
 import {StyleSheet, View} from 'react-native'
 import {connect} from 'react-redux'
 
-import AllChatsList from './AllChatsList'
+import AllChats from './AllChats'
 import BottomNavBar from './BottomNavBar'
 
-class AllChatsContainer extends React.Component {
+class MainScreensContainer extends React.Component {
   state = {
     chats: [],
   }
@@ -39,7 +39,7 @@ class AllChatsContainer extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <AllChatsList goToConvo={this.goToConvo} chats={this.state.chats} />
+        <AllChats goToConvo={this.goToConvo} chats={this.state.chats} />
         <BottomNavBar navigation={this.props.navigation} />
       </View>
     )
@@ -58,4 +58,4 @@ const mapStateToProps = state => ({
   contactsHash: state.contactsHash,
 })
 
-export default connect(mapStateToProps)(AllChatsContainer)
+export default connect(mapStateToProps)(MainScreensContainer)

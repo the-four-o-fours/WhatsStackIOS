@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native'
+import {StyleSheet, View, TouchableOpacity} from 'react-native'
 import {Icon} from 'react-native-elements'
 
 export default class BottomNavBar extends React.Component {

@@ -1,12 +1,12 @@
 import {createStackNavigator} from 'react-navigation'
 
-import AllChats from './chat/mainScreens/AllChatsContainer'
+import MainScreensContainer from './chat/mainScreens/MainScreensContainer'
 import Chat from './chat/singlechat/Chat'
 import NewChat from './chat/singlechat/NewChat'
 
 const MainNavigator = createStackNavigator({
   Main: {
-    screen: AllChats,
+    screen: MainScreensContainer,
     navigationOptions: ({navigation}) => ({
       title: 'WhatsStack',
       headerBackTitle: null,
