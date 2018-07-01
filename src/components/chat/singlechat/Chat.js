@@ -67,19 +67,20 @@ class Chat extends React.Component {
     const receiverUid = this.props.navigation.getParam('uid', false)
     return (
       <View>
-        <Text>Chat Component</Text>
         {this.props.user[receiverUid].map(message => (
           <Text key={message.timeStamp} style={{color: 'black'}}>
             {message.text}
           </Text>
         ))}
         <TextInput
-          placeholder="Do I exist"
-          name="newMessage"
+          placeholder="..."
           value={this.state.newMessage}
           onChangeText={newMessage => this.setState({newMessage})}
         />
-        <TouchableOpacity onPress={this.sendMessage}>
+        <TouchableOpacity
+          onPress={this.sendMessage}
+          disabled={!this.state.newMessage.length}
+        >
           <Text>SEND THAT MESSAGE</Text>
         </TouchableOpacity>
       </View>
