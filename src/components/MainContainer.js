@@ -82,7 +82,8 @@ class MainContainer extends Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  contacts: state.contacts,
+  contactsArr: state.contactsArr,
+  contactsHash: state.contactsHash,
 })
 
 const mapDispatchToProps = dispatch => ({
