@@ -1,9 +1,10 @@
 import React from 'react'
 import {Text, View, TextInput, TouchableOpacity} from 'react-native'
 import firebase from 'react-native-firebase'
+import {connect} from 'react-redux'
 const RSAKey = require('react-native-rsa')
 
-import {connect} from 'react-redux'
+import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -22,6 +23,10 @@ class Chat extends React.Component {
       receiverUid,
       rsa,
     })
+  }
+
+  componentWillUnmount() {
+    this.props.seenMessages(this.state.receiverUid)
   }
 
   sendMessage = () => {
@@ -93,7 +98,11 @@ const mapStateToProps = state => ({
   messages: state.messages,
 })
 
+const mapDispatchToProps = dispatch => ({
+  seenMessages: chatId => dispatch(seenMessages(chatId)),
+})
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(Chat)

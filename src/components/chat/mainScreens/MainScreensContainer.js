@@ -26,6 +26,7 @@ class MainScreensContainer extends React.Component {
       .map(id => {
         const chat = this.props.contactsHash[id]
         const messages = this.props.messages[id].conversation
+        chat.seen = this.props.messages[id].seen
         chat.lastMessage = messages[messages.length - 1]
         return chat
       })
