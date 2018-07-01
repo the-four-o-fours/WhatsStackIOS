@@ -26,6 +26,7 @@ class Chat extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log('i got here')
     this.props.seenMessages(this.state.receiverUid)
   }
 
