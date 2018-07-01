@@ -31,7 +31,6 @@ class MainScreensContainer extends React.Component {
         return chat
       })
       .sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
-    console.log('chat', chats)
     this.setState({chats})
   }
 
@@ -43,7 +42,6 @@ class MainScreensContainer extends React.Component {
   }
 
   render() {
-    console.log(this.props.messages['607Wni596ZdziVI8Ic93khP2jVA3'])
     return (
       <View style={styles.container}>
         <AllChats goToConvo={this.goToConvo} chats={this.state.chats} />
