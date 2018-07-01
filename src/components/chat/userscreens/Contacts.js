@@ -13,9 +13,9 @@ class Contacts extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.contacts.length ? (
+        {this.props.contactsArr.length ? (
           <View>
-            {this.props.contacts.map(contact => (
+            {this.props.contactsArr.map(contact => (
               <ListItem
                 key={contact.uid}
                 title={`${contact.phoneName} (${contact.displayName})`}
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.user,
-  contacts: state.contacts,
+  contactsArr: state.contactsArr,
 })
 
 export default connect(

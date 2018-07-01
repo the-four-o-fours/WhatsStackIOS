@@ -42,7 +42,7 @@ class AllChats extends React.Component {
       if (key.length > 12) friendIds.push(key)
     }
     const chats = friendIds.map(id =>
-      this.props.contacts.find(ele => ele.uid === id),
+      this.props.contactsArr.find(ele => ele.uid === id),
     )
     this.setState({chats})
   }
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.user,
-  contacts: state.contacts,
+  contactsArr: state.contactsArr,
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -16,6 +16,7 @@ class MainContainer extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props)
     this.props.populateContacts()
     const uid = this.props.uid
     const userRef = firebase.database().ref(`/Users/${uid}`)
@@ -82,7 +83,8 @@ class MainContainer extends Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  contacts: state.contacts,
+  contactsArr: state.contactsArr,
+  contactsHash: state.contactsHash,
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux'
 import user from './user'
-import contacts from './contacts'
+import contactsArr from './contacts'
+import contactsHash from './contactsHash'
 
-export default combineReducers({user, contacts})
+export default combineReducers({user, contactsArr, contactsHash})
