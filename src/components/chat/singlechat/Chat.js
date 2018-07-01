@@ -26,7 +26,6 @@ class Chat extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('i got here')
     this.props.seenMessages(this.state.receiverUid)
   }
 
@@ -69,7 +68,6 @@ class Chat extends React.Component {
 
   render() {
     const receiverUid = this.props.navigation.getParam('uid', false)
-    console.log('messages', this.props.messages[receiverUid])
     return (
       <View>
         {this.props.messages[receiverUid].conversation.map(message => (
