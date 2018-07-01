@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import AllChatsList from './AllChatsList'
 import BottomNavBar from './BottomNavBar'
 
-class AllChats extends React.Component {
+class AllChatsContainer extends React.Component {
   state = {
     chats: [],
   }
@@ -58,4 +58,4 @@ const mapStateToProps = state => ({
   contactsHash: state.contactsHash,
 })
 
-export default connect(mapStateToProps)(AllChats)
+export default connect(mapStateToProps)(AllChatsContainer)

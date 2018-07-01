@@ -2,7 +2,7 @@ import React from 'react'
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native'
 import {Icon} from 'react-native-elements'
 
-class BottomNavBar extends React.Component {
+export default class BottomNavBar extends React.Component {
   goToScreen = screen => {
     this.props.navigation.navigate(`${screen}`)
   }
@@ -57,5 +57,3 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
   },
 })
-
-export default BottomNavBar

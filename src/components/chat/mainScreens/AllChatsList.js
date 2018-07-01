@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {FlatList, StyleSheet, View} from 'react-native'
-// import {Divider, Card, ListItem} from 'react-native-material-ui'
-import {ListItem, Avatar} from 'react-native-elements'
+import {ListItem} from 'react-native-elements'
 
 const styles = StyleSheet.create({
   container: {
@@ -10,7 +9,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class AllChatView extends Component {
+export default class AllChatsList extends Component {
   extractKey = ({uid}) => uid
   renderItem = ({item}) => {
     const goToConvo = this.props.goToConvo
