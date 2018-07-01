@@ -18,7 +18,7 @@ class Contacts extends React.Component {
             {this.props.contacts.map(contact => (
               <ListItem
                 key={contact.uid}
-                title={`${contact.displayName} (${contact.phoneName})`}
+                title={`${contact.phoneName} (${contact.displayName})`}
                 onPress={() => this.goToConvo(contact.uid)}
               />
             ))}
