@@ -36,10 +36,6 @@ class AllChats extends React.Component {
     }
   }
 
-  signOut = () => {
-    firebase.auth().signOut()
-  }
-
   findChats = () => {
     const friendIds = []
     for (let key in this.props.user) {
@@ -60,20 +56,16 @@ class AllChats extends React.Component {
 
   render() {
     return (
-      <View>
-        <Button title="Sign Out" color="red" onPress={this.signOut} />
-        <Button
-          title="Go to contacts"
-          color="blue"
-          onPress={() => this.props.navigation.navigate('Contacts')}
-        />
-        {this.state.chats.map(ele => (
-          <ListItem
-            key={ele.uid}
-            title={ele.displayName}
-            onPress={() => this.goToConvo(ele.uid, ele.displayName)}
-          />
-        ))}
+      <View style={styles.container}>
+        <View>
+          {this.state.chats.map(ele => (
+            <ListItem
+              key={ele.uid}
+              title={ele.displayName}
+              onPress={() => this.goToConvo(ele.uid, ele.displayName)}
+            />
+          ))}
+        </View>
         <BottomNavBar navigation={this.props.navigation} />
       </View>
     )
