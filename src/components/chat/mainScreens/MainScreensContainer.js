@@ -65,7 +65,7 @@ class MainScreensContainer extends React.Component {
     return (
       <View style={styles.container}>
         {this.state.displayContacts ? (
-          <Contacts />
+          <Contacts navigation={this.props.navigation} />
         ) : this.state.displayAccountInfo ? (
           <AccountInfo />
         ) : (
