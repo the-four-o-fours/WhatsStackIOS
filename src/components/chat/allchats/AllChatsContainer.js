@@ -23,10 +23,25 @@ const dummyData = [
 ]
 
 class AllChats extends React.Component {
-  componentDidMount() {}
+  state = {
+    chats: [],
+  }
+
+  componentDidMount() {
+    const chats = this.findChats()
+    this.setState({chats})
+  }
 
   signOut = () => {
     firebase.auth().signOut()
+  }
+
+  findChats = () => {
+    const friendIds = []
+    for (let key in this.props.user) {
+      if (key.length > 12) friendIds.push(key)
+    }
+    return friendIds.map(id => this.props.contacts.find(ele => ele.uid === id))
   }
 
   goToConvo = uid => {
@@ -44,7 +59,7 @@ class AllChats extends React.Component {
           color="blue"
           onPress={() => this.props.navigation.navigate('Contacts')}
         />
-        {dummyData.map(ele => (
+        {this.state.chats.map(ele => (
           <ListItem
             key={ele.uid}
             title={ele.displayName}
@@ -58,6 +73,7 @@ class AllChats extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.user,
+  contacts: state.contacts,
 })
 
 const mapDispatchToProps = dispatch => ({
