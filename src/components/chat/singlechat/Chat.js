@@ -1,5 +1,11 @@
 import React from 'react'
-import {Text, View, TextInput, TouchableOpacity} from 'react-native'
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 const RSAKey = require('react-native-rsa')
@@ -69,24 +75,33 @@ class Chat extends React.Component {
   render() {
     const receiverUid = this.props.navigation.getParam('uid', false)
     return (
-      <View>
-        {this.props.messages[receiverUid].conversation.map(message => (
-          <Text key={message.timeStamp} style={{color: 'black'}}>
-            {message.text}
-          </Text>
-        ))}
-        <TextInput
-          placeholder="..."
-          value={this.state.newMessage}
-          onChangeText={newMessage => this.setState({newMessage})}
-        />
-        <TouchableOpacity
-          onPress={this.sendMessage}
-          disabled={!this.state.newMessage.length}
-        >
-          <Text>SEND THAT MESSAGE</Text>
-        </TouchableOpacity>
-      </View>
+      <KeyboardAvoidingView
+        enabled
+        behavior="padding"
+        keyboardVerticalOffset={64}
+      >
+        <ScrollView>
+          {this.props.messages[receiverUid].conversation.map(message => (
+            <Text key={message.timeStamp} style={{color: 'black'}}>
+              {message.text}
+            </Text>
+          ))}
+          <TextInput
+            autoFocus={false}
+            placeholder="..."
+            value={this.state.newMessage}
+            onChangeText={newMessage => this.setState({newMessage})}
+            enablesReturnKeyAutomatically={true}
+            onSubmitEditing={this.sendMessage}
+          />
+          <TouchableOpacity
+            onPress={this.sendMessage}
+            disabled={!this.state.newMessage.length}
+          >
+            <Text>SEND THAT MESSAGE</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     )
   }
 }
