@@ -19,7 +19,6 @@ class Main extends Component {
   }
 
   componentDidMount() {
-    this.setState({loading: false})
     this.unsubscribe = firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         const isInDatabase = await this.userInDatabase(user.uid)
@@ -27,10 +26,12 @@ class Main extends Component {
           isLoggedIn: true,
           isInDatabase,
           uid: user.uid,
+          loading: false,
         })
       } else {
         this.setState({
           isLoggedIn: false,
+          loading: false,
         })
       }
     })

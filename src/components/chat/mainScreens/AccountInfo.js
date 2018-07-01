@@ -1,6 +1,10 @@
 import React from 'react'
 import {View, StyleSheet, Text, Button} from 'react-native'
 
+import firebase from 'react-native-firebase'
+
+import BottomNavBar from '../mainScreens/BottomNavBar'
+
 class Contacts extends React.Component {
   signOut = () => {
     firebase.auth().signOut()
@@ -19,6 +23,7 @@ class Contacts extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'space-between',
   },
 })
 
