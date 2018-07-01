@@ -19,12 +19,15 @@ export default class AllChats extends Component {
 
   extractKey = ({uid}) => uid
   renderItem = ({item}) => {
+    const lastSeen = item.seen
+      ? item.lastMessage.text
+      : item.lastMessage.text + ' Not seen'
     return (
       <View>
         <ListItem
           roundAvatar
           title={`${item.displayName}`}
-          subtitle={item.displayName}
+          subtitle={lastSeen}
           avatar={{uri: item.img}}
           onPress={() => this.goToConvo(item.uid, item.displayName)}
           onLongPress={() => {
