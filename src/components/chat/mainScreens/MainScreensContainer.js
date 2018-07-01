@@ -3,11 +3,15 @@ import {StyleSheet, View} from 'react-native'
 import {connect} from 'react-redux'
 
 import AllChats from './AllChats'
+import Contacts from './Contacts'
+import AccountInfo from './AccountInfo'
 import BottomNavBar from './BottomNavBar'
 
 class MainScreensContainer extends React.Component {
   state = {
     chats: [],
+    displayContacts: false,
+    displayAccountInfo: false,
   }
 
   componentDidMount() {
@@ -29,18 +33,46 @@ class MainScreensContainer extends React.Component {
     this.setState({chats})
   }
 
-  goToConvo = (uid, title) => {
-    this.props.navigation.navigate('Chat', {
-      uid,
-      title,
+  displayChats = () => {
+    this.setState({
+      displayContacts: false,
+      displayAccountInfo: false,
+    })
+  }
+
+  displayContacts = () => {
+    this.setState({
+      displayContacts: true,
+      displayAccountInfo: false,
+    })
+  }
+
+  displayAccountInfo = () => {
+    this.setState({
+      displayContacts: false,
+      displayAccountInfo: true,
     })
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <AllChats goToConvo={this.goToConvo} chats={this.state.chats} />
-        <BottomNavBar navigation={this.props.navigation} />
+        {this.state.displayContacts ? (
+          <Contacts />
+        ) : this.state.displayAccountInfo ? (
+          <AccountInfo />
+        ) : (
+          <AllChats
+            navigation={this.props.navigation}
+            chats={this.state.chats}
+          />
+        )}
+        <BottomNavBar
+          navigation={this.props.navigation}
+          displayChats={this.displayChats}
+          displayContacts={this.displayContacts}
+          displayAccountInfo={this.displayAccountInfo}
+        />
       </View>
     )
   }

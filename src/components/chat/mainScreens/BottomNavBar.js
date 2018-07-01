@@ -2,35 +2,35 @@ import React from 'react'
 import {StyleSheet, View, TouchableOpacity} from 'react-native'
 import {Icon} from 'react-native-elements'
 
-export default class BottomNavBar extends React.Component {
-  goToScreen = screen => {
-    this.props.navigation.navigate(`${screen}`)
-  }
-
-  render() {
-    return (
-      <View style={styles.navBar}>
-        <TouchableOpacity
-          style={[styles.button, styles.leftButton]}
-          onPress={() => this.goToScreen('Contacts')}
-        >
-          <Icon name="contacts" color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.centerButton]}
-          onPress={() => this.goToScreen('AccountInfo')}
-        >
-          <Icon name="account-circle" color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.rightButton]}
-          onPress={() => this.goToScreen('NewChat')}
-        >
-          <Icon name="message" color="white" />
-        </TouchableOpacity>
-      </View>
-    )
-  }
+const BottomNavBar = props => {
+  return (
+    <View style={styles.navBar}>
+      <TouchableOpacity
+        style={[styles.button, styles.hasRightEdge]}
+        onPress={() => props.displayAccountInfo()}
+      >
+        <Icon name="account-circle" color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, styles.hasBothEdges]}
+        onPress={() => props.displayContacts()}
+      >
+        <Icon name="contact-mail" color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, styles.hasBothEdges]}
+        onPress={() => props.displayChats()}
+      >
+        <Icon name="view-list" color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, styles.hasLeftEdge]}
+        onPress={() => props.navigation.navigate(`NewChat`)}
+      >
+        <Icon name="message" color="white" />
+      </TouchableOpacity>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -46,14 +46,16 @@ const styles = StyleSheet.create({
     height: 50,
     borderColor: 'white',
   },
-  leftButton: {
+  hasRightEdge: {
     borderRightWidth: 1,
   },
-  centerButton: {
+  hasBothEdges: {
+    borderRightWidth: 1,
     borderLeftWidth: 1,
-    borderRightWidth: 1,
   },
-  rightButton: {
+  hasLeftEdge: {
     borderLeftWidth: 1,
   },
 })
+
+export default BottomNavBar

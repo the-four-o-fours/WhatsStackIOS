@@ -13,11 +13,8 @@ class Contacts extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View>
-          <Text>AccountInfo Dummy Component</Text>
-          <Button title="Sign Out" color="red" onPress={this.signOut} />
-        </View>
-        <BottomNavBar navigation={this.props.navigation} />
+        <Text>AccountInfo Dummy Component</Text>
+        <Button title="Sign Out" color="red" onPress={this.signOut} />
       </View>
     )
   }
