@@ -47,9 +47,13 @@ class MainContainer extends Component {
     })
     userRef.on('child_changed', async snapshot => {
       try {
-        const conversation = await this.convertToArrAndDecrypt(snapshot.val())
-        const chatId = snapshot.key
-        this.props.getNewMessage(conversation, chatId)
+        if (snapshot.key === 'displayName') {
+          this.props.getUser({[snapshot.key]: snapshot.val()})
+        } else {
+          const conversation = await this.convertToArrAndDecrypt(snapshot.val())
+          const chatId = snapshot.key
+          this.props.getNewMessage(conversation, chatId)
+        }
       } catch (error) {
         console.log(error)
       }
