@@ -15,17 +15,21 @@ class MainScreensContainer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.user !== prevProps.user) {
+    if (this.props.messages !== prevProps.messages) {
       this.findChats()
     }
   }
 
   findChats = () => {
-    const friendIds = []
-    for (let key in this.props.user) {
-      if (key.length > 12) friendIds.push(key)
-    }
-    const chats = friendIds.map(id => this.props.contactsHash[id])
+    const friendIds = Object.keys(this.props.messages)
+    const chats = friendIds
+      .map(id => {
+        const chat = this.props.contactsHash[id]
+        const messages = this.props.messages[id].conversation
+        chat.lastMessage = messages[messages.length - 1]
+        return chat
+      })
+      .sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
     this.setState({chats})
   }
 
@@ -56,6 +60,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   user: state.user,
   contactsHash: state.contactsHash,
+  messages: state.messages,
 })
 
 export default connect(mapStateToProps)(MainScreensContainer)

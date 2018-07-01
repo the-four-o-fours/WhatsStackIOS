@@ -27,9 +27,7 @@ class Chat extends React.Component {
   sendMessage = () => {
     const text = this.state.newMessage
     const user = this.props.user
-    const receiver = this.props.contacts.filter(
-      contact => contact.uid === this.state.receiverUid,
-    )[0]
+    const receiver = this.props.contactsHash[this.state.receiverUid]
     const rsa = this.state.rsa
     rsa.setPublicString(user.publicKey)
     const senderCopy = rsa.encrypt(text)
@@ -65,9 +63,10 @@ class Chat extends React.Component {
 
   render() {
     const receiverUid = this.props.navigation.getParam('uid', false)
+    console.log('messages', this.props.messages[receiverUid])
     return (
       <View>
-        {this.props.user[receiverUid].map(message => (
+        {this.props.messages[receiverUid].conversation.map(message => (
           <Text key={message.timeStamp} style={{color: 'black'}}>
             {message.text}
           </Text>
@@ -90,7 +89,8 @@ class Chat extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  contacts: state.contacts,
+  contactsHash: state.contactsHash,
+  messages: state.messages,
 })
 
 export default connect(

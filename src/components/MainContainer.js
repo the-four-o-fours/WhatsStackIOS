@@ -5,7 +5,12 @@ import firebase from 'react-native-firebase'
 import MainNavigator from './MainNavigator'
 const RSAKey = require('react-native-rsa')
 
-import {getNewMessage, getUser, populateContacts} from '../store/actions'
+import {
+  getNewMessage,
+  getUser,
+  getMessages,
+  populateContacts,
+} from '../store/actions'
 
 class MainContainer extends Component {
   constructor(props) {
@@ -28,13 +33,17 @@ class MainContainer extends Component {
         snapshot.key !== 'publicKey' &&
         snapshot.key !== 'uid'
       ) {
-        userField[snapshot.key] = await this.convertToArrAndDecrypt(
+        userField[snapshot.key] = {}
+        const messageField = userField[snapshot.key]
+        messageField.conversation = await this.convertToArrAndDecrypt(
           snapshot.val(),
         )
+        messageField.seen = true
+        this.props.getMessages(userField)
       } else {
         userField[snapshot.key] = snapshot.val()
+        this.props.getUser(userField)
       }
-      this.props.getUser(userField)
     })
     userRef.on('child_changed', async snapshot => {
       try {
@@ -84,10 +93,12 @@ const mapStateToProps = state => ({
   user: state.user,
   contactsArr: state.contactsArr,
   contactsHash: state.contactsHash,
+  messages: state.messages,
 })
 
 const mapDispatchToProps = dispatch => ({
   getUser: user => dispatch(getUser(user)),
+  getMessages: messages => dispatch(getMessages(messages)),
   getNewMessage: (message, chatId) => dispatch(getNewMessage(message, chatId)),
   populateContacts: () => dispatch(populateContacts()),
 })

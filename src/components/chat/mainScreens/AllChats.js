@@ -18,7 +18,7 @@ export default class AllChats extends Component {
         <ListItem
           roundAvatar
           title={`${item.displayName}`}
-          subtitle={item.displayName}
+          subtitle={item.lastMessage.text}
           avatar={{uri: item.img}}
           onPress={() => goToConvo(item.uid, item.displayName)}
           onLongPress={() => {
