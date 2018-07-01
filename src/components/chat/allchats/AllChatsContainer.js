@@ -28,8 +28,13 @@ class AllChats extends React.Component {
   }
 
   componentDidMount() {
-    const chats = this.findChats()
-    this.setState({chats})
+    this.findChats()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.user !== prevProps.user) {
+      this.findChats()
+    }
   }
 
   signOut = () => {
@@ -41,7 +46,10 @@ class AllChats extends React.Component {
     for (let key in this.props.user) {
       if (key.length > 12) friendIds.push(key)
     }
-    return friendIds.map(id => this.props.contacts.find(ele => ele.uid === id))
+    const chats = friendIds.map(id =>
+      this.props.contacts.find(ele => ele.uid === id),
+    )
+    this.setState({chats})
   }
 
   goToConvo = uid => {
