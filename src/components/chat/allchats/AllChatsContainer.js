@@ -1,25 +1,9 @@
 import React from 'react'
-import {StyleSheet, View, Button} from 'react-native'
-import {ListItem} from 'react-native-elements'
+import {StyleSheet, View} from 'react-native'
 import {connect} from 'react-redux'
 
 import AllChatsList from './AllChatsList'
 import BottomNavBar from './BottomNavBar'
-//AllChatsContainer will just render these two components in a view
-
-import {getNewMessage} from '../../../store/actions'
-
-const dummyData = [
-  {
-    displayName: 'Chloe',
-    phoneNumber: '+19178647990',
-    uid: 'mcMNuTXzK5aFP1znT9WfPPttVxH2',
-  },
-  {
-    uid: 'rdMKINrxayVThCXWmKu2OtkniIT2',
-    displayName: 'Nousit',
-  },
-]
 
 class AllChats extends React.Component {
   state = {
@@ -41,9 +25,7 @@ class AllChats extends React.Component {
     for (let key in this.props.user) {
       if (key.length > 12) friendIds.push(key)
     }
-    const chats = friendIds.map(id =>
-      this.props.contactsArr.find(ele => ele.uid === id),
-    )
+    const chats = friendIds.map(id => this.props.contactsHash[id])
     this.setState({chats})
   }
 
@@ -57,15 +39,7 @@ class AllChats extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View>
-          {this.state.chats.map(ele => (
-            <ListItem
-              key={ele.uid}
-              title={ele.displayName}
-              onPress={() => this.goToConvo(ele.uid, ele.displayName)}
-            />
-          ))}
-        </View>
+        <AllChatsList goToConvo={this.goToConvo} chats={this.state.chats} />
         <BottomNavBar navigation={this.props.navigation} />
       </View>
     )
@@ -81,14 +55,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.user,
-  contactsArr: state.contactsArr,
+  contactsHash: state.contactsHash,
 })
 
-const mapDispatchToProps = dispatch => ({
-  getNewMessage: (message, chatId) => dispatch(getNewMessage(message, chatId)),
-})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AllChats)
+export default connect(mapStateToProps)(AllChats)

@@ -16,7 +16,6 @@ class MainContainer extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props)
     this.props.populateContacts()
     const uid = this.props.uid
     const userRef = firebase.database().ref(`/Users/${uid}`)
