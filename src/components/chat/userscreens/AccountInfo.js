@@ -1,6 +1,8 @@
 import React from 'react'
 import {View, StyleSheet, Text, Button} from 'react-native'
 
+import firebase from 'react-native-firebase'
+
 class Contacts extends React.Component {
   signOut = () => {
     firebase.auth().signOut()
