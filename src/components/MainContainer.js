@@ -53,7 +53,7 @@ class MainContainer extends Component {
         ].conversation = await this.JoinDecryptAndConvertToArr(snapshot.val())
         convoObj[snapshot.key].seen = true
         this.props.getMessages(convoObj)
-      } else {
+      } else if (snapshot.key !== 'img') {
         //when you first connect to the database, all pre-existing fields come in as being newly added children
         //we take advantage of this to populate the user field in the store with up to date info
         const userField = {}

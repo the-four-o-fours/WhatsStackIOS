@@ -13,6 +13,9 @@ import {ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
 import RNFetchBlob from 'rn-fetch-blob'
 import firebase from 'react-native-firebase'
+import {connect} from 'react-redux'
+
+import {getUser} from '../../../store/actions'
 
 class AccountInfo extends React.Component {
   state = {
@@ -37,19 +40,21 @@ class AccountInfo extends React.Component {
   }
 
   setAvatar = async () => {
-    const url = this.props.user.img
-    await this.downloadAvatar(url)
+    const cloudUrl = await this.uploadAvatar()
+    const localUrl = await this.downloadAvatar(cloudUrl)
+    this.props.getUser({img: localUrl})
   }
 
   downloadAvatar = url => {
-    RNFetchBlob.config({
-      fileCache: true,
-      appendExt: 'jpg',
-    })
-      .fetch('GET', url)
-      .then(res => {
-        console.log('The file saved to ', res.path())
+    return new Promise((resolve, reject) => {
+      RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'jpg',
       })
+        .fetch('GET', url)
+        .then(res => resolve(res.path()))
+        .catch(err => reject(err))
+    })
   }
 
   uploadAvatar = () => {
@@ -76,8 +81,6 @@ class AccountInfo extends React.Component {
 
   render() {
     const user = this.props.user
-    const url =
-      '/Users/chloe/Library/Developer/CoreSimulator/Devices/68F66964-35B2-44FF-8089-F5E546765FE3/data/Containers/Data/Application/B44C55ED-73E6-4033-A9EA-8199A63E9675/Documents/RNFetchBlob_tmp/RNFetchBlobTmp_mcxs890geboxbgbcmkt1y.jpg'
     return (
       <KeyboardAvoidingView enabled behavior="padding">
         <ScrollView>
@@ -104,7 +107,7 @@ class AccountInfo extends React.Component {
                 <ListItem
                   roundAvatar
                   title={user.displayName}
-                  avatar={{uri: url}}
+                  avatar={{uri: user.img}}
                 />
                 <Button title="Change" color="red" onPress={this.changeView} />
               </View>
@@ -129,4 +132,15 @@ const styles = StyleSheet.create({
   },
 })
 
-export default AccountInfo
+const mapStateToProps = state => ({
+  user: state.user,
+})
+
+const mapDispatchToProps = dispatch => ({
+  getUser: user => dispatch(getUser(user)),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountInfo)
