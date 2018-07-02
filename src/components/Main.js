@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import firebase from 'react-native-firebase'
-import {ActivityIndicator} from 'react-native'
+import {StyleSheet, View, ActivityIndicator} from 'react-native'
 
 import Login from './auth/Login'
 import CreateUser from './auth/CreateUser'
@@ -54,7 +54,11 @@ class Main extends Component {
 
   render() {
     if (this.state.loading) {
-      return <ActivityIndicator />
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      )
     } else if (this.state.isLoggedIn && this.state.isInDatabase) {
       return <MainContainer uid={this.state.uid} />
     } else if (this.state.isLoggedIn && !this.state.isInDatabase) {
@@ -64,5 +68,13 @@ class Main extends Component {
     }
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+})
 
 export default Main

@@ -9,14 +9,22 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
-
+import ImagePicker from 'react-native-image-crop-picker'
 import firebase from 'react-native-firebase'
 
 class AccountInfo extends React.Component {
   state = {
     change: false,
     displayName: '',
+    ref: null,
   }
+
+  componentDidMount() {
+    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
+    console.log(ref)
+    this.setState({ref})
+  }
+
   signOut = () => {
     firebase.auth().signOut()
   }
@@ -31,6 +39,17 @@ class AccountInfo extends React.Component {
 
   changeView = () => {
     this.setState({change: true})
+  }
+
+  uploadAvatar = () => {
+    ImagePicker.openPicker({
+      multiple: false,
+    }).then(images => {
+      console.log(images)
+      this.state.ref
+        .putFile(images.sourceURL)
+        .then(_ => console.log('uploaded?'))
+    })
   }
 
   render() {
@@ -61,6 +80,11 @@ class AccountInfo extends React.Component {
               </View>
             )}
             <Button title="Sign Out" color="red" onPress={this.signOut} />
+            <Button
+              title="Upload avatar"
+              color="green"
+              onPress={this.uploadAvatar}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
