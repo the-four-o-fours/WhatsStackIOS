@@ -16,10 +16,11 @@ class Contacts extends React.Component {
     }
   }
 
-  goToConvo = (uid, title) => {
+  goToConvo = item => {
     this.props.navigation.navigate('Chat', {
-      uid,
-      title,
+      uid: item.uid,
+      title: item.title,
+      publicKey: item.publicKey,
     })
   }
 
@@ -39,7 +40,7 @@ class Contacts extends React.Component {
         roundAvatar
         title={`${item.phoneName} (${item.displayName})`}
         avatar={{uri: item.img}}
-        onPress={() => this.goToConvo(item.uid, item.displayName)}
+        onPress={() => this.goToConvo(item)}
         onLongPress={() => {
           console.log('Long press show drawer')
         }}

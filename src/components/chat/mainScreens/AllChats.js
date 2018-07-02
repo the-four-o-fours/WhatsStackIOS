@@ -3,11 +3,11 @@ import {FlatList} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
-  goToConvo = (uid, title, publicKey) => {
+  goToConvo = item => {
     this.props.navigation.navigate('Chat', {
-      uid,
-      title,
-      publicKey,
+      uid: item.uid,
+      title: item.title,
+      publicKey: item.publicKey,
     })
   }
 
@@ -22,9 +22,7 @@ export default class AllChats extends Component {
         title={`${item.displayName}`}
         subtitle={lastSeen}
         avatar={{uri: item.img}}
-        onPress={() =>
-          this.goToConvo(item.uid, item.displayName, item.publicKey)
-        }
+        onPress={() => this.goToConvo(item)}
         onLongPress={() => {
           console.log('Long press show drawer')
         }}
