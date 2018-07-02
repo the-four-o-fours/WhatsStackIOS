@@ -1,9 +1,10 @@
 import React from 'react'
-import {Text, View, TextInput, TouchableOpacity} from 'react-native'
+import {Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native'
 import firebase from 'react-native-firebase'
+import {connect} from 'react-redux'
 const RSAKey = require('react-native-rsa')
 
-import {connect} from 'react-redux'
+import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -24,13 +25,16 @@ class Chat extends React.Component {
     this.setState({receiverUid, rsa})
   }
 
+  componentWillUnmount() {
+    this
+      .props
+      .seenMessages(this.state.receiverUid)
+  }
+
   sendMessage = () => {
     const text = this.state.newMessage
     const user = this.props.user
-    const receiver = this
-      .props
-      .contacts
-      .filter(contact => contact.uid === this.state.receiverUid,)[0]
+    const receiver = this.props.contactsHash[this.state.receiverUid]
     const rsa = this.state.rsa
     rsa.setPublicString(user.publicKey)
     const senderCopy = rsa.encrypt(text)
@@ -68,33 +72,43 @@ class Chat extends React.Component {
       .navigation
       .getParam('uid', false)
     return (
-      <View>
-        <Text>Chat Component</Text>
-        {this
-          .props
-          .user[receiverUid]
-          .map(message => (
-            <Text
-              key={message.timeStamp}
-              style={{
-              color: 'black'
-            }}>
-              {message.text}
-            </Text>
-          ))}
-        <TextInput
-          placeholder="Do I exist"
-          name="newMessage"
-          value={this.state.newMessage}
-          onChangeText={newMessage => this.setState({newMessage})}/>
-        <TouchableOpacity onPress={this.sendMessage}>
-          <Text>SEND THAT MESSAGE</Text>
-        </TouchableOpacity>
-      </View>
+      <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset={64}>
+        <ScrollView>
+          {this
+            .props
+            .messages[receiverUid]
+            .conversation
+            .map(message => (
+              <Text
+                key={message.timeStamp}
+                style={{
+                color: 'black'
+              }}>
+                {message.text}
+              </Text>
+            ))}
+          <TextInput
+            autoFocus={false}
+            placeholder="..."
+            value={this.state.newMessage}
+            onChangeText={newMessage => this.setState({newMessage})}
+            enablesReturnKeyAutomatically={true}
+            onSubmitEditing={this.sendMessage}/>
+          <TouchableOpacity
+            onPress={this.sendMessage}
+            disabled={!this.state.newMessage.length}>
+            <Text>SEND THAT MESSAGE</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     )
   }
 }
 
-const mapStateToProps = state => ({user: state.user, contacts: state.contacts})
+const mapStateToProps = state => ({user: state.user, contactsHash: state.contactsHash, messages: state.messages})
 
-export default connect(mapStateToProps, null,)(Chat)
+const mapDispatchToProps = dispatch => ({
+  seenMessages: chatId => dispatch(seenMessages(chatId))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps,)(Chat)

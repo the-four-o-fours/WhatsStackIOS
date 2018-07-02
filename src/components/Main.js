@@ -30,6 +30,7 @@ class Main extends Component {
         })
       } else {
         this.setState({
+          isLoggedIn: false,
           loading: false,
         })
       }
