@@ -1,10 +1,12 @@
 import React from 'react'
 import {
+  StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
@@ -38,6 +40,7 @@ class Chat extends React.Component {
   }
 
   sendMessage = () => {
+    Keyboard.dismiss()
     const text = this.state.newMessage
     const user = this.props.user
     const receiver = this.props.contactsHash[this.state.receiverUid]
@@ -78,39 +81,49 @@ class Chat extends React.Component {
     const receiverUid = this.state.receiverUid
     return (
       <KeyboardAvoidingView
+        style={styles.container}
         enabled
         behavior="padding"
         keyboardVerticalOffset={64}
       >
-        <ScrollView>
-          {this.props.messages[receiverUid] ? (
-            this.props.messages[receiverUid].conversation.map(message => (
-              <Text key={message.timeStamp} style={{color: 'black'}}>
-                {message.text}
-              </Text>
-            ))
-          ) : (
-            <Text>No Messages</Text>
-          )}
-          <TextInput
-            autoFocus={false}
-            placeholder="..."
-            value={this.state.newMessage}
-            onChangeText={newMessage => this.setState({newMessage})}
-            enablesReturnKeyAutomatically={true}
-            onSubmitEditing={this.sendMessage}
-          />
-          <TouchableOpacity
-            onPress={this.sendMessage}
-            disabled={!this.state.newMessage.length}
-          >
-            <Text>SEND THAT MESSAGE</Text>
-          </TouchableOpacity>
-        </ScrollView>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Keyboard.dismiss()
+          }}
+        >
+          <ScrollView>
+            {this.props.messages[receiverUid] ? (
+              this.props.messages[receiverUid].conversation.map(message => (
+                <Text key={message.timeStamp} style={{color: 'black'}}>
+                  {message.text}
+                </Text>
+              ))
+            ) : (
+              <Text>No Messages</Text>
+            )}
+          </ScrollView>
+        </TouchableWithoutFeedback>
+        <TextInput
+          style={styles.TextInput}
+          autoFocus={false}
+          placeholder="..."
+          value={this.state.newMessage}
+          onChangeText={newMessage => this.setState({newMessage})}
+          enablesReturnKeyAutomatically={true}
+          returnKeyType="send"
+          onSubmitEditing={this.sendMessage}
+        />
       </KeyboardAvoidingView>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+})
 
 const mapStateToProps = state => ({
   user: state.user,
