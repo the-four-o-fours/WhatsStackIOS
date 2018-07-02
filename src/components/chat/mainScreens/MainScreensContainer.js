@@ -16,14 +16,22 @@ class MainScreensContainer extends React.Component {
   }
 
   async componentDidMount() {
-    const chats = await this.findChats()
-    this.setState({chats})
+    try {
+      const chats = await this.findChats()
+      this.setState({chats})
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   async componentDidUpdate(prevProps) {
-    if (this.props.messages !== prevProps.messages) {
-      const chats = await this.findChats()
-      this.setState({chats})
+    try {
+      if (this.props.messages !== prevProps.messages) {
+        const chats = await this.findChats()
+        this.setState({chats})
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -31,13 +39,20 @@ class MainScreensContainer extends React.Component {
     const friendIds = Object.keys(this.props.messages)
     const chats = await Promise.all(
       friendIds.map(async id => {
-        let chat
-        if (this.props.contactsHash[id]) chat = this.props.contactsHash[id]
-        else chat = await this.findAnonymous(id)
-        const messages = this.props.messages[id].conversation
-        chat.seen = this.props.messages[id].seen
-        chat.lastMessage = messages[messages.length - 1]
-        return chat
+        try {
+          let chat
+          if (this.props.contactsHash[id]) {
+            chat = this.props.contactsHash[id]
+          } else {
+            chat = await this.findAnonymous(id)
+          }
+          const messages = this.props.messages[id].conversation
+          chat.seen = this.props.messages[id].seen
+          chat.lastMessage = messages[messages.length - 1]
+          return chat
+        } catch (error) {
+          console.log(error)
+        }
       }),
     )
     chats.sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
@@ -45,18 +60,22 @@ class MainScreensContainer extends React.Component {
   }
 
   findAnonymous = async id => {
-    const user = {uid: id}
-    await firebase
-      .database()
-      .ref(`/Users/${id}`)
-      .once('value')
-      .then(snapshot => {
-        const data = snapshot.val()
-        user.displayName = data.displayName
-        user.publicKey = data.publicKey
-        user.phoneNumber = data.phoneNumber
-      })
-    return user
+    try {
+      const user = {uid: id}
+      await firebase
+        .database()
+        .ref(`/Users/${id}`)
+        .once('value')
+        .then(snapshot => {
+          const data = snapshot.val()
+          user.displayName = data.displayName
+          user.publicKey = data.publicKey
+          user.phoneNumber = data.phoneNumber
+        })
+      return user
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   displayChats = () => {

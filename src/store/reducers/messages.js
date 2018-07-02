@@ -4,8 +4,11 @@ const initialState = {}
 
 const messagesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case GOT_MESSAGES:
+    case GOT_MESSAGES: {
+      const chatId = Object.keys(action.messages)[0]
+      if (!state[chatId]) action.messages[chatId].seen = false
       return {...state, ...action.messages}
+    }
     case GOT_NEW_MESSAGE:
       return {
         ...state,
