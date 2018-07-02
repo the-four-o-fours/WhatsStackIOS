@@ -3,6 +3,10 @@ package com.fourohfours.whatsstackios;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
+import io.invertase.firebase.RNFirebasePackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -40,6 +44,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new RNFetchBlobPackage(),
+            new VectorIconsPackage(),
+            new PickerPackage(),
+            new RNFirebasePackage(),
             new ReactNativeContacts(),
         new RNFirebasePackage(),
         // add/remove these packages as appropriate

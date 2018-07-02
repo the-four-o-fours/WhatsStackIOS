@@ -9,7 +9,9 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
+import {ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
+import RNFetchBlob from 'rn-fetch-blob'
 import firebase from 'react-native-firebase'
 
 class AccountInfo extends React.Component {
@@ -35,26 +37,25 @@ class AccountInfo extends React.Component {
   }
 
   setAvatar = async () => {
-    const url = await this.uploadAvatar()
-    // const avatarRef = firebase
-    //   .database()
-    //   .ref(`/Users/${this.props.user.uid}/img`)
-    // avatarRef.set(url)
-    // await this.downloadAvatar(url)
-    console.log('downloaded?', url)
+    const url = this.props.user.img
+    await this.downloadAvatar(url)
   }
 
   downloadAvatar = url => {
-    const avatar = URL(url)
-    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
-    ref
-      .downloadFile(avatar)
-      .then(res => console.log('res', res))
-      .catch(err => console.log(err))
+    RNFetchBlob.config({
+      fileCache: true,
+      appendExt: 'jpg',
+    })
+      .fetch('GET', url)
+      .then(res => {
+        console.log('The file saved to ', res.path())
+      })
   }
 
   uploadAvatar = () => {
-    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
+    const ref = firebase
+      .storage()
+      .ref(`/Users/${this.props.user.uid}/avatar.jpg`)
     return new Promise((resolve, reject) => {
       ImagePicker.openPicker({
         multiple: false,
@@ -74,6 +75,9 @@ class AccountInfo extends React.Component {
   }
 
   render() {
+    const user = this.props.user
+    const url =
+      '/Users/chloe/Library/Developer/CoreSimulator/Devices/68F66964-35B2-44FF-8089-F5E546765FE3/data/Containers/Data/Application/B44C55ED-73E6-4033-A9EA-8199A63E9675/Documents/RNFetchBlob_tmp/RNFetchBlobTmp_mcxs890geboxbgbcmkt1y.jpg'
     return (
       <KeyboardAvoidingView enabled behavior="padding">
         <ScrollView>
@@ -84,6 +88,7 @@ class AccountInfo extends React.Component {
                 <Text>Change your displayname:</Text>
                 <TextInput
                   value={this.state.displayName}
+                  maxLength={20}
                   onChangeText={displayName => this.setState({displayName})}
                   onSubmitEditing={this.changeDisplayName}
                 />
@@ -96,7 +101,11 @@ class AccountInfo extends React.Component {
               </View>
             ) : (
               <View>
-                <Text>{this.props.user.displayName}</Text>
+                <ListItem
+                  roundAvatar
+                  title={user.displayName}
+                  avatar={{uri: url}}
+                />
                 <Button title="Change" color="red" onPress={this.changeView} />
               </View>
             )}

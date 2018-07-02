@@ -23,6 +23,8 @@ target 'WhatsStackIOS' do
   
   pod 'Fabric', '~> 1.7.6'
   pod 'Crashlytics', '~> 3.10.1'
+  pod 'rn-fetch-blob',
+    :path => '../node_modules/rn-fetch-blob'
 
   rn_path = '../node_modules/react-native'
   pod 'yoga', path: "#{rn_path}/ReactCommon/yoga/yoga.podspec"
@@ -41,6 +43,8 @@ target 'WhatsStackIOS' do
   ]
 
   pod 'RNImageCropPicker', :path =>  '../node_modules/react-native-image-crop-picker'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
 end
 
