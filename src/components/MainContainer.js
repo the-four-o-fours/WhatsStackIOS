@@ -68,7 +68,7 @@ class MainContainer extends Component {
   updateOnNewMessageOrNameChange = async snapshot => {
     //both these events trigger a "child changed"
     try {
-      if (snapshot.key === 'displayName') {
+      if (snapshot.key === 'displayName' || snapshot.key === 'img') {
         //listening for a changed name
         this.props.getUser({[snapshot.key]: snapshot.val()})
       } else {

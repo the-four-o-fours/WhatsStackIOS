@@ -18,11 +18,6 @@ class AccountInfo extends React.Component {
     displayName: '',
   }
 
-  // componentDidMount() {
-  //   const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
-  //   this.setState({ref})
-  // }
-
   signOut = () => {
     firebase.auth().signOut()
   }
@@ -41,12 +36,13 @@ class AccountInfo extends React.Component {
 
   setAvatar = async () => {
     const url = await this.uploadAvatar()
-    console.log(url)
     const avatarRef = firebase
       .database()
       .ref(`/Users/${this.props.user.uid}/img`)
     avatarRef.set(url)
   }
+
+  downloadAvatar = () => {}
 
   uploadAvatar = () => {
     const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
@@ -58,13 +54,12 @@ class AccountInfo extends React.Component {
         const metadata = {
           contentType: images.mime,
         }
-        ref.putFile(images.sourceURL, metadata).then(res => {
-          if (res.state === 'success') {
-            resolve(res.downloadURL)
-          } else {
-            return reject(res)
-          }
-        })
+        ref
+          .putFile(images.sourceURL, metadata)
+          .then(res => {
+            if (res.state === 'success') resolve(res.downloadURL)
+          })
+          .catch(err => reject(err))
       })
     })
   }
