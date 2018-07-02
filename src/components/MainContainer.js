@@ -85,7 +85,6 @@ class MainContainer extends Component {
   }
 
   JoinDecryptAndConvertToArr = async conversation => {
-    console.log(conversation)
     try {
       const privateKey = await AsyncStorage.getItem('privateKey')
       rsa.setPrivateString(privateKey)

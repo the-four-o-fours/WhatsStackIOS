@@ -36,13 +36,22 @@ class AccountInfo extends React.Component {
 
   setAvatar = async () => {
     const url = await this.uploadAvatar()
-    const avatarRef = firebase
-      .database()
-      .ref(`/Users/${this.props.user.uid}/img`)
-    avatarRef.set(url)
+    // const avatarRef = firebase
+    //   .database()
+    //   .ref(`/Users/${this.props.user.uid}/img`)
+    // avatarRef.set(url)
+    // await this.downloadAvatar(url)
+    console.log('downloaded?', url)
   }
 
-  downloadAvatar = () => {}
+  downloadAvatar = url => {
+    const avatar = URL(url)
+    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
+    ref
+      .downloadFile(avatar)
+      .then(res => console.log('res', res))
+      .catch(err => console.log(err))
+  }
 
   uploadAvatar = () => {
     const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
