@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {FlatList, View} from 'react-native'
+import {FlatList, View, StyleSheet} from 'react-native'
 import {ListItem} from 'react-native-elements'
+import NewChatIcon from '../../../components/ui/NewChatIcon'
 
 export default class AllChats extends Component {
   goToConvo = (uid, title, publicKey) => {
@@ -10,13 +11,26 @@ export default class AllChats extends Component {
       .navigate('Chat', {uid, title, publicKey})
   }
 
+  truncate = (string) => {
+    let trimmed = ''
+    if (string.length > 30) {
+      trimmed += string.slice(0, 30) + '...'
+    } else {
+      trimmed = string
+    }
+
+    console.log('trimmed', trimmed)
+
+    return trimmed
+  }
+
   extractKey = ({uid}) => uid
   renderItem = ({item}) => {
     const lastSeen = item.seen
-      ? item.lastMessage.text
-      : item.lastMessage.text + ' Not seen'
+      ? this.truncate(item.lastMessage.text)
+      : this.truncate(item.lastMessage.text) + ' Hello'
     return (
-      <View>
+      <View >
         <ListItem
           roundAvatar
           title={`${item.displayName}`}

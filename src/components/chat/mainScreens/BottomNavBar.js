@@ -7,21 +7,16 @@ const BottomNavBar = props => {
     <View style={styles.navBar}>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => props.displayAccountInfo()}
-      >
-        <Icon name="account-circle" color="white" />
+        onPress={() => props.displayAccountInfo()}>
+        <Icon name="account-circle" color="white"/>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, styles.edges]}
-        onPress={() => props.displayContacts()}
-      >
-        <Icon name="contact-mail" color="white" />
+        onPress={() => props.displayContacts()}>
+        <Icon name="contact-mail" color="white"/>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => props.displayChats()}
-      >
-        <Icon name="view-list" color="white" />
+      <TouchableOpacity style={styles.button} onPress={() => props.displayChats()}>
+        <Icon name="view-list" color="white"/>
       </TouchableOpacity>
     </View>
   )
@@ -30,20 +25,20 @@ const BottomNavBar = props => {
 const styles = StyleSheet.create({
   navBar: {
     flexDirection: 'row',
-    backgroundColor: 'black',
-    height: 50,
+    backgroundColor: '#20AAB2',
+    height: 50
   },
   button: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    borderColor: 'white',
+    borderColor: '#20AAB2'
   },
   edges: {
     borderRightWidth: 1,
-    borderLeftWidth: 1,
-  },
+    borderLeftWidth: 1
+  }
 })
 
 export default BottomNavBar
