@@ -86,7 +86,6 @@ class MainContainer extends Component {
     try {
       privateKey = await AsyncStorage.getItem('privateKey')
       const arr = []
-      const rsa = new RSAKey()
       rsa.setPrivateString(privateKey)
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -107,7 +106,6 @@ class MainContainer extends Component {
   }
 
   render() {
-    console.log(rsa)
     return <MainNavigator />
   }
 }
