@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, KeyboardAvoidingView} from 'react-native'
 import {connect} from 'react-redux'
 
 import AllChats from './AllChats'
@@ -61,7 +61,12 @@ class MainScreensContainer extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        enabled
+        behavior="padding"
+        keyboardVerticalOffset={64}
+        style={styles.container}
+      >
         {this.state.displayContacts ? (
           <Contacts navigation={this.props.navigation} />
         ) : this.state.displayAccountInfo ? (
@@ -73,12 +78,11 @@ class MainScreensContainer extends React.Component {
           />
         )}
         <BottomNavBar
-          navigation={this.props.navigation}
           displayChats={this.displayChats}
           displayContacts={this.displayContacts}
           displayAccountInfo={this.displayAccountInfo}
         />
-      </View>
+      </KeyboardAvoidingView>
     )
   }
 }
