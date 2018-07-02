@@ -3,7 +3,7 @@ import {AsyncStorage} from 'react-native'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 import MainNavigator from './MainNavigator'
-const RSAKey = require('react-native-rsa')
+import rsa from './rsa'
 
 import {
   getNewMessage,
@@ -25,43 +25,60 @@ class MainContainer extends Component {
     const uid = this.props.uid
     const userRef = firebase.database().ref(`/Users/${uid}`)
     userRef.off()
-    userRef.on('child_added', async snapshot => {
+    userRef.on('child_added', snapshot =>
+      this.populateStoreAndListenForNewConversation(snapshot),
+    )
+    userRef.on('child_changed', snapshot =>
+      this.updateOnNewMessageOrNameChange(snapshot),
+    )
+    this.setState({
+      userRef,
+    })
+  }
+
+  populateStoreAndListenForNewConversation = async snapshot => {
+    try {
       if (
+        //when you first connect to the database, all pre-existing fields come in as being newly added children
+        //we take advantage of this to populate the user field in the store with up to date info
         snapshot.key !== 'displayName' &&
         snapshot.key !== 'phoneNumber' &&
         snapshot.key !== 'publicKey' &&
         snapshot.key !== 'uid'
       ) {
-        const messageField = {}
-        messageField[snapshot.key] = {}
-        const conversationObj = messageField[snapshot.key]
-        conversationObj.conversation = await this.convertToArrAndDecrypt(
+        const convoObj = {}
+        convoObj[snapshot.key] = {}
+        convoObj[snapshot.key].conversation = await this.convertToArrAndDecrypt(
           snapshot.val(),
         )
-        conversationObj.seen = true
-        this.props.getMessages(messageField)
+        convoObj[snapshot.key].seen = true
+        this.props.getMessages(convoObj)
       } else {
+        //this condition populates the messages field in the store with actual message histories, not user data
         const userField = {}
         userField[snapshot.key] = snapshot.val()
         this.props.getUser(userField)
       }
-    })
-    userRef.on('child_changed', async snapshot => {
-      try {
-        if (snapshot.key === 'displayName') {
-          this.props.getUser({[snapshot.key]: snapshot.val()})
-        } else {
-          const conversation = await this.convertToArrAndDecrypt(snapshot.val())
-          const chatId = snapshot.key
-          this.props.getNewMessage(conversation, chatId)
-        }
-      } catch (error) {
-        console.log(error)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  updateOnNewMessageOrNameChange = async snapshot => {
+    //both these events trigger a "child changed"
+    try {
+      if (snapshot.key === 'displayName') {
+        //listening for a changed name
+        this.props.getUser({[snapshot.key]: snapshot.val()})
+      } else {
+        //listening for a new message being added to an existing conversation
+        const conversation = await this.convertToArrAndDecrypt(snapshot.val())
+        const chatId = snapshot.key
+        this.props.getNewMessage(conversation, chatId)
       }
-    })
-    this.setState({
-      userRef,
-    })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   convertToArrAndDecrypt = async obj => {
@@ -69,7 +86,6 @@ class MainContainer extends Component {
     try {
       privateKey = await AsyncStorage.getItem('privateKey')
       const arr = []
-      const rsa = new RSAKey()
       rsa.setPrivateString(privateKey)
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
