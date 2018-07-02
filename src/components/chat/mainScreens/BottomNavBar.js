@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
   },
   btnSelected: {
     backgroundColor: '#C5E8C5',
-    borderLeftWidth: 1,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

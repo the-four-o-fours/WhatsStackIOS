@@ -43,7 +43,8 @@ class MainContainer extends Component {
         snapshot.key !== 'displayName' &&
         snapshot.key !== 'phoneNumber' &&
         snapshot.key !== 'publicKey' &&
-        snapshot.key !== 'uid'
+        snapshot.key !== 'uid' &&
+        snapshot.key !== 'img'
       ) {
         const convoObj = {}
         convoObj[snapshot.key] = {}
@@ -52,7 +53,7 @@ class MainContainer extends Component {
         ].conversation = await this.JoinDecryptAndConvertToArr(snapshot.val())
         convoObj[snapshot.key].seen = true
         this.props.getMessages(convoObj)
-      } else {
+      } else if (snapshot.key !== 'img') {
         //when you first connect to the database, all pre-existing fields come in as being newly added children
         //we take advantage of this to populate the user field in the store with up to date info
         const userField = {}
@@ -67,7 +68,7 @@ class MainContainer extends Component {
   updateOnNewMessageOrNameChange = async snapshot => {
     //both these events trigger a "child changed"
     try {
-      if (snapshot.key === 'displayName') {
+      if (snapshot.key === 'displayName' || snapshot.key === 'img') {
         //listening for a changed name
         this.props.getUser({[snapshot.key]: snapshot.val()})
       } else {
@@ -84,7 +85,6 @@ class MainContainer extends Component {
   }
 
   JoinDecryptAndConvertToArr = async conversation => {
-    console.log(conversation)
     try {
       const privateKey = await AsyncStorage.getItem('privateKey')
       rsa.setPrivateString(privateKey)

@@ -9,20 +9,18 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
+import {ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
+import RNFetchBlob from 'rn-fetch-blob'
 import firebase from 'react-native-firebase'
+import {connect} from 'react-redux'
+
+import {getUser} from '../../../store/actions'
 
 class AccountInfo extends React.Component {
   state = {
     change: false,
     displayName: '',
-    ref: null,
-  }
-
-  componentDidMount() {
-    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
-    console.log(ref)
-    this.setState({ref})
   }
 
   signOut = () => {
@@ -41,18 +39,48 @@ class AccountInfo extends React.Component {
     this.setState({change: true})
   }
 
+  setAvatar = async () => {
+    const cloudUrl = await this.uploadAvatar()
+    const localUrl = await this.downloadAvatar(cloudUrl)
+    this.props.getUser({img: localUrl})
+  }
+
+  downloadAvatar = url => {
+    return new Promise((resolve, reject) => {
+      RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'jpg',
+      })
+        .fetch('GET', url)
+        .then(res => resolve(res.path()))
+        .catch(err => reject(err))
+    })
+  }
+
   uploadAvatar = () => {
-    ImagePicker.openPicker({
-      multiple: false,
-    }).then(images => {
-      console.log(images)
-      this.state.ref
-        .putFile(images.sourceURL)
-        .then(_ => console.log('uploaded?'))
+    const ref = firebase
+      .storage()
+      .ref(`/Users/${this.props.user.uid}/avatar.jpg`)
+    return new Promise((resolve, reject) => {
+      ImagePicker.openPicker({
+        multiple: false,
+        mediaType: 'photo',
+      }).then(images => {
+        const metadata = {
+          contentType: images.mime,
+        }
+        ref
+          .putFile(images.sourceURL, metadata)
+          .then(res => {
+            if (res.state === 'success') resolve(res.downloadURL)
+          })
+          .catch(err => reject(err))
+      })
     })
   }
 
   render() {
+    const user = this.props.user
     return (
       <KeyboardAvoidingView enabled behavior="padding">
         <ScrollView>
@@ -63,6 +91,7 @@ class AccountInfo extends React.Component {
                 <Text>Change your displayname:</Text>
                 <TextInput
                   value={this.state.displayName}
+                  maxLength={20}
                   onChangeText={displayName => this.setState({displayName})}
                   onSubmitEditing={this.changeDisplayName}
                 />
@@ -75,7 +104,11 @@ class AccountInfo extends React.Component {
               </View>
             ) : (
               <View>
-                <Text>{this.props.user.displayName}</Text>
+                <ListItem
+                  roundAvatar
+                  title={user.displayName}
+                  avatar={{uri: user.img}}
+                />
                 <Button title="Change" color="red" onPress={this.changeView} />
               </View>
             )}
@@ -83,7 +116,7 @@ class AccountInfo extends React.Component {
             <Button
               title="Upload avatar"
               color="green"
-              onPress={this.uploadAvatar}
+              onPress={this.setAvatar}
             />
           </View>
         </ScrollView>
@@ -99,4 +132,15 @@ const styles = StyleSheet.create({
   },
 })
 
-export default AccountInfo
+const mapStateToProps = state => ({
+  user: state.user,
+})
+
+const mapDispatchToProps = dispatch => ({
+  getUser: user => dispatch(getUser(user)),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountInfo)
