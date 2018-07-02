@@ -26,7 +26,7 @@ class Contacts extends React.Component {
 
   searchFor = contactName => {
     const matchingContacts = this.props.contactsArr.filter(contact =>
-      contact.displayName.startsWith(contactName),
+      contact.displayName.toLowerCase().startsWith(contactName.toLowerCase()),
     )
     this.setState({
       matchingContacts,
@@ -39,10 +39,9 @@ class Contacts extends React.Component {
         enabled
         behavior="padding"
         keyboardVerticalOffset={64}
-        styles={styles.container}
       >
         <TextInput
-          autoFocus={true}
+          autoFocus={false}
           placeholder="Contact Name"
           value={this.state.searchFor}
           onChangeText={contactName => this.searchFor(contactName)}
@@ -64,15 +63,6 @@ class Contacts extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#fff',
-    padding: 10,
-  },
-})
 
 const mapStateToProps = state => ({
   user: state.user,
