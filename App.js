@@ -7,12 +7,14 @@ import {store, persistor} from './src/store'
 import Main from './src/components/Main'
 import {ActivityIndicator} from 'react-native'
 
-const App = () => (
-  <Provider store={store}>
-    <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
-      <Main />
-    </PersistGate>
-  </Provider>
-)
+const App = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
+        <Main />
+      </PersistGate>
+    </Provider>
+  )
+}
 
 export default App

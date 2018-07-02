@@ -1,37 +1,31 @@
 import {createStackNavigator} from 'react-navigation'
 
-import AllChats from './chat/AllChats/AllChatsContainer'
+import MainScreensContainer from './chat/mainScreens/MainScreensContainer'
 import Chat from './chat/singlechat/Chat'
-import Contacts from './chat/userscreens/Contacts'
+import NewChat from './chat/singlechat/NewChat'
 
-const MainNavigator = createStackNavigator(
-  {
-    Main: {
-      screen: AllChats,
-      navigationOptions: ({navigation}) => ({
-        title: 'WhatsStack',
-        headerBackTitle: null,
-      }),
-    },
-    Chat: {
-      screen: Chat,
-      navigationOptions: ({navigation}) => ({}),
-    },
-    Contacts: {
-      screen: Contacts,
-      navigationOptions: ({navigation}) => ({
-        title: 'Contacts',
-        headerBackTitle: null,
-      }),
-    },
+const MainNavigator = createStackNavigator({
+  Main: {
+    screen: MainScreensContainer,
+    navigationOptions: ({navigation}) => ({
+      title: 'WhatsStack',
+      headerBackTitle: null,
+    }),
   },
-  {
-    order: ['Main', 'Chat', 'Contacts'],
-    animationEnabled: true,
-    style: {
-      backgroundColor: 'green',
-    },
+  Chat: {
+    screen: Chat,
+    navigationOptions: ({navigation}) => ({
+      title: navigation.state.params.title,
+      headerBackTitle: null,
+    }),
   },
-)
+  NewChat: {
+    screen: NewChat,
+    navigationOptions: ({navigation}) => ({
+      title: 'New Message',
+      headerBackTitle: null,
+    }),
+  },
+})
 
 export default MainNavigator
