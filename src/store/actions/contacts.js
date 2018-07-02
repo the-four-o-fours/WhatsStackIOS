@@ -42,6 +42,7 @@ const getAllUsers = async () => {
         phoneNumber: childData.phoneNumber,
         uid: childData.uid,
         publicKey: childData.publicKey,
+        img: childData.img,
       })
     })
     return firebaseUsers
