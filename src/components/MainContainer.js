@@ -39,8 +39,7 @@ class MainContainer extends Component {
   populateStoreAndListenForNewConversation = async snapshot => {
     try {
       if (
-        //when you first connect to the database, all pre-existing fields come in as being newly added children
-        //we take advantage of this to populate the user field in the store with up to date info
+        //this condition populates the messages field in the store with actual message histories, not user data
         snapshot.key !== 'displayName' &&
         snapshot.key !== 'phoneNumber' &&
         snapshot.key !== 'publicKey' &&
@@ -54,7 +53,8 @@ class MainContainer extends Component {
         convoObj[snapshot.key].seen = true
         this.props.getMessages(convoObj)
       } else {
-        //this condition populates the messages field in the store with actual message histories, not user data
+        //when you first connect to the database, all pre-existing fields come in as being newly added children
+        //we take advantage of this to populate the user field in the store with up to date info
         const userField = {}
         userField[snapshot.key] = snapshot.val()
         this.props.getUser(userField)

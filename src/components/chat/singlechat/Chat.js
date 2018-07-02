@@ -44,7 +44,14 @@ class Chat extends React.Component {
     Keyboard.dismiss()
     const text = this.state.newMessage
     const user = this.props.user
-    const receiver = this.props.contactsHash[this.state.receiverUid]
+    const receiver = {
+      uid: this.state.receiverUid,
+      publicKey: this
+        .props
+        .navigation
+        .getParam('publicKey')
+    }
+    // const rsa = this.state.rsa
     rsa.setPublicString(user.publicKey)
     const senderCopy = rsa.encrypt(text)
     rsa.setPublicString(receiver.publicKey)
@@ -128,7 +135,7 @@ class Chat extends React.Component {
   }
 }
 
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between'

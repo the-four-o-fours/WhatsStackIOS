@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
-import {FlatList} from 'react-native'
+import {FlatList, View} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
-  goToConvo = (uid, title) => {
-    this.props.navigation.navigate('Chat', {
-      uid,
-      title,
-    })
+  goToConvo = (uid, title, publicKey) => {
+    this
+      .props
+      .navigation
+      .navigate('Chat', {uid, title, publicKey})
   }
 
   extractKey = ({uid}) => uid
@@ -16,26 +16,26 @@ export default class AllChats extends Component {
       ? item.lastMessage.text
       : item.lastMessage.text + ' Not seen'
     return (
-      <ListItem
-        roundAvatar
-        title={`${item.displayName}`}
-        subtitle={lastSeen}
-        avatar={{uri: item.img}}
-        onPress={() => this.goToConvo(item.uid, item.displayName)}
-        onLongPress={() => {
-          console.log('Long press show drawer')
+      <View>
+        <ListItem
+          roundAvatar
+          title={`${item.displayName}`}
+          subtitle={lastSeen}
+          avatar={{
+          uri: item.img
         }}
-      />
+          onPress={() => this.goToConvo(item.uid, item.displayName, item.publicKey)}
+          onLongPress={() => {
+          console.log('Long press show drawer')
+        }}/>
+      </View>
     )
   }
 
   render() {
-    return (
-      <FlatList
-        data={this.props.chats}
-        renderItem={this.renderItem}
-        keyExtractor={this.extractKey}
-      />
-    )
+    return (<FlatList
+      data={this.props.chats}
+      renderItem={this.renderItem}
+      keyExtractor={this.extractKey}/>)
   }
 }
