@@ -73,9 +73,6 @@ class Chat extends React.Component {
     receiverMessageObj[sentAt] = receiverMessage
     senderRef.update(senderMessageObj)
     receiverRef.update(receiverMessageObj)
-    this.setState({
-      newMessage: '',
-    })
   }
 
   render() {
@@ -106,17 +103,24 @@ class Chat extends React.Component {
         </TouchableWithoutFeedback>
         <TextInput
           style={[styles.input, {height: this.state.height}]}
-          autoFocus={false}
+          value={this.state.newMessage}
           multiline={true}
+          autoFocus={false}
+          enablesReturnKeyAutomatically={true}
+          returnKeyType="send"
+          placeholder="..."
+          blurOnSubmit={true}
+          onChangeText={newMessage => this.setState({newMessage})}
           onContentSizeChange={event => {
             this.setState({height: event.nativeEvent.contentSize.height})
           }}
-          placeholder="..."
-          value={this.state.newMessage}
-          onChangeText={newMessage => this.setState({newMessage})}
-          enablesReturnKeyAutomatically={true}
-          returnKeyType="send"
-          onSubmitEditing={this.sendMessage}
+          onSubmitEditing={() => {
+            this.sendMessage()
+            this.setState({
+              newMessage: '',
+              height: 16,
+            })
+          }}
         />
       </KeyboardAvoidingView>
     )
