@@ -21,6 +21,7 @@ class Chat extends React.Component {
       receiverUid: '',
       newMessage: '',
       rsa: {},
+      height: 24,
     }
   }
 
@@ -104,8 +105,12 @@ class Chat extends React.Component {
           </ScrollView>
         </TouchableWithoutFeedback>
         <TextInput
-          style={styles.TextInput}
+          style={[styles.input, {height: this.state.height}]}
           autoFocus={false}
+          multiline={true}
+          onContentSizeChange={event => {
+            this.setState({height: event.nativeEvent.contentSize.height})
+          }}
           placeholder="..."
           value={this.state.newMessage}
           onChangeText={newMessage => this.setState({newMessage})}
@@ -118,10 +123,19 @@ class Chat extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
+  },
+  input: {
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingLeft: 5,
+    paddingRight: 5,
+    fontSize: 24,
   },
 })
 
