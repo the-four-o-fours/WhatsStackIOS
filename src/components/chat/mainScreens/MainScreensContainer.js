@@ -6,6 +6,7 @@ import AllChats from './AllChats'
 import Contacts from './Contacts'
 import AccountInfo from './AccountInfo'
 import BottomNavBar from './BottomNavBar'
+import firebase from 'react-native-firebase'
 
 class MainScreensContainer extends React.Component {
   state = {
@@ -14,28 +15,48 @@ class MainScreensContainer extends React.Component {
     displayAccountInfo: false,
   }
 
-  componentDidMount() {
-    this.findChats()
+  async componentDidMount() {
+    const chats = await this.findChats()
+    this.setState({chats})
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (this.props.messages !== prevProps.messages) {
-      this.findChats()
+      const chats = await this.findChats()
+      this.setState({chats})
     }
   }
 
-  findChats = () => {
+  findChats = async () => {
     const friendIds = Object.keys(this.props.messages)
-    const chats = friendIds
-      .map(id => {
-        const chat = this.props.contactsHash[id]
+    const chats = await Promise.all(
+      friendIds.map(async id => {
+        let chat
+        if (this.props.contactsHash[id]) chat = this.props.contactsHash[id]
+        else chat = await this.findAnonymous(id)
         const messages = this.props.messages[id].conversation
         chat.seen = this.props.messages[id].seen
         chat.lastMessage = messages[messages.length - 1]
         return chat
+      }),
+    )
+    chats.sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
+    return chats
+  }
+
+  findAnonymous = async id => {
+    const user = {uid: id}
+    await firebase
+      .database()
+      .ref(`/Users/${id}`)
+      .once('value')
+      .then(snapshot => {
+        const data = snapshot.val()
+        user.displayName = data.displayName
+        user.publicKey = data.publicKey
+        user.phoneNumber = data.phoneNumber
       })
-      .sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
-    this.setState({chats})
+    return user
   }
 
   displayChats = () => {
