@@ -3,11 +3,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  ScrollView,
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native'
+
+import ReversedFlatList from 'react-native-reversed-flat-list'
+import ChatBubble from './ChatBubble'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 
@@ -85,8 +87,14 @@ class Chat extends React.Component {
     receiverRef.update(receiverMessageObj)
   }
 
+  extractKey = ({timestamp}) => timestamp
+  renderItem = ({item}) => {
+    return <ChatBubble style={styles.chatBubble} message={item} />
+  }
+
   render() {
     const receiverUid = this.state.receiverUid
+    console.log(this.props.messages[receiverUid])
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -99,17 +107,16 @@ class Chat extends React.Component {
             Keyboard.dismiss()
           }}
         >
-          <ScrollView>
-            {this.props.messages[receiverUid] ? (
-              this.props.messages[receiverUid].conversation.map(message => (
-                <Text key={message.timeStamp} style={{color: 'black'}}>
-                  {message.text}
-                </Text>
-              ))
-            ) : (
-              <Text>No Messages</Text>
-            )}
-          </ScrollView>
+          {this.props.messages[receiverUid] ? (
+            <ReversedFlatList
+              style={styles.chats}
+              data={this.props.messages[receiverUid].conversation}
+              renderItem={this.renderItem}
+              keyExtractor={this.keyExtractor}
+            />
+          ) : (
+            <Text>No Messages</Text>
+          )}
         </TouchableWithoutFeedback>
         <TextInput
           style={[styles.input, {height: this.state.height}]}
@@ -142,11 +149,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  chats: {
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
   input: {
     backgroundColor: 'white',
     borderColor: 'black',
-    borderRadius: 10,
-    borderWidth: 1,
+    borderTopWidth: 1,
     paddingLeft: 5,
     paddingRight: 5,
     fontSize: 24,
