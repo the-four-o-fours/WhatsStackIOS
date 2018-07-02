@@ -4,10 +4,17 @@ import {View, StyleSheet} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 class Contacts extends React.Component {
-  goToConvo = uid => {
-    this.props.navigation.navigate('Chat', {
-      uid,
-    })
+  goToConvoOrNewMessage = (uid, title) => {
+    if (this.props.messages[uid]) {
+      this.props.navigation.navigate('Chat', {
+        uid,
+        title,
+      })
+    } else {
+      this.props.navigation.navigate('NewChat')
+      //we should add something so it starts you on a draft of a message to that user
+      //once we actually finish the newchat component and understand how it will work
+    }
   }
 
   render() {
@@ -19,7 +26,9 @@ class Contacts extends React.Component {
               <ListItem
                 key={contact.uid}
                 title={`${contact.phoneName} (${contact.displayName})`}
-                onPress={() => this.goToConvo(contact.uid)}
+                onPress={() =>
+                  this.goToConvoOrNewMessage(contact.uid, contact.displayName)
+                }
               />
             ))}
           </View>
@@ -43,6 +52,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   user: state.user,
   contactsArr: state.contactsArr,
+  messages: state.messages,
 })
 
 export default connect(

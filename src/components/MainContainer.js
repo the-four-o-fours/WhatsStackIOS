@@ -47,7 +47,6 @@ class MainContainer extends Component {
     })
     userRef.on('child_changed', async snapshot => {
       try {
-        console.log(snapshot)
         if (snapshot.key === 'displayName') {
           this.props.getUser({[snapshot.key]: snapshot.val()})
         } else {
