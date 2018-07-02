@@ -92,9 +92,8 @@ class Chat extends React.Component {
           ) : (
             <Text>No Messages</Text>
           )}
-
           <TextInput
-            autoFocus={true}
+            autoFocus={false}
             placeholder="..."
             value={this.state.newMessage}
             onChangeText={newMessage => this.setState({newMessage})}
