@@ -37,18 +37,29 @@ class Chat extends React.Component {
     }
   }
 
+  //this whole mess is because RSA can only encrypt strings less than 117 characters long
+  splitterForRSA = string => {
+    const messageChunks = []
+    let tracker = 0
+    while (tracker < string.length) {
+      messageChunks.push(string.slice(tracker, tracker + 117))
+      tracker += 117
+    }
+    return messageChunks
+  }
+
   sendMessage = () => {
     Keyboard.dismiss()
-    const text = this.state.newMessage
+    const text = this.splitterForRSA(this.state.newMessage)
     const user = this.props.user
     const receiver = {
       uid: this.state.receiverUid,
       publicKey: this.props.navigation.getParam('publicKey'),
     }
     rsa.setPublicString(user.publicKey)
-    const senderCopy = rsa.encrypt(text)
+    const senderCopy = text.map(chunk => rsa.encrypt(chunk))
     rsa.setPublicString(receiver.publicKey)
-    const receiverCopy = rsa.encrypt(text)
+    const receiverCopy = text.map(chunk => rsa.encrypt(chunk))
     const senderMessage = {
       text: senderCopy,
       sender: true,
