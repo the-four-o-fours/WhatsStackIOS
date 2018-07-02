@@ -110,7 +110,7 @@ class MainScreensContainer extends React.Component {
         {this.state.displayContacts ? (
           <Contacts navigation={this.props.navigation} />
         ) : this.state.displayAccountInfo ? (
-          <AccountInfo user={this.props.user} />
+          <AccountInfo />
         ) : (
           <AllChats
             navigation={this.props.navigation}
