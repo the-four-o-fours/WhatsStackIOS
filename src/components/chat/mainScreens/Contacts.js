@@ -41,6 +41,7 @@ class Contacts extends React.Component {
         keyboardVerticalOffset={64}
       >
         <TextInput
+          style={styles.input}
           autoFocus={false}
           placeholder="Contact Name"
           value={this.state.searchFor}
@@ -63,6 +64,18 @@ class Contacts extends React.Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  input: {
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingLeft: 5,
+    paddingRight: 5,
+    fontSize: 24,
+  },
+})
 
 const mapStateToProps = state => ({
   user: state.user,
