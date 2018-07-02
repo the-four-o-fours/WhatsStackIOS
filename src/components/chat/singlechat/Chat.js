@@ -48,6 +48,7 @@ class Chat extends React.Component {
       uid: this.state.receiverUid,
       publicKey: this.props.navigation.getParam('publicKey'),
     }
+    console.log('recevier', receiver)
     const rsa = this.state.rsa
     rsa.setPublicString(user.publicKey)
     const senderCopy = rsa.encrypt(text)
@@ -148,7 +149,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.user,
-  contactsHash: state.contactsHash,
   messages: state.messages,
 })
 
