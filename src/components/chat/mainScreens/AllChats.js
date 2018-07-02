@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {FlatList, View, StyleSheet} from 'react-native'
+import {FlatList, View, Text} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import NewChatIcon from '../../../components/ui/NewChatIcon'
 
@@ -18,8 +18,6 @@ export default class AllChats extends Component {
     } else {
       trimmed = string
     }
-
-    console.log('trimmed', trimmed)
 
     return trimmed
   }
