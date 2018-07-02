@@ -32,7 +32,9 @@ class Chat extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.seenMessages(this.state.receiverUid)
+    if (this.props.messages[this.state.receiverUid]) {
+      this.props.seenMessages(this.state.receiverUid)
+    }
   }
 
   sendMessage = () => {
@@ -73,7 +75,7 @@ class Chat extends React.Component {
   }
 
   render() {
-    const receiverUid = this.props.navigation.getParam('uid', false)
+    const receiverUid = this.state.receiverUid
     return (
       <KeyboardAvoidingView
         enabled
@@ -81,13 +83,18 @@ class Chat extends React.Component {
         keyboardVerticalOffset={64}
       >
         <ScrollView>
-          {this.props.messages[receiverUid].conversation.map(message => (
-            <Text key={message.timeStamp} style={{color: 'black'}}>
-              {message.text}
-            </Text>
-          ))}
+          {this.props.messages[receiverUid] ? (
+            this.props.messages[receiverUid].conversation.map(message => (
+              <Text key={message.timeStamp} style={{color: 'black'}}>
+                {message.text}
+              </Text>
+            ))
+          ) : (
+            <Text>No Messages</Text>
+          )}
+
           <TextInput
-            autoFocus={false}
+            autoFocus={true}
             placeholder="..."
             value={this.state.newMessage}
             onChangeText={newMessage => this.setState({newMessage})}
