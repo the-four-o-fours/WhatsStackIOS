@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {
   View,
-  Button,
+  // Button,
   Text,
   TextInput,
   StyleSheet,
@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native'
 import firebase from 'react-native-firebase'
+
+import { Button } from 'react-native-elements'
 
 class Login extends Component {
   state = {
@@ -54,25 +56,38 @@ class Login extends Component {
     const {phoneNumber} = this.state
 
     return (
-      <KeyboardAvoidingView>
-        <View style={{padding: 25}}>
-          <Text style={styles.white}>Enter phone number:</Text>
+      // <KeyboardAvoidingView behavior="padding" style={styles.loginContainer}>
+        <View style={styles.loginContainer}>
+          <Text style={styles.whiteFont}>Enter phone number:</Text>
           <TextInput
             autoFocus
             style={{
-              height: 40,
+              // height: 40,
               marginTop: 15,
               marginBottom: 15,
               backgroundColor: '#fff',
+              borderWidth: 1.33,
+              borderStyle: 'solid',
+              fontSize: 15,
+              borderRadius: 25,
+              width: 200,
+              padding: 10,
+              // opacity: 0.70,
             }}
             onChangeText={value => this.setState({phoneNumber: value})}
             placeholder="Phone number ... "
             value={phoneNumber}
             color="black"
           />
-          <Button title="Sign In" color="white" onPress={this.signIn} />
+          <Button
+            title="Sign In"
+            // color="white"
+            buttonStyle={{borderRadius: 25,}}
+            onPress={this.signIn}
+            icon={{name: 'sign-in', type: 'font-awesome'}}
+          />
         </View>
-      </KeyboardAvoidingView>
+      // </KeyboardAvoidingView>
     )
   }
 
@@ -83,11 +98,8 @@ class Login extends Component {
 
     return (
       <Text
-        style={{
-          padding: 5,
-          backgroundColor: '#000',
-          color: '#fff',
-        }}
+        style={styles.whiteFont
+        }
       >
         {message}
       </Text>
@@ -104,7 +116,11 @@ class Login extends Component {
           padding: 25,
         }}
       >
-        <Text>Enter verification code below:</Text>
+        <Text
+        style={styles.whiteFont
+        }>Enter verification code below:
+          
+        </Text>
         <TextInput
           autoFocus
           style={{
@@ -118,7 +134,9 @@ class Login extends Component {
         />
         <Button
           title="Confirm Code"
-          color="#841584"
+          buttonStyle={{borderRadius: 25,}}
+          icon={{name: 'sign-in', type: 'hand-o-right'}}
+          // color="#841584"
           onPress={this.confirmCode}
         />
       </View>
@@ -128,9 +146,11 @@ class Login extends Component {
   render() {
     const {user, confirmResult} = this.state
     return (
-      <View style={styles.container}>
+      
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      {/* <View style={styles.container}> */}
         <Image
-          style={{flex: 1, width: '66%', justifyContent: 'center'}}
+          style={{flex: 1, width: '66%', padding: 22}}
           source={require('../../Public/whatsStackWhiteLogo1.png')}
           resizeMode="contain"
         />
@@ -139,7 +159,9 @@ class Login extends Component {
         {this.renderMessage()}
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
-      </View>
+      {/* </View> */}
+      </KeyboardAvoidingView>
+      
     )
   }
 }
@@ -164,9 +186,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 25,
   },
-  white: {
+  whiteFont: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 22,
+    fontSize: 16,
+    // justifyContent: 'center',
   },
 })
