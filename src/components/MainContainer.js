@@ -48,9 +48,9 @@ class MainContainer extends Component {
       ) {
         const convoObj = {}
         convoObj[snapshot.key] = {}
-        convoObj[snapshot.key].conversation = await this.convertToArrAndDecrypt(
-          snapshot.val(),
-        )
+        convoObj[
+          snapshot.key
+        ].conversation = await this.JoinDecryptAndConvertToArr(snapshot.val())
         convoObj[snapshot.key].seen = true
         this.props.getMessages(convoObj)
       } else {
@@ -73,7 +73,9 @@ class MainContainer extends Component {
         this.props.getUser({[snapshot.key]: snapshot.val()})
       } else {
         //listening for a new message being added to an existing conversation
-        const conversation = await this.convertToArrAndDecrypt(snapshot.val())
+        const conversation = await this.JoinDecryptAndConvertToArr(
+          snapshot.val(),
+        )
         const chatId = snapshot.key
         this.props.getNewMessage(conversation, chatId)
       }
@@ -82,19 +84,17 @@ class MainContainer extends Component {
     }
   }
 
-  convertToArrAndDecrypt = async obj => {
-    let privateKey = ''
+  JoinDecryptAndConvertToArr = async conversation => {
+    console.log(conversation)
     try {
-      privateKey = await AsyncStorage.getItem('privateKey')
-      const arr = []
+      const privateKey = await AsyncStorage.getItem('privateKey')
       rsa.setPrivateString(privateKey)
-      for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          const message = {...obj[key], timeStamp: key}
-          message.text = rsa.decrypt(message.text)
-          arr.push(message)
-        }
-      }
+      const arr = []
+      Object.keys(conversation).forEach(key => {
+        const message = {...conversation[key], timeStamp: key}
+        message.text = message.text.map(chunk => rsa.decrypt(chunk)).join('')
+        arr.push(message)
+      })
       arr.sort((a, b) => a.timeStamp - b.timeStamp)
       return arr
     } catch (error) {
