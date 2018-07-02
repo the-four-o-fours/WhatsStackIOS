@@ -16,13 +16,12 @@ class AccountInfo extends React.Component {
   state = {
     change: false,
     displayName: '',
-    ref: null,
   }
 
-  componentDidMount() {
-    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
-    this.setState({ref})
-  }
+  // componentDidMount() {
+  //   const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
+  //   this.setState({ref})
+  // }
 
   signOut = () => {
     firebase.auth().signOut()
@@ -40,14 +39,33 @@ class AccountInfo extends React.Component {
     this.setState({change: true})
   }
 
+  setAvatar = async () => {
+    const url = await this.uploadAvatar()
+    console.log(url)
+    const avatarRef = firebase
+      .database()
+      .ref(`/Users/${this.props.user.uid}/img`)
+    avatarRef.set(url)
+  }
+
   uploadAvatar = () => {
-    ImagePicker.openPicker({
-      multiple: false,
-    }).then(images => {
-      console.log(images)
-      this.state.ref
-        .putFile(images.sourceURL)
-        .then(_ => console.log('uploaded?'))
+    const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
+    return new Promise((resolve, reject) => {
+      ImagePicker.openPicker({
+        multiple: false,
+        mediaType: 'photo',
+      }).then(images => {
+        const metadata = {
+          contentType: images.mime,
+        }
+        ref.putFile(images.sourceURL, metadata).then(res => {
+          if (res.state === 'success') {
+            resolve(res.downloadURL)
+          } else {
+            return reject(res)
+          }
+        })
+      })
     })
   }
 
@@ -82,7 +100,7 @@ class AccountInfo extends React.Component {
             <Button
               title="Upload avatar"
               color="green"
-              onPress={this.uploadAvatar}
+              onPress={this.setAvatar}
             />
           </View>
         </ScrollView>

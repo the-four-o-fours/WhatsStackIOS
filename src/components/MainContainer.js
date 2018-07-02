@@ -43,7 +43,8 @@ class MainContainer extends Component {
         snapshot.key !== 'displayName' &&
         snapshot.key !== 'phoneNumber' &&
         snapshot.key !== 'publicKey' &&
-        snapshot.key !== 'uid'
+        snapshot.key !== 'uid' &&
+        snapshot.key !== 'img'
       ) {
         const convoObj = {}
         convoObj[snapshot.key] = {}
