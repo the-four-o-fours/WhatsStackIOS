@@ -21,7 +21,6 @@ class AccountInfo extends React.Component {
 
   componentDidMount() {
     const ref = firebase.storage().ref(`/Users/${this.props.user.uid}/avatar`)
-    console.log(ref)
     this.setState({ref})
   }
 
