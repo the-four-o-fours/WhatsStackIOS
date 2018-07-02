@@ -1,25 +1,25 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {View, StyleSheet, TextInput, KeyboardAvoidingView, Text} from 'react-native'
+import {View, FlatList, StyleSheet, TextInput, KeyboardAvoidingView} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 class Contacts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      matchingContacts: []
+      matchingContacts: this.props.contactsArr
     }
   }
 
-  componentDidMount() {
-    this.setState({matchingContacts: this.props.contactsArr})
-  }
-
-  goToConvo = (uid, title) => {
+  goToConvo = item => {
     this
       .props
       .navigation
-      .navigate('Chat', {uid, title})
+      .navigate('Chat', {
+        uid: item.uid,
+        title: item.title,
+        publicKey: item.publicKey
+      })
   }
 
   searchFor = contactName => {
@@ -30,29 +30,38 @@ class Contacts extends React.Component {
     this.setState({matchingContacts})
   }
 
+  extractKey = ({uid}) => uid
+  renderItem = ({item}) => {
+    return (<ListItem
+      roundAvatar
+      title={`${item.phoneName} (${item.displayName})`}
+      avatar={{
+      uri: item.img
+    }}
+      onPress={() => this.goToConvo(item)}
+      onLongPress={() => {
+      console.log('Long press show drawer')
+    }}/>)
+  }
+
   render() {
     return (
+
       <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset={64}>
-        <TextInput
-          style={styles.input}
-          autoFocus={false}
-          placeholder="Contact Name"
-          value={this.state.searchFor}
-          onChangeText={contactName => this.searchFor(contactName)}/> {this.props.contactsArr.length
-          ? (
-            <View>
-              {this
-                .state
-                .matchingContacts
-                .map(contact => (<ListItem
-                  key={contact.uid}
-                  title={`${contact.phoneName} (${contact.displayName})`}
-                  onPress={() => this.goToConvo(contact.uid, contact.displayName)}/>))}
-            </View>
-          )
-          : (
-            <Text>No Contacts</Text>
-          )}
+        <View style={{
+          padding: 5
+        }}>
+          <TextInput
+            style={styles.input}
+            autoFocus={false}
+            placeholder="Contact Name"
+            value={this.state.searchFor}
+            onChangeText={contactName => this.searchFor(contactName)}/>
+        </View>
+        <FlatList
+          data={this.state.matchingContacts}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}/>
       </KeyboardAvoidingView>
     )
   }
@@ -64,12 +73,11 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 10,
     borderWidth: 1,
-    paddingLeft: 5,
-    paddingRight: 5,
+    padding: 5,
     fontSize: 24
   }
 })
 
-const mapStateToProps = state => ({user: state.user, contactsArr: state.contactsArr, messages: state.messages})
+const mapStateToProps = state => ({contactsArr: state.contactsArr})
 
 export default connect(mapStateToProps, null,)(Contacts)
