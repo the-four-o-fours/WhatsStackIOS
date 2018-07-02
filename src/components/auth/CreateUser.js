@@ -1,7 +1,12 @@
 import React, {Component} from 'react'
-import {StyleSheet, Text, AsyncStorage, View, TextInput, Image, KeyboardAvoidingView,} from 'react-native'
-import {Container, Form, Item, Input, } from 'native-base'
-import { Button } from 'react-native-elements'
+import {
+  StyleSheet,
+  AsyncStorage,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+} from 'react-native'
+import {Button} from 'react-native-elements'
 import firebase from 'react-native-firebase'
 const RSAKey = require('react-native-rsa')
 
@@ -28,50 +33,52 @@ class CreateUser extends Component {
   }
 
   addUserToDB = async () => {
-    const firebaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
-    const user = await firebaseUser.once('value')
-    const exists = await user.exists()
-    if (!exists) {
-      const [privateKey, publicKey] = this.generateRSAKey()
-      const user = {...this.state, publicKey}
-      AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
-      firebaseUser.set(user)
+    try {
+      const firebaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
+      const user = await firebaseUser.once('value')
+      const exists = await user.exists()
+      if (!exists) {
+        const [privateKey, publicKey] = this.generateRSAKey()
+        const user = {...this.state, publicKey}
+        AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
+        firebaseUser.set(user)
+      }
+      this.props.userCreated()
+    } catch (error) {
+      console.log(error)
     }
-    this.props.userCreated()
   }
 
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-      {/* <View style={styles.container}> */}
+        {/* <View style={styles.container}> */}
         <Image
           style={{flex: 1, width: '66%', padding: 22}}
           source={require('../../Public/allTeallogo.png')}
           resizeMode="contain"
         />
-            <TextInput
-            autoFocus
-            style={{
-              height: 40,
-              marginTop: 15,
-              marginBottom: 15,
-            }}
-              value={this.state.displayName}
-              onChangeText={displayName => this.setState({displayName})}
-              placeholder="Display Name"
-              placeholderTextColor= '#808080'
-              
-            />
-          
-          <Button
-            title="Choose Display Name"
-            // color="white"
-            backgroundColor= '#00B183'
-            buttonStyle={{borderRadius: 25,}}
-            onPress={this.addUserToDB}
-            icon={{name: 'hand-o-right', type: 'font-awesome'}}
-          />
-        
+        <TextInput
+          autoFocus
+          style={{
+            height: 40,
+            marginTop: 15,
+            marginBottom: 15,
+          }}
+          value={this.state.displayName}
+          onChangeText={displayName => this.setState({displayName})}
+          placeholder="Display Name"
+          placeholderTextColor="#808080"
+        />
+
+        <Button
+          title="Choose Display Name"
+          // color="white"
+          backgroundColor="#00B183"
+          buttonStyle={{borderRadius: 25}}
+          onPress={this.addUserToDB}
+          icon={{name: 'hand-o-right', type: 'font-awesome'}}
+        />
       </KeyboardAvoidingView>
     )
   }

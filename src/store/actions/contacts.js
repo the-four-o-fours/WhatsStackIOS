@@ -29,21 +29,25 @@ const getAllContacts = () => {
 }
 
 const getAllUsers = async () => {
-  const firebaseUsers = []
-  const snapshot = await firebase
-    .database()
-    .ref(`/Users/`)
-    .once('value')
-  snapshot.forEach(childSnap => {
-    const childData = childSnap.val()
-    firebaseUsers.push({
-      displayName: childData.displayName,
-      phoneNumber: childData.phoneNumber,
-      uid: childData.uid,
-      publicKey: childData.publicKey,
+  try {
+    const firebaseUsers = []
+    const snapshot = await firebase
+      .database()
+      .ref(`/Users/`)
+      .once('value')
+    snapshot.forEach(childSnap => {
+      const childData = childSnap.val()
+      firebaseUsers.push({
+        displayName: childData.displayName,
+        phoneNumber: childData.phoneNumber,
+        uid: childData.uid,
+        publicKey: childData.publicKey,
+      })
     })
-  })
-  return firebaseUsers
+    return firebaseUsers
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const findOverlap = (firebaseUsers, contactsObj) => {
@@ -60,9 +64,13 @@ const findOverlap = (firebaseUsers, contactsObj) => {
 }
 
 export const populateContacts = () => async dispatch => {
-  const firebaseUsers = await getAllUsers()
-  const contactsObj = await getAllContacts()
-  const [contactsArr, contactsHash] = findOverlap(firebaseUsers, contactsObj)
-  dispatch(getContacts(contactsArr))
-  dispatch(getContactsHash(contactsHash))
+  try {
+    const firebaseUsers = await getAllUsers()
+    const contactsObj = await getAllContacts()
+    const [contactsArr, contactsHash] = findOverlap(firebaseUsers, contactsObj)
+    dispatch(getContacts(contactsArr))
+    dispatch(getContactsHash(contactsHash))
+  } catch (error) {
+    console.log(error)
+  }
 }

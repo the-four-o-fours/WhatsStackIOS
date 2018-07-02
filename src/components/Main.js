@@ -20,19 +20,23 @@ class Main extends Component {
 
   componentDidMount() {
     this.unsubscribe = firebase.auth().onAuthStateChanged(async user => {
-      if (user) {
-        const isInDatabase = await this.userInDatabase(user.uid)
-        this.setState({
-          isLoggedIn: true,
-          isInDatabase,
-          uid: user.uid,
-          loading: false,
-        })
-      } else {
-        this.setState({
-          isLoggedIn: false,
-          loading: false,
-        })
+      try {
+        if (user) {
+          const isInDatabase = await this.userInDatabase(user.uid)
+          this.setState({
+            isLoggedIn: true,
+            isInDatabase,
+            uid: user.uid,
+            loading: false,
+          })
+        } else {
+          this.setState({
+            isLoggedIn: false,
+            loading: false,
+          })
+        }
+      } catch (error) {
+        console.log(error)
       }
     })
   }
@@ -42,10 +46,14 @@ class Main extends Component {
   }
 
   userInDatabase = async uid => {
-    const firebaseUser = firebase.database().ref(`/Users/${uid}`)
-    const user = await firebaseUser.once('value')
-    const exists = await user.exists()
-    return exists
+    try {
+      const firebaseUser = firebase.database().ref(`/Users/${uid}`)
+      const user = await firebaseUser.once('value')
+      const exists = await user.exists()
+      return exists
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   userCreated = () => {

@@ -26,24 +26,28 @@ class MainContainer extends Component {
     const userRef = firebase.database().ref(`/Users/${uid}`)
     userRef.off()
     userRef.on('child_added', async snapshot => {
-      if (
-        snapshot.key !== 'displayName' &&
-        snapshot.key !== 'phoneNumber' &&
-        snapshot.key !== 'publicKey' &&
-        snapshot.key !== 'uid'
-      ) {
-        const messageField = {}
-        messageField[snapshot.key] = {}
-        const conversationObj = messageField[snapshot.key]
-        conversationObj.conversation = await this.convertToArrAndDecrypt(
-          snapshot.val(),
-        )
-        conversationObj.seen = true
-        this.props.getMessages(messageField)
-      } else {
-        const userField = {}
-        userField[snapshot.key] = snapshot.val()
-        this.props.getUser(userField)
+      try {
+        if (
+          snapshot.key !== 'displayName' &&
+          snapshot.key !== 'phoneNumber' &&
+          snapshot.key !== 'publicKey' &&
+          snapshot.key !== 'uid'
+        ) {
+          const messageField = {}
+          messageField[snapshot.key] = {}
+          const conversationObj = messageField[snapshot.key]
+          conversationObj.conversation = await this.convertToArrAndDecrypt(
+            snapshot.val(),
+          )
+          conversationObj.seen = true
+          this.props.getMessages(messageField)
+        } else {
+          const userField = {}
+          userField[snapshot.key] = snapshot.val()
+          this.props.getUser(userField)
+        }
+      } catch (error) {
+        console.log(error)
       }
     })
     userRef.on('child_changed', async snapshot => {
