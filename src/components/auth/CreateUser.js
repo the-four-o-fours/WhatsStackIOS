@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {StyleSheet, Text, AsyncStorage} from 'react-native'
-import {Container, Button, Form, Item, Input} from 'native-base'
+import {StyleSheet, Text, AsyncStorage, View, TextInput, Image, KeyboardAvoidingView,} from 'react-native'
+import {Container, Form, Item, Input, } from 'native-base'
+import { Button } from 'react-native-elements'
 import firebase from 'react-native-firebase'
 const RSAKey = require('react-native-rsa')
 
@@ -41,36 +42,70 @@ class CreateUser extends Component {
 
   render() {
     return (
-      <Container style={styles.container}>
-        <Form>
-          <Item>
-            <Input
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      {/* <View style={styles.container}> */}
+        <Image
+          style={{flex: 1, width: '66%', padding: 22}}
+          source={require('../../Public/allTeallogo.png')}
+          resizeMode="contain"
+        />
+            <TextInput
+            autoFocus
+            style={{
+              height: 40,
+              marginTop: 15,
+              marginBottom: 15,
+            }}
               value={this.state.displayName}
               onChangeText={displayName => this.setState({displayName})}
               placeholder="Display Name"
+              placeholderTextColor= '#808080'
+              
             />
-          </Item>
-          <Button full rounded primary success onPress={this.addUserToDB}>
-            <Text
-              style={{
-                color: 'white',
-              }}
-            >
-              Submit
-            </Text>
-          </Button>
-        </Form>
-      </Container>
+          
+          <Button
+            title="Choose Display Name"
+            // color="white"
+            backgroundColor= '#00B183'
+            buttonStyle={{borderRadius: 25,}}
+            onPress={this.addUserToDB}
+            icon={{name: 'hand-o-right', type: 'font-awesome'}}
+          />
+        
+      </KeyboardAvoidingView>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: '#fff',
+  //   justifyContent: 'center',
+  //   padding: 10,
+  // },
   container: {
     flex: 1,
+    padding: 0,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    padding: 10,
+    alignItems: 'center',
+  },
+  formContainer: {
+    flex: 1,
+    backgroundColor: '#2c3e50',
+  },
+  loginContainer: {
+    alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 25,
+  },
+  whiteFont: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    // justifyContent: 'center',
   },
 })
 
