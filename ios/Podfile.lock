@@ -136,6 +136,8 @@ PODS:
   - nanopb/encode (0.3.8)
   - Protobuf (3.5.0)
   - QBImagePickerController (3.4.0)
+  - React (0.55.4):
+    - React/Core (= 0.55.4)
   - React/Core (0.55.4):
     - yoga (= 0.55.4.React)
   - React/fishhook (0.55.4)
@@ -170,6 +172,8 @@ PODS:
     - QBImagePickerController
     - React/Core
     - RSKImageCropper
+  - RNVectorIcons (4.6.0):
+    - React
   - RSKImageCropper (2.1.0)
   - yoga (0.55.4.React)
 
@@ -199,6 +203,7 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
 SPEC REPOS:
@@ -240,6 +245,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/rn-fetch-blob"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
@@ -275,9 +282,10 @@ SPEC CHECKSUMS:
   React: aa2040dbb6f317b95314968021bd2888816e03d5
   rn-fetch-blob: 76a8f798dae965bbcd146a2438f2e1d381c91ae3
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
+  RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   RSKImageCropper: 0d0c6d8525a2381f03fde32a47c6703817a2feed
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 3861e71601a2eac3d0ce674252f1ba4e36190488
+PODFILE CHECKSUM: c66b5eb4f0af5ae8ee3a6e8fb77315b62ecd033f
 
 COCOAPODS: 1.5.3

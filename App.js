@@ -11,8 +11,8 @@ const App = () => {
   // persistor.purge()
   return (
     <Provider store={store}>
-      <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
-        <Main />
+      <PersistGate loading={< ActivityIndicator />} persistor={persistor}>
+        <Main/>
       </PersistGate>
     </Provider>
   )
