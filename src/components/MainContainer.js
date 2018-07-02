@@ -94,11 +94,6 @@ class MainContainer extends Component {
         message.text = message.text.map(chunk => rsa.decrypt(chunk)).join('')
         arr.push(message)
       })
-      // for (let key in obj) {
-      //   if (obj.hasOwnProperty(key)) {
-
-      //   }
-      // }
       arr.sort((a, b) => a.timeStamp - b.timeStamp)
       return arr
     } catch (error) {
