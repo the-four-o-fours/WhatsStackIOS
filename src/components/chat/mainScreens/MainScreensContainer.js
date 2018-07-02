@@ -41,8 +41,11 @@ class MainScreensContainer extends React.Component {
       friendIds.map(async id => {
         try {
           let chat
-          if (this.props.contactsHash[id]) chat = this.props.contactsHash[id]
-          else chat = await this.findAnonymous(id)
+          if (this.props.contactsHash[id]) {
+            chat = this.props.contactsHash[id]
+          } else {
+            chat = await this.findAnonymous(id)
+          }
           const messages = this.props.messages[id].conversation
           chat.seen = this.props.messages[id].seen
           chat.lastMessage = messages[messages.length - 1]

@@ -10,10 +10,11 @@ const styles = StyleSheet.create({
 })
 
 export default class AllChats extends Component {
-  goToConvo = (uid, title) => {
+  goToConvo = (uid, title, publicKey) => {
     this.props.navigation.navigate('Chat', {
       uid,
       title,
+      publicKey,
     })
   }
 
@@ -29,7 +30,9 @@ export default class AllChats extends Component {
           title={`${item.displayName}`}
           subtitle={lastSeen}
           avatar={{uri: item.img}}
-          onPress={() => this.goToConvo(item.uid, item.displayName)}
+          onPress={() =>
+            this.goToConvo(item.uid, item.displayName, item.publicKey)
+          }
           onLongPress={() => {
             console.log('Long press show drawer')
           }}
