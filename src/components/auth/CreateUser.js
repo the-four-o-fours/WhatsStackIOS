@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import {Button} from 'react-native-elements'
 import firebase from 'react-native-firebase'
-const RSAKey = require('react-native-rsa')
+import rsa from '../rsa'
 
 class CreateUser extends Component {
   state = {
@@ -23,7 +23,6 @@ class CreateUser extends Component {
   }
 
   generateRSAKey = () => {
-    const rsa = new RSAKey()
     const bits = 1024
     const exponent = '10001' // must be a string
     rsa.generate(bits, exponent)

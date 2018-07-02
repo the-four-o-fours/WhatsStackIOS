@@ -10,8 +10,8 @@ import {
 } from 'react-native'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
-const RSAKey = require('react-native-rsa')
 
+import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
@@ -20,17 +20,14 @@ class Chat extends React.Component {
     this.state = {
       receiverUid: '',
       newMessage: '',
-      rsa: {},
       height: 24,
     }
   }
 
   componentDidMount() {
     const receiverUid = this.props.navigation.getParam('uid', false)
-    const rsa = new RSAKey()
     this.setState({
       receiverUid,
-      rsa,
     })
   }
 
@@ -48,8 +45,6 @@ class Chat extends React.Component {
       uid: this.state.receiverUid,
       publicKey: this.props.navigation.getParam('publicKey'),
     }
-    console.log('recevier', receiver)
-    const rsa = this.state.rsa
     rsa.setPublicString(user.publicKey)
     const senderCopy = rsa.encrypt(text)
     rsa.setPublicString(receiver.publicKey)

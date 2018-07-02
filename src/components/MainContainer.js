@@ -3,7 +3,7 @@ import {AsyncStorage} from 'react-native'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 import MainNavigator from './MainNavigator'
-const RSAKey = require('react-native-rsa')
+import rsa from './rsa'
 
 import {
   getNewMessage,
@@ -86,7 +86,6 @@ class MainContainer extends Component {
     try {
       privateKey = await AsyncStorage.getItem('privateKey')
       const arr = []
-      const rsa = new RSAKey()
       rsa.setPrivateString(privateKey)
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
