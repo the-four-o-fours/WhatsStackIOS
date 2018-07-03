@@ -120,15 +120,31 @@ class AccountInfo extends React.Component {
             </TouchableWithoutFeedback>
             {this.state.change
               ? (
-                <View>
-                  <TextInput
-                    style={styles.changeName}
-                    value={this.state.displayName}
-                    maxLength={30}
-                    autoFocus={true}
-                    placeholder='Change your display name'
-                    onChangeText={displayName => this.setState({displayName})}
-                    onSubmitEditing={this.changeDisplayName}/>
+                <View style={styles.accountButtons}>
+                  <View>
+                    <TextInput
+                      style={styles.changeName}
+                      value={this.state.displayName}
+                      maxLength={30}
+                      autoFocus={true}
+                      placeholder='Change your display name'
+                      onChangeText={displayName => this.setState({displayName})}
+                      onSubmitEditing={this.changeDisplayName}/>
+                  </View>
+                  <View>
+                    <Button
+                      title='Save'
+                      onPress={this.changeDisplayName}
+                      textStyle={{
+                      fontSize: 14
+                    }}
+                      buttonStyle={{
+                      backgroundColor: "#20AAB2",
+                      borderRadius: 8,
+                      padding: 5,
+                      marginTop: 20
+                    }}/>
+                  </View>
                   <TouchableOpacity
                     onPress={this.changeDisplayName}
                     disabled={!this.state.displayName.length}/>
@@ -226,11 +242,18 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start'
   },
+  accountButtons: {
+    flex: 1,
+    flexDirection: 'row'
+  },
   changeName: {
     borderBottomColor: "#aaa",
     borderBottomWidth: 1,
     fontSize: 20,
-    marginTop: 10
+    marginTop: 20,
+    textAlign: 'center',
+    alignItems: 'flex-end',
+    width: 210
   }
 })
 
