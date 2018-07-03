@@ -58,17 +58,15 @@ const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
   firebaseUsers.forEach(user => {
     if (contactsObj[user.phoneNumber]) {
       user.phoneName = contactsObj[user.phoneNumber]
-      if (prevContacts[user.uid].url !== users.url) {
-        console.log('prev contacts', prevContacts[user.uid].url)
-      } else {
-        user.img = prevContacts[user.uid].img
-      }
+      // if (prevContacts[user.uid].url !== users.url) {
+      //   console.log('prev contacts', prevContacts[user.uid].url)
+      // } else {
+      //   user.img = prevContacts[user.uid].img
+      // }
       users.push(user)
       contactsHash[user.uid] = user
     }
   })
-  console.log('users', users)
-  console.log('contactsHash', contactsHash)
   return [users, contactsHash]
 }
 
