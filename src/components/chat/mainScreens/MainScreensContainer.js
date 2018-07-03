@@ -74,6 +74,7 @@ class MainScreensContainer extends React.Component {
 
   findAnonymous = async id => {
     try {
+      const defaultImg = this.props.user.default
       const user = {
         uid: id,
       }
@@ -86,7 +87,7 @@ class MainScreensContainer extends React.Component {
           user.displayName = data.displayName
           user.publicKey = data.publicKey
           user.phoneNumber = data.phoneNumber
-          user.img = data.img
+          user.img = defaultImg
         })
       return user
     } catch (error) {
