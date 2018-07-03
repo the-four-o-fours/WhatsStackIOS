@@ -13,6 +13,7 @@ import RNFetchBlob from 'rn-fetch-blob'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 import {getUser} from '../../../store/actions'
+import download from '../../download'
 
 class AccountInfo extends React.Component {
   state = {
@@ -40,7 +41,11 @@ class AccountInfo extends React.Component {
 
   setAvatar = async() => {
     const cloudUrl = await this.uploadAvatar()
-    const localUrl = await this.downloadAvatar(cloudUrl)
+    const localUrl = await download(cloudUrl)
+    const userImageRef = firebase
+      .database()
+      .ref(`/Users/${this.props.user.uid}/img`)
+    userImageRef.set(cloudUrl)
     this
       .props
       .getUser({img: localUrl})
@@ -105,7 +110,7 @@ class AccountInfo extends React.Component {
         <View style={styles.accountActions}>
           <View>
             <TouchableWithoutFeedback style={styles.accountContainer}>
-              <View style={styles.accountName}>
+              <View>
                 {!this.state.change
                   ? <Text
                       h4
