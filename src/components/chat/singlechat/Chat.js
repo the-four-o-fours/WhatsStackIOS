@@ -28,9 +28,7 @@ class Chat extends React.Component {
 
   componentDidMount() {
     const receiverUid = this.props.navigation.getParam('uid', false)
-    this.setState({
-      receiverUid,
-    })
+    this.setState({receiverUid})
   }
 
   componentWillUnmount() {
@@ -39,7 +37,8 @@ class Chat extends React.Component {
     }
   }
 
-  //this whole mess is because RSA can only encrypt strings less than 117 characters long
+  // this whole mess is because RSA can only encrypt strings less than 117
+  // characters long
   splitterForRSA = string => {
     const messageChunks = []
     let tracker = 0
@@ -119,7 +118,12 @@ class Chat extends React.Component {
           )}
         </TouchableWithoutFeedback>
         <TextInput
-          style={[styles.input, {height: this.state.height}]}
+          style={[
+            styles.input,
+            {
+              height: this.state.height,
+            },
+          ]}
           value={this.state.newMessage}
           multiline={true}
           autoFocus={false}
@@ -133,10 +137,7 @@ class Chat extends React.Component {
           }}
           onSubmitEditing={() => {
             this.sendMessage()
-            this.setState({
-              newMessage: '',
-              height: 16,
-            })
+            this.setState({newMessage: '', height: 16})
           }}
         />
       </KeyboardAvoidingView>
@@ -163,10 +164,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = state => ({
-  user: state.user,
-  messages: state.messages,
-})
+const mapStateToProps = state => ({user: state.user, messages: state.messages})
 
 const mapDispatchToProps = dispatch => ({
   seenMessages: chatId => dispatch(seenMessages(chatId)),

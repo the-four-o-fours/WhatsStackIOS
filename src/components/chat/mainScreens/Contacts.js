@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {
+  View,
   FlatList,
   StyleSheet,
   TextInput,
@@ -28,9 +29,7 @@ class Contacts extends React.Component {
     const matchingContacts = this.props.contactsArr.filter(contact =>
       contact.displayName.toLowerCase().startsWith(contactName.toLowerCase()),
     )
-    this.setState({
-      matchingContacts,
-    })
+    this.setState({matchingContacts})
   }
 
   extractKey = ({uid}) => uid
@@ -39,7 +38,9 @@ class Contacts extends React.Component {
       <ListItem
         roundAvatar
         title={`${item.phoneName} (${item.displayName})`}
-        avatar={{uri: item.img}}
+        avatar={{
+          uri: item.img,
+        }}
         onPress={() => this.goToConvo(item)}
         onLongPress={() => {
           console.log('Long press show drawer')
@@ -55,13 +56,19 @@ class Contacts extends React.Component {
         behavior="padding"
         keyboardVerticalOffset={64}
       >
-        <TextInput
-          style={styles.input}
-          autoFocus={false}
-          placeholder="Contact Name"
-          value={this.state.searchFor}
-          onChangeText={contactName => this.searchFor(contactName)}
-        />
+        <View
+          style={{
+            padding: 5,
+          }}
+        >
+          <TextInput
+            style={styles.input}
+            autoFocus={false}
+            placeholder="Contact Name"
+            value={this.state.searchFor}
+            onChangeText={contactName => this.searchFor(contactName)}
+          />
+        </View>
         <FlatList
           data={this.state.matchingContacts}
           renderItem={this.renderItem}
@@ -78,15 +85,12 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 10,
     borderWidth: 1,
-    paddingLeft: 5,
-    paddingRight: 5,
+    padding: 5,
     fontSize: 24,
   },
 })
 
-const mapStateToProps = state => ({
-  contactsArr: state.contactsArr,
-})
+const mapStateToProps = state => ({contactsArr: state.contactsArr})
 
 export default connect(
   mapStateToProps,
