@@ -8,8 +8,8 @@ const ChatBubble = props => {
     return (
       <View style={[styles.container, styles.senderBubble]}>
         <View style={[styles.bubble, styles.senderInnerBubble]}>
-          <Text style={styles.text}>{props.message.text}</Text>
-          <Text>{`\n${timeStamp}`}</Text>
+          <Text style={styles.messageText}>{props.message.text}</Text>
+          <Text style={styles.timeStampText}>{`\n${timeStamp}`}</Text>
         </View>
         <View style={[styles.triangle, styles.senderTriangle]} />
       </View>
@@ -52,8 +52,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#8BD08B',
     borderBottomLeftRadius: 0,
   },
-  text: {
+  messageText: {
     fontSize: 16,
+  },
+  timeStampText: {
+    fontSize: 12,
+    color: 'grey',
   },
   triangle: {
     width: 0,
