@@ -40,6 +40,10 @@ class AccountInfo extends React.Component {
   setAvatar = async () => {
     const cloudUrl = await this.uploadAvatar()
     const localUrl = await download(cloudUrl)
+    const userImageRef = firebase
+      .database()
+      .ref(`/Users/${this.props.user.uid}/img`)
+    userImageRef.set(cloudUrl)
     this.props.getUser({img: localUrl})
   }
 

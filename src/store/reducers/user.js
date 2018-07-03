@@ -1,6 +1,6 @@
 import {GOT_USER} from '../actions'
 
-const initialState = {}
+const initialState = {img: 'default'}
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
