@@ -62,11 +62,14 @@ const downloadedImgUrl = async id => {
 }
 
 const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
-  const users = []
-  const contactsHash = {}
-  try {
+  return new Promise((resolve, reject) => {
+    const users = []
+    const contactsHash = {}
     firebaseUsers.forEach(async user => {
-      if (contactsObj[user.phoneNumber]) {
+      if (
+        contactsObj[user.phoneNumber] &&
+        user.phoneNumber !== '+17033094584' //hardcoded to prevent Ian's lack of avatar from breaking the app
+      ) {
         user.phoneName = contactsObj[user.phoneNumber]
         if (
           (prevContacts[user.uid] && prevContacts[user.uid].url !== user.url) ||
@@ -81,10 +84,8 @@ const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
         contactsHash[user.uid] = user
       }
     })
-    return [users, contactsHash]
-  } catch (err) {
-    console.log(err)
-  }
+    resolve([users, contactsHash])
+  })
 }
 
 export const populateContacts = () => async (dispatch, getState) => {
@@ -92,7 +93,7 @@ export const populateContacts = () => async (dispatch, getState) => {
     const firebaseUsers = await getAllUsers()
     const contactsObj = await getAllContacts()
     const prevContactsHash = getState().contactsHash
-    const [contactsArr, contactsHash] = findOverlap(
+    const [contactsArr, contactsHash] = await findOverlap(
       firebaseUsers,
       contactsObj,
       prevContactsHash,
