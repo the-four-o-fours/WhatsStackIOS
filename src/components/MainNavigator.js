@@ -6,7 +6,10 @@ import Chat from './chat/singlechat/Chat'
 const MainNavigator = createStackNavigator({
   Main: {
     screen: MainScreensContainer,
-    navigationOptions: ({navigation}) => ({title: 'WhatsStack', headerBackTitle: null})
+    navigationOptions: ({navigation}) => ({
+      title: 'WhatsStack',
+      headerBackTitle: null,
+    }),
   },
   Chat: {
     screen: Chat,
@@ -14,11 +17,11 @@ const MainNavigator = createStackNavigator({
       title: navigation.state.params.title,
       headerBackTitle: null,
       headerStyle: {
-        backgroundColor: '20AAB2'
+        backgroundColor: '#20AAB2',
       },
-      headerTintColor: '#fff'
-    })
-  }
+      headerTintColor: '#fff',
+    }),
+  },
 })
 
 export default MainNavigator
