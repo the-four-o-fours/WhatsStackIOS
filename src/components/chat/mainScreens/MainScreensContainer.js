@@ -9,12 +9,26 @@ import BottomNavBar from './BottomNavBar'
 import firebase from 'react-native-firebase'
 
 class MainScreensContainer extends React.Component {
+  static navigationOptions = ({navigation}) => ({
+    headerTitle: navigation.getParam('title', 'WhatsStack'),
+  })
+
   state = {
     chats: [],
-    screen: 'chats',
+    screen: 'AllChats',
+    reset: false,
+  }
+
+  setTitle = () => {
+    const {setParams} = this.props.navigation
+    if (this.state.screen === 'AllChats') setParams({title: 'WhatsStack'})
+    else if (this.state.screen === 'Contacts') setParams({title: 'Contacts'})
+    else if (this.state.screen === 'AccountInfo')
+      setParams({title: 'Account Info'})
   }
 
   async componentDidMount() {
+    this.setTitle()
     try {
       const chats = await this.findChats()
       this.setState({chats})
@@ -72,6 +86,7 @@ class MainScreensContainer extends React.Component {
           user.displayName = data.displayName
           user.publicKey = data.publicKey
           user.phoneNumber = data.phoneNumber
+          user.img = data.img
         })
       return user
     } catch (error) {
@@ -79,16 +94,24 @@ class MainScreensContainer extends React.Component {
     }
   }
 
-  displayChats = () => {
-    this.setState({screen: 'chats'})
+  displayScreen = screen => {
+    this.setState(
+      {
+        screen,
+        reset: false,
+      },
+      () => this.setTitle(),
+    )
   }
 
-  displayContacts = () => {
-    this.setState({screen: 'contacts'})
-  }
-
-  displayAccountInfo = () => {
-    this.setState({screen: 'accountInfo'})
+  resetScreen = () => {
+    this.setState(
+      {
+        screen: 'AllChats',
+        reset: true,
+      },
+      () => this.setTitle(),
+    )
   }
 
   render() {
@@ -99,20 +122,24 @@ class MainScreensContainer extends React.Component {
         keyboardVerticalOffset={64}
         style={styles.container}
       >
-        {this.state.screen === 'chats' ? (
+        {this.state.screen === 'AllChats' ? (
           <AllChats
             navigation={this.props.navigation}
             chats={this.state.chats}
           />
-        ) : this.state.screen === 'contacts' ? (
-          <Contacts navigation={this.props.navigation} />
+        ) : this.state.screen === 'Contacts' ? (
+          <Contacts
+            navigation={this.props.navigation}
+            resetScreen={this.resetScreen}
+          />
         ) : (
           <AccountInfo />
         )}
         <BottomNavBar
-          displayChats={this.displayChats}
-          displayContacts={this.displayContacts}
-          displayAccountInfo={this.displayAccountInfo}
+          reset={this.state.reset}
+          displayChats={() => this.displayScreen('AllChats')}
+          displayContacts={() => this.displayScreen('Contacts')}
+          displayAccountInfo={() => this.displayScreen('AccountInfo')}
         />
       </KeyboardAvoidingView>
     )

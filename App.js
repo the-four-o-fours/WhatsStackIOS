@@ -8,11 +8,10 @@ import Main from './src/components/Main'
 import {ActivityIndicator} from 'react-native'
 
 const App = () => {
-  // persistor.purge()
   return (
     <Provider store={store}>
-      <PersistGate loading={< ActivityIndicator />} persistor={persistor}>
-        <Main/>
+      <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
+        <Main />
       </PersistGate>
     </Provider>
   )

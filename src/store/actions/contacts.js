@@ -1,6 +1,6 @@
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
-import RNFetchBlob from 'rn-fetch-blob'
+import download from '../../components/download'
 
 export const GOT_CONTACTS = 'GOT_CONTACTS'
 export const GOT_CONTACTS_HASH = 'GOT_CONTACTS_HASH'
@@ -52,17 +52,48 @@ const getAllUsers = async () => {
   }
 }
 
+const downloadedImgUrl = async id => {
+  const cloudUrl = await firebase
+    .storage()
+    .ref(`/Users/${id}/avatar.jpg`)
+    .getDownloadURL()
+  const localUrl = await download(cloudUrl)
+  return localUrl
+}
+
+// const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
+//   return new Promise((resolve, reject) => {
+//     const users = []
+//     const contactsHash = {}
+//     firebaseUsers.forEach(async user => {
+//       if (
+//         contactsObj[user.phoneNumber] &&
+//         user.phoneNumber !== '+17033094584' //hardcoded to prevent Ian's lack of avatar from breaking the app
+//       ) {
+//         user.phoneName = contactsObj[user.phoneNumber]
+//         if (
+//           (prevContacts[user.uid] && prevContacts[user.uid].url !== user.url) ||
+//           !prevContacts[user.uid]
+//         ) {
+//           const localUrl = await downloadedImgUrl(user.uid)
+//           user.img = localUrl
+//         } else {
+//           user.img = prevContacts[user.uid].img
+//         }
+//         users.push(user)
+//         contactsHash[user.uid] = user
+//       }
+//     })
+//     resolve([users, contactsHash])
+//   })
+// }
+
 const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
   const users = []
   const contactsHash = {}
   firebaseUsers.forEach(user => {
     if (contactsObj[user.phoneNumber]) {
       user.phoneName = contactsObj[user.phoneNumber]
-      // if (prevContacts[user.uid].url !== users.url) {
-      //   console.log('prev contacts', prevContacts[user.uid].url)
-      // } else {
-      //   user.img = prevContacts[user.uid].img
-      // }
       users.push(user)
       contactsHash[user.uid] = user
     }
@@ -75,7 +106,7 @@ export const populateContacts = () => async (dispatch, getState) => {
     const firebaseUsers = await getAllUsers()
     const contactsObj = await getAllContacts()
     const prevContactsHash = getState().contactsHash
-    const [contactsArr, contactsHash] = findOverlap(
+    const [contactsArr, contactsHash] = await findOverlap(
       firebaseUsers,
       contactsObj,
       prevContactsHash,

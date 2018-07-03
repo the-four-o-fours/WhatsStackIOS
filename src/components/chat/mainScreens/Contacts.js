@@ -18,6 +18,7 @@ class Contacts extends React.Component {
   }
 
   goToConvo = item => {
+    this.props.resetScreen()
     this.props.navigation.navigate('Chat', {
       uid: item.uid,
       title: item.displayName,
@@ -27,7 +28,7 @@ class Contacts extends React.Component {
 
   searchFor = contactName => {
     const matchingContacts = this.props.contactsArr.filter(contact =>
-      contact.displayName.toLowerCase().startsWith(contactName.toLowerCase()),
+      contact.phoneName.toLowerCase().startsWith(contactName.toLowerCase()),
     )
     this.setState({matchingContacts})
   }
@@ -81,16 +82,21 @@ class Contacts extends React.Component {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: 'white',
-    borderColor: 'black',
-    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    borderColor: 'grey',
     borderWidth: 1,
+    borderRadius: 10,
     padding: 5,
-    fontSize: 24,
+    fontSize: 16,
+    margin: 5,
   },
 })
 
-const mapStateToProps = state => ({contactsArr: state.contactsArr})
+const mapStateToProps = state => ({
+  contactsArr: state.contactsArr.sort((a, b) => {
+    return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
+  }),
+})
 
 export default connect(
   mapStateToProps,

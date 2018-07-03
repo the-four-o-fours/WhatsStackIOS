@@ -6,6 +6,13 @@ class BottomNavBar extends Component {
   state = {
     btnSelected: 3,
   }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.reset !== this.props.reset) {
+      if (this.props.reset) this.setState({btnSelected: 3})
+    }
+  }
+
   render() {
     return (
       <View style={styles.navBar}>
@@ -56,7 +63,7 @@ class BottomNavBar extends Component {
 const styles = StyleSheet.create({
   navBar: {
     flexDirection: 'row',
-    backgroundColor: '#8BD08B',
+    backgroundColor: '#20AAB2',
     height: 50,
   },
   edges: {
@@ -64,14 +71,14 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
   },
   btnSelected: {
-    backgroundColor: '#C5E8C5',
+    backgroundColor: '#AEE8C3',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
   },
   notSelected: {
-    borderColor: '#8BD08B',
+    borderColor: '#20AAB2',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
