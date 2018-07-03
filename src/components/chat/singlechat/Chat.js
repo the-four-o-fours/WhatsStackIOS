@@ -6,8 +6,10 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  TouchableOpacity,
+  View,
 } from 'react-native'
-
+import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
 import ChatBubble from './ChatBubble'
 import firebase from 'react-native-firebase'
@@ -116,29 +118,41 @@ class Chat extends React.Component {
             <Text>No Messages</Text>
           )}
         </TouchableWithoutFeedback>
-        <TextInput
-          style={[
-            styles.input,
-            {
-              height: this.state.height,
-            },
-          ]}
-          value={this.state.newMessage}
-          multiline={true}
-          autoFocus={false}
-          enablesReturnKeyAutomatically={true}
-          returnKeyType="send"
-          placeholder="..."
-          blurOnSubmit={true}
-          onChangeText={newMessage => this.setState({newMessage})}
-          onContentSizeChange={event => {
-            this.setState({height: event.nativeEvent.contentSize.height + 10})
-          }}
-          onSubmitEditing={() => {
-            this.sendMessage()
-            this.setState({newMessage: '', height: 16})
-          }}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[
+              styles.input,
+              {
+                height: this.state.height,
+              },
+            ]}
+            value={this.state.newMessage}
+            multiline={true}
+            autoFocus={false}
+            enablesReturnKeyAutomatically={true}
+            returnKeyType="send"
+            placeholder="..."
+            blurOnSubmit={true}
+            onChangeText={newMessage => this.setState({newMessage})}
+            onContentSizeChange={event => {
+              this.setState({height: event.nativeEvent.contentSize.height + 10})
+            }}
+            onSubmitEditing={() => {
+              this.sendMessage()
+              this.setState({newMessage: '', height: 16})
+            }}
+          />
+          <TouchableOpacity
+            style={styles.submitButton}
+            disabled={this.state.newMessage.length === 0}
+            onPress={() => {
+              this.sendMessage()
+              this.setState({newMessage: '', height: 16})
+            }}
+          >
+            <Icon name="ios-send" size={35} color="#DCF1DC" />
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     )
   }
@@ -150,7 +164,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
   },
+  inputContainer: {
+    flexDirection: 'row',
+    alignContent: 'center',
+  },
   input: {
+    width: 335,
     backgroundColor: '#FFFFFF',
     borderColor: 'grey',
     borderWidth: 1,
@@ -158,6 +177,9 @@ const styles = StyleSheet.create({
     padding: 5,
     fontSize: 16,
     margin: 5,
+  },
+  submitButton: {
+    alignSelf: 'flex-end',
   },
 })
 
