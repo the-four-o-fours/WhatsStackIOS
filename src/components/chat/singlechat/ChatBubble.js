@@ -1,15 +1,24 @@
 import React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {StyleSheet, View, Text} from 'react-native'
 
 const ChatBubble = props => {
   const {message} = props
-  const timeStamp = new Date(Number(message.timeStamp)).toString().slice(0, 24)
+  const isToday = () => {
+    const now = new Date(Date.now()).toString()
+    const messageDate = new Date(Number(message.timeStamp)).toString()
+    if (now.slice(0, 15) === messageDate.slice(0, 15)) {
+      return `Today ${messageDate.slice(16, 24)}`
+    } else {
+      return messageDate.slice(0, 24)
+    }
+  }
+
   if (message.sender) {
     return (
       <View style={[styles.container, styles.senderBubble]}>
         <View style={[styles.bubble, styles.senderInnerBubble]}>
           <Text style={styles.messageText}>{props.message.text}</Text>
-          <Text style={styles.timeStampText}>{`\n${timeStamp}`}</Text>
+          <Text style={styles.timeStampText}>{`\n${isToday()}`}</Text>
         </View>
         <View style={[styles.triangle, styles.senderTriangle]} />
       </View>
@@ -20,7 +29,7 @@ const ChatBubble = props => {
         <View style={[styles.triangle, styles.receiverTriangle]} />
         <View style={[styles.bubble, styles.receiverInnerBubble]}>
           <Text style={styles.text}>{props.message.text}</Text>
-          <Text style={styles.timeStampText}>{`\n${timeStamp}`}</Text>
+          <Text style={styles.timeStampText}>{`\n${isToday()}`}</Text>
         </View>
       </View>
     )
