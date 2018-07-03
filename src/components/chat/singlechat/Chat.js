@@ -40,8 +40,8 @@ class Chat extends React.Component {
     }
   }
 
-  // this whole mess is because RSA can only encrypt strings less than 117
-  // characters long
+  // this whole mess is because RSA can only encrypt
+  // strings less than 117 characters long
   splitterForRSA = string => {
     const messageChunks = []
     let tracker = 0

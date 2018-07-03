@@ -66,46 +66,35 @@ class CreateUser extends Component {
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        {/* <View style={styles.container}> */}
         <Image
           style={{flex: 1, width: '66%', padding: 22}}
           source={require('../../Public/fullLogo20AAB2.png')}
-          
           resizeMode="contain"
         />
-            <TextInput
-           autoFocus
-           style={styles.formContainer}
-           textAlign="center"
+        <TextInput
+          autoFocus
+          style={styles.formContainer}
+          textAlign="center"
+          value={this.state.displayName}
+          onChangeText={displayName => this.setState({displayName})}
+          placeholder="Display Name"
+          placeholderTextColor="#808080"
+        />
 
-              value={this.state.displayName}
-              onChangeText={displayName => this.setState({displayName})}
-              placeholder="Display Name"
-              placeholderTextColor= '#808080'
-              
-            />
-          
-          <Button
-            title="Choose Display Name"
-            textStyle={{fontSize: 20, fontWeight: 'bold'}}
-            backgroundColor= '#20AAB2'
-            buttonStyle={{borderRadius: 25,}}
-            onPress={this.addUserToDB}
-            icon={{name: 'hand-o-right', type: 'font-awesome', size: 20}}
-          />
-        
+        <Button
+          title="Choose Display Name"
+          textStyle={{fontSize: 20, fontWeight: 'bold'}}
+          backgroundColor="#20AAB2"
+          buttonStyle={{borderRadius: 25}}
+          onPress={this.addUserToDB}
+          icon={{name: 'hand-o-right', type: 'font-awesome', size: 20}}
+        />
       </KeyboardAvoidingView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: '#fff',
-  //   justifyContent: 'center',
-  //   padding: 10,
-  // },
   container: {
     flex: 1,
     padding: 0,
@@ -129,18 +118,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 25,
-    // fontSize: 16
   },
   whiteFont: {
-    // color: 'white',
     color: 'black',
     fontWeight: 'bold',
     fontSize: 21,
-    // justifyContent: 'center',
   },
   directionsFont: {
     color: 'grey',
-    // fontWeight: 'bold',
     fontSize: 19,
   },
 })

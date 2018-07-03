@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {
   View,
-  // Button,
   Text,
   TextInput,
   StyleSheet,
@@ -46,9 +45,7 @@ class Login extends Component {
         .then(_ => {
           this.setState({message: 'Code Confirmed!'})
         })
-        .catch(
-          this.setState({message: `Sorry invalid code`}),
-        )
+        .catch(this.setState({message: `Sorry invalid code`}))
     }
   }
 
@@ -56,7 +53,6 @@ class Login extends Component {
     const {phoneNumber} = this.state
 
     return (
-      // <KeyboardAvoidingView behavior="padding" style={styles.loginContainer}>
       <View style={styles.loginContainer}>
         <Text style={styles.directionsFont}>Enter phone number:</Text>
         <TextInput
@@ -77,7 +73,6 @@ class Login extends Component {
           icon={{name: 'sign-in', type: 'font-awesome', size: 20}}
         />
       </View>
-      // </KeyboardAvoidingView>
     )
   }
 
@@ -93,17 +88,15 @@ class Login extends Component {
     const {codeInput} = this.state
 
     return (
-      <View
-        style={styles.loginContainer
-        }
-      >
-        <Text style={styles.directionsFont}>Enter verification code below:</Text>
+      <View style={styles.loginContainer}>
+        <Text style={styles.directionsFont}>
+          Enter verification code below:
+        </Text>
         <TextInput
           autoFocus
           style={styles.formContainer}
           keyboardType="numeric"
           textAlign="center"
-
           onChangeText={value => this.setState({codeInput: value})}
           placeholder="Code ... "
           value={codeInput}
@@ -114,7 +107,6 @@ class Login extends Component {
           buttonStyle={{borderRadius: 25}}
           textStyle={{fontSize: 20, fontWeight: 'bold'}}
           icon={{name: 'hand-o-right', type: 'font-awesome', size: 20}}
-          // color="#841584"
           onPress={this.confirmCode}
         />
       </View>
@@ -125,7 +117,6 @@ class Login extends Component {
     const {user, confirmResult} = this.state
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        {/* <View style={styles.container}> */}
         <Image
           style={{flex: 1, width: '77%', padding: 22, marginTop: 125}}
           // source={require('../../Public/wLogoT.png')}
@@ -137,7 +128,6 @@ class Login extends Component {
         {this.renderMessage()}
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
-        {/* </View> */}
       </KeyboardAvoidingView>
     )
   }
@@ -149,7 +139,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
-    // backgroundColor: '#00B183',
     backgroundColor: '#fff',
     width: 'auto',
     justifyContent: 'center',
@@ -171,18 +160,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 25,
-    // fontSize: 16
   },
   whiteFont: {
-    // color: 'white',
     color: 'black',
     fontWeight: 'bold',
     fontSize: 21,
-    // justifyContent: 'center',
   },
   directionsFont: {
     color: 'grey',
-    // fontWeight: 'bold',
     fontSize: 20,
   },
 })
