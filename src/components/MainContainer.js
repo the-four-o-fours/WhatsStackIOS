@@ -40,11 +40,7 @@ class MainContainer extends Component {
     try {
       if (
         //this condition populates the messages field in the store with actual message histories, not user data
-        snapshot.key !== 'displayName' &&
-        snapshot.key !== 'phoneNumber' &&
-        snapshot.key !== 'publicKey' &&
-        snapshot.key !== 'uid' &&
-        snapshot.key !== 'img'
+        snapshot.key.length === 28
       ) {
         const convoObj = {}
         convoObj[snapshot.key] = {}
@@ -68,10 +64,10 @@ class MainContainer extends Component {
   updateOnNewMessageOrNameChange = async snapshot => {
     //both these events trigger a "child changed"
     try {
-      if (snapshot.key === 'displayName' || snapshot.key === 'img') {
+      if (snapshot.key === 'displayName') {
         //listening for a changed name
         this.props.getUser({[snapshot.key]: snapshot.val()})
-      } else {
+      } else if (snapshot.key !== 'img') {
         //listening for a new message being added to an existing conversation
         const conversation = await this.JoinDecryptAndConvertToArr(
           snapshot.val(),

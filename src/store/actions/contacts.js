@@ -43,7 +43,7 @@ const getAllUsers = async () => {
         phoneNumber: childData.phoneNumber,
         uid: childData.uid,
         publicKey: childData.publicKey,
-        url: childData.img,
+        url: childData.img || 'default',
       })
     })
     return firebaseUsers
@@ -61,34 +61,12 @@ const downloadedImgUrl = async id => {
   return localUrl
 }
 
-// const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
-//   return new Promise((resolve, reject) => {
-//     const users = []
-//     const contactsHash = {}
-//     firebaseUsers.forEach(async user => {
-//       if (
-//         contactsObj[user.phoneNumber] &&
-//         user.phoneNumber !== '+17033094584' //hardcoded to prevent Ian's lack of avatar from breaking the app
-//       ) {
-//         user.phoneName = contactsObj[user.phoneNumber]
-//         if (
-//           (prevContacts[user.uid] && prevContacts[user.uid].url !== user.url) ||
-//           !prevContacts[user.uid]
-//         ) {
-//           const localUrl = await downloadedImgUrl(user.uid)
-//           user.img = localUrl
-//         } else {
-//           user.img = prevContacts[user.uid].img
-//         }
-//         users.push(user)
-//         contactsHash[user.uid] = user
-//       }
-//     })
-//     resolve([users, contactsHash])
-//   })
-// }
-
-const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
+const findOverlap = async (
+  firebaseUsers,
+  contactsObj,
+  prevContacts,
+  defaultImg,
+) => {
   const users = []
   const contactsHash = {}
   firebaseUsers.forEach(user => {
@@ -98,6 +76,33 @@ const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
       contactsHash[user.uid] = user
     }
   })
+  await Promise.all(
+    users.map(async user => {
+      try {
+        const id = user.uid
+        if (prevContacts[id]) {
+          // We have seen this user before
+          if (prevContacts[id].url === user.url) {
+            user.img = prevContacts[id].img // Do not need to download new avatar
+          } else {
+            const localUrl = await downloadedImgUrl(id) // Download new image
+            user.img = localUrl
+          }
+        } else {
+          // This is a new person added to our contacts
+          if (user.url === 'default') {
+            user.img = defaultImg // Set default image on our device
+          } else {
+            const localUrl = await downloadedImgUrl(id) // Download new image
+            user.img = localUrl
+          }
+          contactsHash[id].img = user.img
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }),
+  )
   return [users, contactsHash]
 }
 
@@ -105,14 +110,15 @@ export const populateContacts = () => async (dispatch, getState) => {
   try {
     const firebaseUsers = await getAllUsers()
     const contactsObj = await getAllContacts()
-    const prevContactsHash = getState().contactsHash
-    const [contactsArr, contactsHash] = await findOverlap(
+    const {user, contactsHash} = getState()
+    const [contactsArr, newContactsHash] = await findOverlap(
       firebaseUsers,
       contactsObj,
-      prevContactsHash,
+      contactsHash,
+      user.default,
     )
     dispatch(getContacts(contactsArr))
-    dispatch(getContactsHash(contactsHash))
+    dispatch(getContactsHash(newContactsHash))
   } catch (error) {
     console.log(error)
   }

@@ -23,7 +23,7 @@ class CreateUser extends Component {
 
   componentDidMount() {
     const {uid, phoneNumber} = firebase.auth().currentUser
-    this.setState({uid, phoneNumber})
+    this.setState({uid, phoneNumber}, () => console.log(this.state))
   }
 
   generateRSAKey = () => {
@@ -49,13 +49,18 @@ class CreateUser extends Component {
       const firebaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
       const user = await firebaseUser.once('value')
       const exists = await user.exists()
-      const [cloudUrl, localUrl] = await this.getDefaultImg
+      const [cloudUrl, localUrl] = await this.getDefaultImg()
       this.props.getUser({img: localUrl})
       if (!exists) {
         const [privateKey, publicKey] = this.generateRSAKey()
-        const user = {...this.state, publicKey, img: cloudUrl}
+        const userObj = {
+          ...this.state,
+          publicKey,
+          img: 'default',
+          default: localUrl,
+        }
         AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
-        firebaseUser.set(user)
+        firebaseUser.set(userObj)
       }
       this.props.userCreated()
     } catch (error) {
@@ -79,6 +84,7 @@ class CreateUser extends Component {
           onChangeText={displayName => this.setState({displayName})}
           placeholder="Display Name"
           placeholderTextColor="#808080"
+          maxLength={20}
         />
 
         <Button

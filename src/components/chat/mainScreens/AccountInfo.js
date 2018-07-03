@@ -40,6 +40,10 @@ class AccountInfo extends React.Component {
   setAvatar = async () => {
     const cloudUrl = await this.uploadAvatar()
     const localUrl = await download(cloudUrl)
+    const userImageRef = firebase
+      .database()
+      .ref(`/Users/${this.props.user.uid}/img`)
+    userImageRef.set(cloudUrl)
     this.props.getUser({img: localUrl})
   }
 
@@ -70,6 +74,7 @@ class AccountInfo extends React.Component {
 
   render() {
     const user = this.props.user
+    const img = user.img === 'default' ? user.default : user.img
     return (
       <View style={styles.accountContainer}>
         <KeyboardAvoidingView
@@ -86,7 +91,7 @@ class AccountInfo extends React.Component {
                     xlarge
                     activeOpacity={0.7}
                     source={{
-                      uri: user.img,
+                      uri: img,
                     }}
                   />
                 </View>
@@ -213,6 +218,8 @@ const styles = StyleSheet.create({
   },
   accountAvatar: {
     marginTop: 60,
+  accountName: {
+    backgroundColor: '#fff',
   },
   accountActions: {
     flex: 1,
