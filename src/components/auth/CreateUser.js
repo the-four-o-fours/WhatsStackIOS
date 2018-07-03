@@ -68,16 +68,13 @@ class CreateUser extends Component {
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <Image
           style={{flex: 1, width: '66%', padding: 22}}
-          source={require('../../Public/allTeallogo.png')}
+          source={require('../../Public/fullLogo20AAB2.png')}
           resizeMode="contain"
         />
         <TextInput
           autoFocus
-          style={{
-            height: 40,
-            marginTop: 15,
-            marginBottom: 15,
-          }}
+          style={styles.formContainer}
+          textAlign="center"
           value={this.state.displayName}
           onChangeText={displayName => this.setState({displayName})}
           placeholder="Display Name"
@@ -86,10 +83,11 @@ class CreateUser extends Component {
 
         <Button
           title="Choose Display Name"
-          backgroundColor="#00B183"
+          textStyle={{fontSize: 20, fontWeight: 'bold'}}
+          backgroundColor="#20AAB2"
           buttonStyle={{borderRadius: 25}}
           onPress={this.addUserToDB}
-          icon={{name: 'hand-o-right', type: 'font-awesome'}}
+          icon={{name: 'hand-o-right', type: 'font-awesome', size: 20}}
         />
       </KeyboardAvoidingView>
     )
@@ -105,8 +103,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   formContainer: {
-    flex: 1,
-    backgroundColor: '#2c3e50',
+    marginTop: 15,
+    marginBottom: 15,
+    backgroundColor: '#fff',
+    fontSize: 20,
+    borderRadius: 25,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 1,
+    width: 200,
+    padding: 10,
   },
   loginContainer: {
     alignItems: 'center',
@@ -115,9 +120,13 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   whiteFont: {
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 21,
+  },
+  directionsFont: {
+    color: 'grey',
+    fontSize: 19,
   },
 })
 

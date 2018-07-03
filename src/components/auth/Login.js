@@ -30,9 +30,9 @@ class Login extends Component {
       .then(confirmResult =>
         this.setState({confirmResult, message: 'Code has been sent!'}),
       )
-      .catch(error =>
+      .catch(
         this.setState({
-          message: `Sign In With Phone Number Error: ${error.message}`,
+          message: `Sorry invalid phone number`,
         }),
       )
   }
@@ -45,9 +45,7 @@ class Login extends Component {
         .then(_ => {
           this.setState({message: 'Code Confirmed!'})
         })
-        .catch(error =>
-          this.setState({message: `Code Confirm Error: ${error.message}`}),
-        )
+        .catch(this.setState({message: `Sorry invalid code`}))
     }
   }
 
@@ -56,20 +54,12 @@ class Login extends Component {
 
     return (
       <View style={styles.loginContainer}>
-        <Text style={styles.whiteFont}>Enter phone number:</Text>
+        <Text style={styles.directionsFont}>Enter phone number:</Text>
         <TextInput
           autoFocus
-          style={{
-            marginTop: 15,
-            marginBottom: 15,
-            backgroundColor: '#fff',
-            borderWidth: 1.33,
-            borderStyle: 'solid',
-            fontSize: 15,
-            borderRadius: 25,
-            width: 200,
-            padding: 10,
-          }}
+          style={styles.formContainer}
+          keyboardType="numeric"
+          textAlign="center"
           onChangeText={value => this.setState({phoneNumber: value})}
           placeholder="Phone number ... "
           value={phoneNumber}
@@ -77,9 +67,10 @@ class Login extends Component {
         />
         <Button
           title="Sign In"
-          buttonStyle={{borderRadius: 25}}
+          buttonStyle={{borderRadius: 25, backgroundColor: '#20AAB2'}}
+          textStyle={{fontSize: 20, fontWeight: 'bold'}}
           onPress={this.signIn}
-          icon={{name: 'sign-in', type: 'font-awesome'}}
+          icon={{name: 'sign-in', type: 'font-awesome', size: 20}}
         />
       </View>
     )
@@ -97,28 +88,25 @@ class Login extends Component {
     const {codeInput} = this.state
 
     return (
-      <View
-        style={{
-          marginTop: 25,
-          padding: 25,
-        }}
-      >
-        <Text style={styles.whiteFont}>Enter verification code below:</Text>
+      <View style={styles.loginContainer}>
+        <Text style={styles.directionsFont}>
+          Enter verification code below:
+        </Text>
         <TextInput
           autoFocus
-          style={{
-            height: 40,
-            marginTop: 15,
-            marginBottom: 15,
-          }}
+          style={styles.formContainer}
+          keyboardType="numeric"
+          textAlign="center"
           onChangeText={value => this.setState({codeInput: value})}
           placeholder="Code ... "
           value={codeInput}
+          keyboardType="numeric"
         />
         <Button
           title="Confirm Code"
           buttonStyle={{borderRadius: 25}}
-          icon={{name: 'sign-in', type: 'hand-o-right'}}
+          textStyle={{fontSize: 20, fontWeight: 'bold'}}
+          icon={{name: 'hand-o-right', type: 'font-awesome', size: 20}}
           onPress={this.confirmCode}
         />
       </View>
@@ -130,8 +118,9 @@ class Login extends Component {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <Image
-          style={{flex: 1, width: '66%', padding: 22}}
-          source={require('../../Public/whatsStackWhiteLogo1.png')}
+          style={{flex: 1, width: '77%', padding: 22, marginTop: 125}}
+          // source={require('../../Public/wLogoT.png')}
+          source={require('../../Public/fullLogo20AAB2.png')}
           resizeMode="contain"
         />
         {!user && !confirmResult && this.renderPhoneNumberInput()}
@@ -150,13 +139,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
-    backgroundColor: '#11D8B0',
+    backgroundColor: '#fff',
+    width: 'auto',
     justifyContent: 'center',
     alignItems: 'center',
   },
   formContainer: {
-    flex: 1,
-    backgroundColor: '#2c3e50',
+    marginTop: 15,
+    marginBottom: 15,
+    backgroundColor: '#fff',
+    fontSize: 20,
+    borderRadius: 25,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 1,
+    width: 200,
+    padding: 10,
   },
   loginContainer: {
     alignItems: 'center',
@@ -165,8 +162,12 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   whiteFont: {
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 21,
+  },
+  directionsFont: {
+    color: 'grey',
+    fontSize: 20,
   },
 })
