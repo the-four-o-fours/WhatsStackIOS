@@ -11,18 +11,24 @@ import firebase from 'react-native-firebase'
 class MainScreensContainer extends React.Component {
   static navigationOptions = ({navigation}) => ({
     headerTitle: navigation.getParam('title', 'WhatsStack'),
+    headerStyle: {
+      backgroundColor: '#20AAB2'
+    },
+    headerTintColor: '#fff'
   })
 
   state = {
     chats: [],
-    screen: 'AllChats',
+    screen: 'AllChats'
   }
 
   setTitle = () => {
     const {setParams} = this.props.navigation
-    if (this.state.screen === 'AllChats') setParams({title: 'WhatsStack'})
-    else if (this.state.screen === 'Contacts') setParams({title: 'Contacts'})
-    else if (this.state.screen === 'AccountInfo')
+    if (this.state.screen === 'AllChats') 
+      setParams({title: 'WhatsStack'})
+    else if (this.state.screen === 'Contacts') 
+      setParams({title: 'Contacts'})
+    else if (this.state.screen === 'AccountInfo') 
       setParams({title: 'Account Info'})
   }
 
@@ -48,26 +54,24 @@ class MainScreensContainer extends React.Component {
     }
   }
 
-  findChats = async () => {
+  findChats = async() => {
     const friendIds = Object.keys(this.props.messages)
-    const chats = await Promise.all(
-      friendIds.map(async id => {
-        try {
-          let chat
-          if (this.props.contactsHash[id]) {
-            chat = this.props.contactsHash[id]
-          } else {
-            chat = await this.findAnonymous(id)
-          }
-          const messages = this.props.messages[id].conversation
-          chat.seen = this.props.messages[id].seen
-          chat.lastMessage = messages[messages.length - 1]
-          return chat
-        } catch (error) {
-          console.log(error)
+    const chats = await Promise.all(friendIds.map(async id => {
+      try {
+        let chat
+        if (this.props.contactsHash[id]) {
+          chat = this.props.contactsHash[id]
+        } else {
+          chat = await this.findAnonymous(id)
         }
-      }),
-    )
+        const messages = this.props.messages[id].conversation
+        chat.seen = this.props.messages[id].seen
+        chat.lastMessage = messages[messages.length - 1]
+        return chat
+      } catch (error) {
+        console.log(error)
+      }
+    }),)
     chats.sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
     return chats
   }
@@ -76,7 +80,7 @@ class MainScreensContainer extends React.Component {
     try {
       const defaultImg = this.props.user.default
       const user = {
-        uid: id,
+        uid: id
       }
       await firebase
         .database()
@@ -96,12 +100,9 @@ class MainScreensContainer extends React.Component {
   }
 
   setScreen = screen => {
-    this.setState(
-      {
-        screen,
-      },
-      () => this.setTitle(),
-    )
+    this.setState({
+      screen
+    }, () => this.setTitle(),)
   }
 
   render() {
@@ -110,27 +111,19 @@ class MainScreensContainer extends React.Component {
         enabled
         behavior="padding"
         keyboardVerticalOffset={64}
-        style={styles.container}
-      >
-        {this.state.screen === 'AllChats' ? (
-          <AllChats
-            navigation={this.props.navigation}
-            chats={this.state.chats}
-          />
-        ) : this.state.screen === 'Contacts' ? (
-          <Contacts
-            navigation={this.props.navigation}
-            resetScreen={() => this.setScreen('AllChats')}
-          />
-        ) : (
-          <AccountInfo />
-        )}
+        style={styles.container}>
+        {this.state.screen === 'AllChats'
+          ? (<AllChats navigation={this.props.navigation} chats={this.state.chats}/>)
+          : this.state.screen === 'Contacts'
+            ? (<Contacts
+              navigation={this.props.navigation}
+              resetScreen={() => this.setScreen('AllChats')}/>)
+            : (<AccountInfo/>)}
         <BottomNavBar
           screen={this.state.screen}
           displayChats={() => this.setScreen('AllChats')}
           displayContacts={() => this.setScreen('Contacts')}
-          displayAccountInfo={() => this.setScreen('AccountInfo')}
-        />
+          displayAccountInfo={() => this.setScreen('AccountInfo')}/>
       </KeyboardAvoidingView>
     )
   }
@@ -140,14 +133,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
-  },
+    backgroundColor: '#ffffff'
+  }
 })
 
-const mapStateToProps = state => ({
-  user: state.user,
-  contactsHash: state.contactsHash,
-  messages: state.messages,
-})
+const mapStateToProps = state => ({user: state.user, contactsHash: state.contactsHash, messages: state.messages})
 
 export default connect(mapStateToProps)(MainScreensContainer)
