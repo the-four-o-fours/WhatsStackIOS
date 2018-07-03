@@ -139,7 +139,7 @@ class AccountInfo extends React.Component {
                       value={this.state.displayName}
                       maxLength={30}
                       autoFocus={true}
-                      placeholder='Change your display name'
+                      placeholder='Change display name'
                       onChangeText={displayName => this.setState({displayName})}
                       onSubmitEditing={this.changeDisplayName}/>
                   </View>
