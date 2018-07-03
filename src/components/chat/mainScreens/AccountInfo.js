@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
   },
   accountAvatar: {
     marginTop: 60,
-  },
   accountName: {
     backgroundColor: '#fff',
   },
