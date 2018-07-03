@@ -16,7 +16,6 @@ class MainScreensContainer extends React.Component {
   state = {
     chats: [],
     screen: 'AllChats',
-    reset: false,
   }
 
   setTitle = () => {
@@ -94,21 +93,10 @@ class MainScreensContainer extends React.Component {
     }
   }
 
-  displayScreen = screen => {
+  setScreen = screen => {
     this.setState(
       {
         screen,
-        reset: false,
-      },
-      () => this.setTitle(),
-    )
-  }
-
-  resetScreen = () => {
-    this.setState(
-      {
-        screen: 'AllChats',
-        reset: true,
       },
       () => this.setTitle(),
     )
@@ -130,16 +118,16 @@ class MainScreensContainer extends React.Component {
         ) : this.state.screen === 'Contacts' ? (
           <Contacts
             navigation={this.props.navigation}
-            resetScreen={this.resetScreen}
+            resetScreen={() => this.setScreen('AllChats')}
           />
         ) : (
           <AccountInfo />
         )}
         <BottomNavBar
-          reset={this.state.reset}
-          displayChats={() => this.displayScreen('AllChats')}
-          displayContacts={() => this.displayScreen('Contacts')}
-          displayAccountInfo={() => this.displayScreen('AccountInfo')}
+          screen={this.state.screen}
+          displayChats={() => this.setScreen('AllChats')}
+          displayContacts={() => this.setScreen('Contacts')}
+          displayAccountInfo={() => this.setScreen('AccountInfo')}
         />
       </KeyboardAvoidingView>
     )
