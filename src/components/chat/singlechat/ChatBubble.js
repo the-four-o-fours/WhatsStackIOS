@@ -20,7 +20,7 @@ const ChatBubble = props => {
         <View style={[styles.triangle, styles.receiverTriangle]} />
         <View style={[styles.bubble, styles.receiverInnerBubble]}>
           <Text style={styles.text}>{props.message.text}</Text>
-          <Text>{timeStamp}</Text>
+          <Text style={styles.timeStampText}>{`\n${timeStamp}`}</Text>
         </View>
       </View>
     )

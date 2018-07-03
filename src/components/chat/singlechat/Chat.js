@@ -150,7 +150,7 @@ class Chat extends React.Component {
               this.setState({newMessage: '', height: 16})
             }}
           >
-            <Icon name="ios-send" size={35} color="#DCF1DC" />
+            <Icon name="ios-send" size={35} color="black" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
