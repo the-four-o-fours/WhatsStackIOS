@@ -9,13 +9,28 @@ import BottomNavBar from './BottomNavBar'
 import firebase from 'react-native-firebase'
 
 class MainScreensContainer extends React.Component {
+  static navigationOptions = ({navigation}) => ({
+    headerTitle: navigation.getParam('title', 'WhatsStack'),
+  })
+
   state = {
     chats: [],
     displayContacts: false,
-    displayAccountInfo: false
+    displayAccountInfo: false,
+    reset: false,
+  }
+
+  getTitle = () => {
+    const {setParams} = this.props.navigation
+    if (this.state.displayContacts && !this.state.displayAccountInfo)
+      setParams({title: 'Contacts'})
+    else if (this.state.displayAccountInfo)
+      setParams({title: 'Account Settings'})
+    else setParams({title: 'WhatsStack'})
   }
 
   async componentDidMount() {
+    this.getTitle()
     try {
       const chats = await this.findChats()
       this.setState({chats})
@@ -35,24 +50,26 @@ class MainScreensContainer extends React.Component {
     }
   }
 
-  findChats = async() => {
+  findChats = async () => {
     const friendIds = Object.keys(this.props.messages)
-    const chats = await Promise.all(friendIds.map(async id => {
-      try {
-        let chat
-        if (this.props.contactsHash[id]) {
-          chat = this.props.contactsHash[id]
-        } else {
-          chat = await this.findAnonymous(id)
+    const chats = await Promise.all(
+      friendIds.map(async id => {
+        try {
+          let chat
+          if (this.props.contactsHash[id]) {
+            chat = this.props.contactsHash[id]
+          } else {
+            chat = await this.findAnonymous(id)
+          }
+          const messages = this.props.messages[id].conversation
+          chat.seen = this.props.messages[id].seen
+          chat.lastMessage = messages[messages.length - 1]
+          return chat
+        } catch (error) {
+          console.log(error)
         }
-        const messages = this.props.messages[id].conversation
-        chat.seen = this.props.messages[id].seen
-        chat.lastMessage = messages[messages.length - 1]
-        return chat
-      } catch (error) {
-        console.log(error)
-      }
-    }),)
+      }),
+    )
     chats.sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
     return chats
   }
@@ -60,7 +77,7 @@ class MainScreensContainer extends React.Component {
   findAnonymous = async id => {
     try {
       const user = {
-        uid: id
+        uid: id,
       }
       await firebase
         .database()
@@ -71,6 +88,7 @@ class MainScreensContainer extends React.Component {
           user.displayName = data.displayName
           user.publicKey = data.publicKey
           user.phoneNumber = data.phoneNumber
+          user.img = data.img
         })
       return user
     } catch (error) {
@@ -79,15 +97,47 @@ class MainScreensContainer extends React.Component {
   }
 
   displayChats = () => {
-    this.setState({displayContacts: false, displayAccountInfo: false})
+    this.setState(
+      {
+        displayContacts: false,
+        displayAccountInfo: false,
+        reset: false,
+      },
+      () => this.getTitle(),
+    )
   }
 
   displayContacts = () => {
-    this.setState({displayContacts: true, displayAccountInfo: false})
+    this.setState(
+      {
+        displayContacts: true,
+        displayAccountInfo: false,
+        reset: false,
+      },
+      () => this.getTitle(),
+    )
   }
 
   displayAccountInfo = () => {
-    this.setState({displayContacts: false, displayAccountInfo: true})
+    this.setState(
+      {
+        displayContacts: false,
+        displayAccountInfo: true,
+        reset: false,
+      },
+      () => this.getTitle(),
+    )
+  }
+
+  resetScreen = () => {
+    this.setState(
+      {
+        displayContacts: false,
+        displayAccountInfo: false,
+        reset: true,
+      },
+      () => this.getTitle(),
+    )
   }
 
   render() {
@@ -96,16 +146,27 @@ class MainScreensContainer extends React.Component {
         enabled
         behavior="padding"
         keyboardVerticalOffset={64}
-        style={styles.container}>
-        {this.state.displayContacts
-          ? (<Contacts navigation={this.props.navigation}/>)
-          : this.state.displayAccountInfo
-            ? (<AccountInfo/>)
-            : (<AllChats navigation={this.props.navigation} chats={this.state.chats}/>)}
+        style={styles.container}
+      >
+        {this.state.displayContacts ? (
+          <Contacts
+            navigation={this.props.navigation}
+            resetScreen={this.resetScreen}
+          />
+        ) : this.state.displayAccountInfo ? (
+          <AccountInfo />
+        ) : (
+          <AllChats
+            navigation={this.props.navigation}
+            chats={this.state.chats}
+          />
+        )}
         <BottomNavBar
+          reset={this.state.reset}
           displayChats={this.displayChats}
           displayContacts={this.displayContacts}
-          displayAccountInfo={this.displayAccountInfo}/>
+          displayAccountInfo={this.displayAccountInfo}
+        />
       </KeyboardAvoidingView>
     )
   }
@@ -118,6 +179,10 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = state => ({user: state.user, contactsHash: state.contactsHash, messages: state.messages})
+const mapStateToProps = state => ({
+  user: state.user,
+  contactsHash: state.contactsHash,
+  messages: state.messages,
+})
 
 export default connect(mapStateToProps)(MainScreensContainer)
