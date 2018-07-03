@@ -141,7 +141,7 @@ class AccountInfo extends React.Component {
                       buttonStyle={{
                       backgroundColor: "#20AAB2",
                       borderRadius: 8,
-                      padding: 5,
+                      padding: 4,
                       marginTop: 20
                     }}/>
                   </View>

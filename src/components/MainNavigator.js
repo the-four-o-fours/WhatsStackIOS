@@ -10,7 +10,14 @@ const MainNavigator = createStackNavigator({
   },
   Chat: {
     screen: Chat,
-    navigationOptions: ({navigation}) => ({title: navigation.state.params.title, headerBackTitle: null})
+    navigationOptions: ({navigation}) => ({
+      title: navigation.state.params.title,
+      headerBackTitle: null,
+      headerStyle: {
+        backgroundColor: '20AAB2'
+      },
+      headerTintColor: '#fff'
+    })
   }
 })
 

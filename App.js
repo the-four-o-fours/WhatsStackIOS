@@ -6,6 +6,7 @@ import {PersistGate} from 'redux-persist/lib/integration/react'
 import {store, persistor} from './src/store'
 import Main from './src/components/Main'
 import {ActivityIndicator} from 'react-native'
+import {purgeStoredState} from 'redux-persist';
 
 const App = () => {
   //persistor.purge()
