@@ -61,31 +61,44 @@ const downloadedImgUrl = async id => {
   return localUrl
 }
 
+// const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
+//   return new Promise((resolve, reject) => {
+//     const users = []
+//     const contactsHash = {}
+//     firebaseUsers.forEach(async user => {
+//       if (
+//         contactsObj[user.phoneNumber] &&
+//         user.phoneNumber !== '+17033094584' //hardcoded to prevent Ian's lack of avatar from breaking the app
+//       ) {
+//         user.phoneName = contactsObj[user.phoneNumber]
+//         if (
+//           (prevContacts[user.uid] && prevContacts[user.uid].url !== user.url) ||
+//           !prevContacts[user.uid]
+//         ) {
+//           const localUrl = await downloadedImgUrl(user.uid)
+//           user.img = localUrl
+//         } else {
+//           user.img = prevContacts[user.uid].img
+//         }
+//         users.push(user)
+//         contactsHash[user.uid] = user
+//       }
+//     })
+//     resolve([users, contactsHash])
+//   })
+// }
+
 const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
-  return new Promise((resolve, reject) => {
-    const users = []
-    const contactsHash = {}
-    firebaseUsers.forEach(async user => {
-      if (
-        contactsObj[user.phoneNumber] &&
-        user.phoneNumber !== '+17033094584' //hardcoded to prevent Ian's lack of avatar from breaking the app
-      ) {
-        user.phoneName = contactsObj[user.phoneNumber]
-        if (
-          (prevContacts[user.uid] && prevContacts[user.uid].url !== user.url) ||
-          !prevContacts[user.uid]
-        ) {
-          const localUrl = await downloadedImgUrl(user.uid)
-          user.img = localUrl
-        } else {
-          user.img = prevContacts[user.uid].img
-        }
-        users.push(user)
-        contactsHash[user.uid] = user
-      }
-    })
-    resolve([users, contactsHash])
+  const users = []
+  const contactsHash = {}
+  firebaseUsers.forEach(user => {
+    if (contactsObj[user.phoneNumber]) {
+      user.phoneName = contactsObj[user.phoneNumber]
+      users.push(user)
+      contactsHash[user.uid] = user
+    }
   })
+  return [users, contactsHash]
 }
 
 export const populateContacts = () => async (dispatch, getState) => {

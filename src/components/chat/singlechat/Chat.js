@@ -6,7 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from 'react-native'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
@@ -15,28 +15,27 @@ import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
+  static navigationOptions = ({navigation}) => ({
+    headerTitle: 'Chat',
+  })
+
   constructor(props) {
     super(props)
     this.state = {
       receiverUid: '',
       newMessage: '',
-      height: 24
+      height: 24,
     }
   }
 
   componentDidMount() {
-    const receiverUid = this
-      .props
-      .navigation
-      .getParam('uid', false)
+    const receiverUid = this.props.navigation.getParam('uid', false)
     this.setState({receiverUid})
   }
 
   componentWillUnmount() {
     if (this.props.messages[this.state.receiverUid]) {
-      this
-        .props
-        .seenMessages(this.state.receiverUid)
+      this.props.seenMessages(this.state.receiverUid)
     }
   }
 
@@ -58,10 +57,7 @@ class Chat extends React.Component {
     const user = this.props.user
     const receiver = {
       uid: this.state.receiverUid,
-      publicKey: this
-        .props
-        .navigation
-        .getParam('publicKey')
+      publicKey: this.props.navigation.getParam('publicKey'),
     }
     rsa.setPublicString(user.publicKey)
     const senderCopy = text.map(chunk => rsa.encrypt(chunk))
@@ -70,12 +66,12 @@ class Chat extends React.Component {
     const senderMessage = {
       text: senderCopy,
       sender: true,
-      group: false
+      group: false,
     }
     const receiverMessage = {
       text: receiverCopy,
       sender: false,
-      group: false
+      group: false,
     }
     const sentAt = Date.now()
     const senderRef = firebase
@@ -99,33 +95,37 @@ class Chat extends React.Component {
         style={styles.container}
         enabled
         behavior="padding"
-        keyboardVerticalOffset={64}>
+        keyboardVerticalOffset={64}
+      >
         <TouchableWithoutFeedback
           onPress={() => {
-          Keyboard.dismiss()
-        }}>
+            Keyboard.dismiss()
+          }}
+        >
           <ScrollView>
-            {this.props.messages[receiverUid]
-              ? (this.props.messages[receiverUid].conversation.map(message => (
+            {this.props.messages[receiverUid] ? (
+              this.props.messages[receiverUid].conversation.map(message => (
                 <Text
                   key={message.timeStamp}
                   style={{
-                  color: 'black'
-                }}>
+                    color: 'black',
+                  }}
+                >
                   {message.text}
                 </Text>
-              )))
-              : (
-                <Text>No Messages</Text>
-              )}
+              ))
+            ) : (
+              <Text>No Messages</Text>
+            )}
           </ScrollView>
         </TouchableWithoutFeedback>
         <TextInput
           style={[
-          styles.input, {
-            height: this.state.height
-          }
-        ]}
+            styles.input,
+            {
+              height: this.state.height,
+            },
+          ]}
           value={this.state.newMessage}
           multiline={true}
           autoFocus={false}
@@ -135,12 +135,13 @@ class Chat extends React.Component {
           blurOnSubmit={true}
           onChangeText={newMessage => this.setState({newMessage})}
           onContentSizeChange={event => {
-          this.setState({height: event.nativeEvent.contentSize.height})
-        }}
+            this.setState({height: event.nativeEvent.contentSize.height})
+          }}
           onSubmitEditing={() => {
-          this.sendMessage();
-          this.setState({newMessage: '', height: 16})
-        }}/>
+            this.sendMessage()
+            this.setState({newMessage: '', height: 16})
+          }}
+        />
       </KeyboardAvoidingView>
     )
   }
@@ -149,7 +150,7 @@ class Chat extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   input: {
     backgroundColor: 'white',
@@ -158,14 +159,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 5,
     paddingRight: 5,
-    fontSize: 24
-  }
+    fontSize: 24,
+  },
 })
 
 const mapStateToProps = state => ({user: state.user, messages: state.messages})
 
 const mapDispatchToProps = dispatch => ({
-  seenMessages: chatId => dispatch(seenMessages(chatId))
+  seenMessages: chatId => dispatch(seenMessages(chatId)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps,)(Chat)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Chat)

@@ -6,6 +6,13 @@ class BottomNavBar extends Component {
   state = {
     btnSelected: 3,
   }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.reset !== this.props.reset) {
+      if (this.props.reset) this.setState({btnSelected: 3})
+    }
+  }
+
   render() {
     return (
       <View style={styles.navBar}>

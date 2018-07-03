@@ -13,6 +13,7 @@ class MainScreensContainer extends React.Component {
     chats: [],
     displayContacts: false,
     displayAccountInfo: false,
+    reset: false,
   }
 
   async componentDidMount() {
@@ -73,6 +74,7 @@ class MainScreensContainer extends React.Component {
           user.displayName = data.displayName
           user.publicKey = data.publicKey
           user.phoneNumber = data.phoneNumber
+          user.img = data.img
         })
       return user
     } catch (error) {
@@ -81,15 +83,35 @@ class MainScreensContainer extends React.Component {
   }
 
   displayChats = () => {
-    this.setState({displayContacts: false, displayAccountInfo: false})
+    this.setState({
+      displayContacts: false,
+      displayAccountInfo: false,
+      reset: false,
+    })
   }
 
   displayContacts = () => {
-    this.setState({displayContacts: true, displayAccountInfo: false})
+    this.setState({
+      displayContacts: true,
+      displayAccountInfo: false,
+      reset: false,
+    })
   }
 
   displayAccountInfo = () => {
-    this.setState({displayContacts: false, displayAccountInfo: true})
+    this.setState({
+      displayContacts: false,
+      displayAccountInfo: true,
+      reset: false,
+    })
+  }
+
+  resetScreen = () => {
+    this.setState({
+      displayContacts: false,
+      displayAccountInfo: false,
+      reset: true,
+    })
   }
 
   render() {
@@ -101,7 +123,10 @@ class MainScreensContainer extends React.Component {
         style={styles.container}
       >
         {this.state.displayContacts ? (
-          <Contacts navigation={this.props.navigation} />
+          <Contacts
+            navigation={this.props.navigation}
+            resetScreen={this.resetScreen}
+          />
         ) : this.state.displayAccountInfo ? (
           <AccountInfo />
         ) : (
@@ -111,6 +136,7 @@ class MainScreensContainer extends React.Component {
           />
         )}
         <BottomNavBar
+          reset={this.state.reset}
           displayChats={this.displayChats}
           displayContacts={this.displayContacts}
           displayAccountInfo={this.displayAccountInfo}

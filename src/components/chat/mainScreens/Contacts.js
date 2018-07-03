@@ -18,6 +18,7 @@ class Contacts extends React.Component {
   }
 
   goToConvo = item => {
+    this.props.resetScreen()
     this.props.navigation.navigate('Chat', {
       uid: item.uid,
       title: item.title,
