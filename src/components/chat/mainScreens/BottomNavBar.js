@@ -17,11 +17,9 @@ class BottomNavBar extends Component {
     return (
       <View style={styles.navBar}>
         <TouchableOpacity
-          style={
-            this.state.btnSelected === 1
-              ? styles.btnSelected
-              : styles.notSelected
-          }
+          style={(this.state.btnSelected === 1)
+          ? styles.btnSelected
+          : styles.notSelected}
           onPress={() => {
             this.props.displayAccountInfo()
             this.setState({btnSelected: 1})
@@ -30,11 +28,9 @@ class BottomNavBar extends Component {
           <Icon name="user-circle" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-          style={
-            this.state.btnSelected === 2
-              ? styles.btnSelected
-              : styles.notSelected
-          }
+          style={(this.state.btnSelected === 2)
+          ? styles.btnSelected
+          : styles.notSelected}
           onPress={() => {
             this.props.displayContacts()
             this.setState({btnSelected: 2})
@@ -43,11 +39,9 @@ class BottomNavBar extends Component {
           <Icon name="address-book" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-          style={
-            this.state.btnSelected === 3
-              ? styles.btnSelected
-              : styles.notSelected
-          }
+          style={(this.state.btnSelected === 3)
+          ? styles.btnSelected
+          : styles.notSelected}
           onPress={() => {
             this.props.displayChats()
             this.setState({btnSelected: 3})
@@ -63,22 +57,22 @@ class BottomNavBar extends Component {
 const styles = StyleSheet.create({
   navBar: {
     flexDirection: 'row',
-    backgroundColor: '#8BD08B',
-    height: 50,
+    backgroundColor: '#20AAB2',
+    height: 50
   },
   edges: {
     borderRightWidth: 1,
     borderLeftWidth: 1,
   },
   btnSelected: {
-    backgroundColor: '#C5E8C5',
+    backgroundColor: '#AEE8C3',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
   },
   notSelected: {
-    borderColor: '#8BD08B',
+    borderColor: '#20AAB2',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

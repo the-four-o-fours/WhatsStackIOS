@@ -175,9 +175,8 @@ class MainScreensContainer extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
-  },
+    backgroundColor: '#ffffff'
+  }
 })
 
 const mapStateToProps = state => ({
