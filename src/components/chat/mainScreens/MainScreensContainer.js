@@ -31,7 +31,6 @@ class MainScreensContainer extends React.Component {
 
   async componentDidMount() {
     this.getTitle()
-    console.log(this.props.navigation)
     try {
       const chats = await this.findChats()
       this.setState({chats})

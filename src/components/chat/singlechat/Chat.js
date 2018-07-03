@@ -15,10 +15,6 @@ import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
-  static navigationOptions = ({navigation}) => ({
-    headerTitle: 'Chat',
-  })
-
   constructor(props) {
     super(props)
     this.state = {
