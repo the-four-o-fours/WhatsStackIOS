@@ -6,7 +6,7 @@ export default class AllChats extends Component {
   goToConvo = item => {
     this.props.navigation.navigate('Chat', {
       uid: item.uid,
-      title: item.title,
+      title: item.displayName,
       publicKey: item.publicKey,
     })
   }
