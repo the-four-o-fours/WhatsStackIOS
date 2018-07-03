@@ -76,19 +76,29 @@ const findOverlap = async (
       contactsHash[user.uid] = user
     }
   })
+  console.log('prevContacts', prevContacts)
   await Promise.all(
     users.map(async user => {
       try {
         const id = user.uid
-        if (!prevContacts[id] || prevContacts[id].url === 'default') {
-          user.img = defaultImg
-        } else if (prevContacts[id].url !== user.url) {
-          const localUrl = await downloadedImgUrl(id)
-          user.img = localUrl
+        if (prevContacts[id]) {
+          // We have seen this user before
+          if (prevContacts[id].url === user.url) {
+            user.img = prevContacts[id].img // Do not need to download new avatar
+          } else {
+            const localUrl = await downloadedImgUrl(id) // Download new image
+            user.img = localUrl
+          }
         } else {
-          user.img = prevContacts[id].img
+          // This is a new person added to our contacts
+          if (user.url === 'default') {
+            user.img = defaultImg // Set default image on our device
+          } else {
+            const localUrl = await downloadedImgUrl(id) // Download new image
+            user.img = localUrl
+          }
+          contactsHash[id].img = user.img
         }
-        contactsHash[id].img = user.img
       } catch (err) {
         console.log(err)
       }
