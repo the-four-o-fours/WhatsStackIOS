@@ -87,91 +87,93 @@ class AccountInfo extends React.Component {
     return (
 
       <View style={styles.accountContainer}>
-        <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset={64}>
-          <TouchableWithoutFeedback onPress={this.exitNameChange}>
-            <View style={styles.accountProfile}>
-              <View>
-                <View style={styles.accountAvatar}>
-                  <Avatar
-                    rounded
-                    xlarge
-                    activeOpacity={0.7}
-                    source={{
-                    uri: user.img
-                  }}/>
-                </View>
+        <TouchableWithoutFeedback onPress={this.exitNameChange}>
+          <View style={styles.accountProfile}>
+            <View>
+              <View style={styles.accountAvatar}>
+                <Avatar
+                  rounded
+                  xlarge
+                  activeOpacity={0.7}
+                  source={{
+                  uri: user.img
+                }}/>
               </View>
             </View>
-          </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+        <View style={styles.accountActions}>
+          <View>
+            <TouchableWithoutFeedback style={styles.accountContainer}>
+              <View style={styles.accountName}>
+                {!this.state.change
+                  ? <Text
+                      h4
+                      style={{
+                      textAlign: 'center',
+                      fontFamily: 'Gill Sans',
+                      color: '#20AAB2'
+                    }}>{user.displayName}</Text>
+                  : ''}
 
-          <View style={styles.accountActions}>
-            <View>
-              <TouchableWithoutFeedback style={styles.accountContainer}>
-                <View style={styles.accountName}>
-                  <Text
-                    h4
-                    style={{
-                    textAlign: 'center',
-                    fontFamily: 'Gill Sans',
-                    color: '#20AAB2'
-                  }}>{user.displayName}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+            {this.state.change
+              ? (
+                <View>
+                  <TextInput
+                    style={styles.changeName}
+                    value={this.state.displayName}
+                    maxLength={30}
+                    autoFocus={true}
+                    placeholder='Change your display name'
+                    onChangeText={displayName => this.setState({displayName})}
+                    onSubmitEditing={this.changeDisplayName}/>
+                  <TouchableOpacity
+                    onPress={this.changeDisplayName}
+                    disabled={!this.state.displayName.length}/>
                 </View>
-              </TouchableWithoutFeedback>
-              {this.state.change
-                ? (
-                  <View>
-                    <TextInput
-                      style={styles.changeName}
-                      value={this.state.displayName}
-                      maxLength={30}
-                      placeholder='Change your display name'
-                      onChangeText={displayName => this.setState({displayName})}
-                      onSubmitEditing={this.changeDisplayName}/>
-                    <TouchableOpacity
-                      onPress={this.changeDisplayName}
-                      disabled={!this.state.displayName.length} />
-                  </View>
-                )
-                : (<Button
-                  buttonStyle={{
-                  backgroundColor: "transparent",
-                  borderBottomColor: "#eee",
-                  borderBottomWidth: 1
-                }}
-                  icon={{
-                  name: 'address-card',
-                  type: 'font-awesome',
-                  color: '#006994',
-                  size: 24
-                }}
-                  textStyle={{
-                  fontSize: 20
-                }}
-                  title='Change display name'
-                  color='#006994'
-                  onPress={this.changeView}/>)}
-            </View>
-            <View style={styles.upLoadAvatar}>
-              <Button
+              )
+              : (<Button
                 buttonStyle={{
                 backgroundColor: "transparent",
                 borderBottomColor: "#eee",
                 borderBottomWidth: 1
               }}
-                textStyle={{
-                fontSize: 20
-              }}
                 icon={{
-                name: 'upload',
+                name: 'address-card',
                 type: 'font-awesome',
                 color: '#006994',
                 size: 24
               }}
-                title='Upload profile image'
+                textStyle={{
+                fontSize: 20
+              }}
+                title='Change display name'
                 color='#006994'
-                onPress={this.setAvatar}/>
-            </View>
-            {/* <View style={styles.signOut}>
+                onPress={this.changeView}/>)}
+          </View>
+          <View style={styles.upLoadAvatar}>
+            <Button
+              buttonStyle={{
+              backgroundColor: "transparent",
+              borderBottomColor: "#eee",
+              borderBottomWidth: 1
+            }}
+              textStyle={{
+              fontSize: 20
+            }}
+              icon={{
+              name: 'upload',
+              type: 'font-awesome',
+              color: '#006994',
+              size: 24
+            }}
+              title='Upload profile image'
+              color='#006994'
+              onPress={this.setAvatar}/>
+          </View>
+          {/* <View style={styles.signOut}>
             <Button
               buttonStyle={{
               backgroundColor: "transparent",
@@ -188,8 +190,8 @@ class AccountInfo extends React.Component {
               color='#006994'
               onPress={this.signOut}/>
           </View> */}
-          </View>
-        </KeyboardAvoidingView>
+        </View>
+
       </View>
     )
   }
@@ -206,8 +208,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginTop: '15%'
+    justifyContent: 'flex-end'
   },
   accountProfile: {
     flex: 1,
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   accountAvatar: {
-    marginTop: 60
+    marginTop: 10
   },
   accountName: {
     color: '#fff'
