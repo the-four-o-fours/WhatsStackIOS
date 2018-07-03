@@ -6,12 +6,18 @@ import Chat from './chat/singlechat/Chat'
 const MainNavigator = createStackNavigator({
   Main: {
     screen: MainScreensContainer,
-    navigationOptions: ({navigation}) => ({title: 'WhatsStack', headerBackTitle: null})
+    navigationOptions: ({navigation}) => ({
+      title: 'WhatsStack',
+      headerBackTitle: null,
+    }),
   },
   Chat: {
     screen: Chat,
-    navigationOptions: ({navigation}) => ({title: navigation.state.params.title, headerBackTitle: null})
-  }
+    navigationOptions: ({navigation}) => ({
+      title: navigation.state.params.title,
+      headerBackTitle: null,
+    }),
+  },
 })
 
 export default MainNavigator

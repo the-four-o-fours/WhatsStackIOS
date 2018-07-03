@@ -60,6 +60,7 @@
     "react-native-gifted-chat": "^0.4.3",
     "react-native-image-crop-picker": "^0.20.3",
     "react-native-material-bottom-navigation": "^1.0.0",
+    "react-native-reversed-flat-list": "^1.0.2",
     "react-native-rsa": "0.0.3",
     "react-native-unified-contacts": "^1.6.2",
     "react-native-vector-icons": "^4.6.0",

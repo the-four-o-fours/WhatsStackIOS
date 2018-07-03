@@ -15,22 +15,19 @@ class MainScreensContainer extends React.Component {
 
   state = {
     chats: [],
-    displayContacts: false,
-    displayAccountInfo: false,
-    reset: false,
+    screen: 'AllChats',
   }
 
-  getTitle = () => {
+  setTitle = () => {
     const {setParams} = this.props.navigation
-    if (this.state.displayContacts && !this.state.displayAccountInfo)
-      setParams({title: 'Contacts'})
-    else if (this.state.displayAccountInfo)
-      setParams({title: 'Account Settings'})
-    else setParams({title: 'WhatsStack'})
+    if (this.state.screen === 'AllChats') setParams({title: 'WhatsStack'})
+    else if (this.state.screen === 'Contacts') setParams({title: 'Contacts'})
+    else if (this.state.screen === 'AccountInfo')
+      setParams({title: 'Account Info'})
   }
 
   async componentDidMount() {
-    this.getTitle()
+    this.setTitle()
     try {
       const chats = await this.findChats()
       this.setState({chats})
@@ -96,47 +93,12 @@ class MainScreensContainer extends React.Component {
     }
   }
 
-  displayChats = () => {
+  setScreen = screen => {
     this.setState(
       {
-        displayContacts: false,
-        displayAccountInfo: false,
-        reset: false,
+        screen,
       },
-      () => this.getTitle(),
-    )
-  }
-
-  displayContacts = () => {
-    this.setState(
-      {
-        displayContacts: true,
-        displayAccountInfo: false,
-        reset: false,
-      },
-      () => this.getTitle(),
-    )
-  }
-
-  displayAccountInfo = () => {
-    this.setState(
-      {
-        displayContacts: false,
-        displayAccountInfo: true,
-        reset: false,
-      },
-      () => this.getTitle(),
-    )
-  }
-
-  resetScreen = () => {
-    this.setState(
-      {
-        displayContacts: false,
-        displayAccountInfo: false,
-        reset: true,
-      },
-      () => this.getTitle(),
+      () => this.setTitle(),
     )
   }
 
@@ -148,24 +110,24 @@ class MainScreensContainer extends React.Component {
         keyboardVerticalOffset={64}
         style={styles.container}
       >
-        {this.state.displayContacts ? (
-          <Contacts
-            navigation={this.props.navigation}
-            resetScreen={this.resetScreen}
-          />
-        ) : this.state.displayAccountInfo ? (
-          <AccountInfo />
-        ) : (
+        {this.state.screen === 'AllChats' ? (
           <AllChats
             navigation={this.props.navigation}
             chats={this.state.chats}
           />
+        ) : this.state.screen === 'Contacts' ? (
+          <Contacts
+            navigation={this.props.navigation}
+            resetScreen={() => this.setScreen('AllChats')}
+          />
+        ) : (
+          <AccountInfo />
         )}
         <BottomNavBar
-          reset={this.state.reset}
-          displayChats={this.displayChats}
-          displayContacts={this.displayContacts}
-          displayAccountInfo={this.displayAccountInfo}
+          screen={this.state.screen}
+          displayChats={() => this.setScreen('AllChats')}
+          displayContacts={() => this.setScreen('Contacts')}
+          displayAccountInfo={() => this.setScreen('AccountInfo')}
         />
       </KeyboardAvoidingView>
     )
@@ -175,8 +137,9 @@ class MainScreensContainer extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff'
-  }
+    justifyContent: 'space-between',
+    backgroundColor: '#ffffff',
+  },
 })
 
 const mapStateToProps = state => ({
