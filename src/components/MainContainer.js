@@ -64,10 +64,10 @@ class MainContainer extends Component {
   updateOnNewMessageOrNameChange = async snapshot => {
     //both these events trigger a "child changed"
     try {
-      if (snapshot.key === 'displayName' || snapshot.key === 'img') {
+      if (snapshot.key === 'displayName') {
         //listening for a changed name
         this.props.getUser({[snapshot.key]: snapshot.val()})
-      } else {
+      } else if (snapshot.key !== 'img') {
         //listening for a new message being added to an existing conversation
         const conversation = await this.JoinDecryptAndConvertToArr(
           snapshot.val(),
