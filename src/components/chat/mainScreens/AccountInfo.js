@@ -10,7 +10,6 @@ import {
 } from 'react-native'
 import {Avatar, Text, Button} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
-import RNFetchBlob from 'rn-fetch-blob'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 import {getUser} from '../../../store/actions'
@@ -55,16 +54,6 @@ class AccountInfo extends React.Component {
     this.setState({isLoading: false})
   }
 
-  downloadAvatar = url => {
-    return new Promise((resolve, reject) => {
-      RNFetchBlob
-        .config({fileCache: true, appendExt: 'jpg'})
-        .fetch('GET', url)
-        .then(res => resolve(res.path()))
-        .catch(err => reject(err))
-    })
-  }
-
   uploadAvatar = () => {
     const ref = firebase
       .storage()
@@ -93,6 +82,9 @@ class AccountInfo extends React.Component {
 
   render() {
     const user = this.props.user
+    const img = user.img === 'default'
+      ? user.default
+      : user.img
     return (
 
       <View style={styles.accountContainer}>
