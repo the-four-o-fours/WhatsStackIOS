@@ -33,7 +33,7 @@ class Contacts extends React.Component {
     this.setState({matchingContacts})
   }
 
-  extractKey = ({uid}) => uid
+  keyExtractor = ({uid}) => uid
   renderItem = ({item}) => {
     return (
       <ListItem
