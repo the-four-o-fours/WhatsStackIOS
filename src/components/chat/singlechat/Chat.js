@@ -121,7 +121,7 @@ class Chat extends React.Component {
                 keyExtractor={this.keyExtractor}
               />
             ) : (
-              <Text>No Messages</Text>
+              <Text style={styles.noMessages}>No Messages ◉︵◉</Text>
             )}
           </TouchableWithoutFeedback>
         </ImageBackground>
@@ -170,6 +170,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
+  },
+  noMessages: {
+    fontSize: 32,
+    color: '#006994',
+    alignSelf: 'center',
+    paddingTop: 250,
   },
   inputContainer: {
     flexDirection: 'row',
