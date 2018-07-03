@@ -70,6 +70,7 @@ class AccountInfo extends React.Component {
 
   render() {
     const user = this.props.user
+    const img = user.img === 'default' ? user.default : user.img
     return (
       <View style={styles.accountContainer}>
         <KeyboardAvoidingView
@@ -86,7 +87,7 @@ class AccountInfo extends React.Component {
                     xlarge
                     activeOpacity={0.7}
                     source={{
-                      uri: user.img,
+                      uri: img,
                     }}
                   />
                 </View>

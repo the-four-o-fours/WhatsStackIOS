@@ -23,7 +23,7 @@ class CreateUser extends Component {
 
   componentDidMount() {
     const {uid, phoneNumber} = firebase.auth().currentUser
-    this.setState({uid, phoneNumber})
+    this.setState({uid, phoneNumber}, () => console.log(this.state))
   }
 
   generateRSAKey = () => {
@@ -49,7 +49,7 @@ class CreateUser extends Component {
       const firebaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
       const user = await firebaseUser.once('value')
       const exists = await user.exists()
-      const [cloudUrl, localUrl] = await this.getDefaultImg
+      const [cloudUrl, localUrl] = await this.getDefaultImg()
       this.props.getUser({img: localUrl})
       if (!exists) {
         const [privateKey, publicKey] = this.generateRSAKey()
@@ -71,7 +71,6 @@ class CreateUser extends Component {
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        {/* <View style={styles.container}> */}
         <Image
           style={{flex: 1, width: '66%', padding: 22}}
           source={require('../../Public/allTeallogo.png')}
