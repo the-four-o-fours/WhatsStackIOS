@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native'
 
 const ChatBubble = props => {
   const {message} = props
-  const timeStamp = new Date(Number(message.timeStamp)).toString()
+  const timeStamp = new Date(Number(message.timeStamp)).toString().slice(0, 24)
   if (message.sender) {
     return (
       <View style={[styles.container, styles.senderBubble]}>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   bubble: {
-    maxWidth: 300,
+    maxWidth: 335,
     padding: 10,
     marginBottom: 5,
     marginTop: 5,
