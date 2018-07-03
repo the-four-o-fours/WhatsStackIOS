@@ -8,10 +8,10 @@ import {
 } from 'react-native'
 import {Button} from 'react-native-elements'
 import firebase from 'react-native-firebase'
-import RNFetchBlob from 'rn-fetch-blob'
 import rsa from '../rsa'
 import {connect} from 'react-redux'
 
+import download from '../download'
 import {getUser} from '../../store/actions'
 
 class CreateUser extends Component {
@@ -40,20 +40,8 @@ class CreateUser extends Component {
       .storage()
       .ref('/Users/default.jpg')
       .getDownloadURL()
-    const localUrl = await this.downloadAvatar(cloudUrl)
+    const localUrl = await download(cloudUrl)
     return [cloudUrl, localUrl]
-  }
-
-  downloadAvatar = url => {
-    return new Promise((resolve, reject) => {
-      RNFetchBlob.config({
-        fileCache: true,
-        appendExt: 'jpg',
-      })
-        .fetch('GET', url)
-        .then(res => resolve(res.path()))
-        .catch(err => reject(err))
-    })
   }
 
   addUserToDB = async () => {
@@ -146,4 +134,7 @@ const mapDispatchToProps = dispatch => ({
   getUser: user => dispatch(getUser(user)),
 })
 
-export default (null, mapDispatchToProps)(CreateUser)
+export default connect(
+  null,
+  mapDispatchToProps,
+)(CreateUser)

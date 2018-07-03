@@ -1,6 +1,6 @@
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
-import RNFetchBlob from 'rn-fetch-blob'
+import download from '../../components/download'
 
 export const GOT_CONTACTS = 'GOT_CONTACTS'
 export const GOT_CONTACTS_HASH = 'GOT_CONTACTS_HASH'
@@ -52,14 +52,30 @@ const getAllUsers = async () => {
   }
 }
 
+const downloadedImgUrl = async id => {
+  const cloudUrl = await firebase
+    .storage()
+    .ref(`/Users/${id}/avatar.jpg`)
+    .getDownloadURL()
+  const localUrl = await download(cloudUrl)
+  return localUrl
+}
+
 const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
   const users = []
   const contactsHash = {}
-  firebaseUsers.forEach(user => {
+  console.log('contactsobj', contactsObj)
+  console.log('prevContacts', prevContacts)
+  firebaseUsers.forEach(async user => {
     if (contactsObj[user.phoneNumber]) {
+      console.log('prev', prevContacts)
       user.phoneName = contactsObj[user.phoneNumber]
-      if (prevContacts[user.uid].url !== users.url) {
-        console.log('prev contacts', prevContacts[user.uid].url)
+      if (
+        (prevContacts[user.uid] && prevContacts[user.uid].url !== user.url) ||
+        !prevContacts[user.uid]
+      ) {
+        const localUrl = await downloadedImgUrl(user.uid)
+        user.img = localUrl
       } else {
         user.img = prevContacts[user.uid].img
       }
@@ -67,13 +83,12 @@ const findOverlap = (firebaseUsers, contactsObj, prevContacts) => {
       contactsHash[user.uid] = user
     }
   })
-  console.log('users', users)
-  console.log('contactsHash', contactsHash)
   return [users, contactsHash]
 }
 
 export const populateContacts = () => async (dispatch, getState) => {
   try {
+    console.log('state?', getState())
     const firebaseUsers = await getAllUsers()
     const contactsObj = await getAllContacts()
     const prevContactsHash = getState().contactsHash

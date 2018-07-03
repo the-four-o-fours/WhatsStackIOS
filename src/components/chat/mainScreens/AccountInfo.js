@@ -11,10 +11,10 @@ import {
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
-import RNFetchBlob from 'rn-fetch-blob'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 
+import download from '../../download'
 import {getUser} from '../../../store/actions'
 
 class AccountInfo extends React.Component {
@@ -41,20 +41,8 @@ class AccountInfo extends React.Component {
 
   setAvatar = async () => {
     const cloudUrl = await this.uploadAvatar()
-    const localUrl = await this.downloadAvatar(cloudUrl)
+    const localUrl = await download(cloudUrl)
     this.props.getUser({img: localUrl})
-  }
-
-  downloadAvatar = url => {
-    return new Promise((resolve, reject) => {
-      RNFetchBlob.config({
-        fileCache: true,
-        appendExt: 'jpg',
-      })
-        .fetch('GET', url)
-        .then(res => resolve(res.path()))
-        .catch(err => reject(err))
-    })
   }
 
   uploadAvatar = () => {
