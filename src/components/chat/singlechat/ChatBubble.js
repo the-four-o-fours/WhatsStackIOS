@@ -54,19 +54,20 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   senderInnerBubble: {
-    backgroundColor: '#DCF1DC',
+    backgroundColor: '#006994',
     borderTopRightRadius: 0,
   },
   receiverInnerBubble: {
-    backgroundColor: '#8BD08B',
+    backgroundColor: '#AEE8C3',
     borderBottomLeftRadius: 0,
   },
   messageText: {
     fontSize: 16,
+    color: 'white',
   },
   timeStampText: {
     fontSize: 12,
-    color: 'grey',
+    color: '#E8FDFF',
   },
   triangle: {
     width: 0,
@@ -79,10 +80,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   senderTriangle: {
-    borderTopColor: '#DCF1DC',
+    borderTopColor: '#006994',
   },
   receiverTriangle: {
-    borderTopColor: '#8BD08B',
+    borderTopColor: '#AEE8C3',
     alignSelf: 'flex-end',
     marginBottom: 5,
     transform: [{rotate: '180deg'}],

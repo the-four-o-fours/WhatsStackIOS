@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   View,
+  ImageBackground,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
@@ -102,22 +103,28 @@ class Chat extends React.Component {
         behavior="padding"
         keyboardVerticalOffset={64}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            Keyboard.dismiss()
-          }}
+        <ImageBackground
+          style={{flex: 1}}
+          source={require('../../../Public/bgtile.png')}
+          resizeMode="repeat"
         >
-          {this.props.messages[receiverUid] ? (
-            <ReversedFlatList
-              style={styles.chats}
-              data={this.props.messages[receiverUid].conversation}
-              renderItem={this.renderItem}
-              keyExtractor={this.keyExtractor}
-            />
-          ) : (
-            <Text>No Messages</Text>
-          )}
-        </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              Keyboard.dismiss()
+            }}
+          >
+            {this.props.messages[receiverUid] ? (
+              <ReversedFlatList
+                style={styles.chats}
+                data={this.props.messages[receiverUid].conversation}
+                renderItem={this.renderItem}
+                keyExtractor={this.keyExtractor}
+              />
+            ) : (
+              <Text>No Messages</Text>
+            )}
+          </TouchableWithoutFeedback>
+        </ImageBackground>
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -150,7 +157,7 @@ class Chat extends React.Component {
               this.setState({newMessage: '', height: 16})
             }}
           >
-            <Icon name="ios-send" size={35} color="black" />
+            <Icon name="ios-send" size={35} color="#006994" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
