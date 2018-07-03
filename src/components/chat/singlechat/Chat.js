@@ -89,7 +89,7 @@ class Chat extends React.Component {
     receiverRef.update(receiverMessageObj)
   }
 
-  extractKey = ({timestamp}) => timestamp
+  keyExtractor = ({timeStamp}) => timeStamp
   renderItem = ({item}) => {
     return <ChatBubble style={styles.chatBubble} message={item} />
   }
@@ -121,7 +121,9 @@ class Chat extends React.Component {
                 keyExtractor={this.keyExtractor}
               />
             ) : (
-              <Text style={styles.noMessages}>No Messages ◉︵◉</Text>
+              <View>
+                <Text style={styles.noMessages}>No Messages ◉︵◉</Text>
+              </View>
             )}
           </TouchableWithoutFeedback>
         </ImageBackground>
@@ -169,7 +171,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
   },
   noMessages: {
     fontSize: 32,
