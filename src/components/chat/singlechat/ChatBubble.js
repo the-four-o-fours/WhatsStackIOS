@@ -1,43 +1,78 @@
-import React, {Component} from 'react'
-import {View, Text, StyleSheet, FlatList} from 'react-native'
+import React from 'react'
+import {View, Text, StyleSheet} from 'react-native'
 
 const ChatBubble = props => {
-  const message = props.message
-  return (
-    <View style={message.sender ? styles.senderBubble : styles.receiverBubble}>
-      <Text style={message.sender ? styles.senderText : styles.receiverText}>
-        {message.text}
-      </Text>
-    </View>
-  )
+  const {message} = props
+  const timeStamp = new Date(Number(message.timeStamp)).toString()
+  if (message.sender) {
+    return (
+      <View style={[styles.container, styles.senderBubble]}>
+        <View style={[styles.bubble, styles.senderInnerBubble]}>
+          <Text style={styles.text}>{props.message.text}</Text>
+          <Text>{`\n${timeStamp}`}</Text>
+        </View>
+        <View style={[styles.triangle, styles.senderTriangle]} />
+      </View>
+    )
+  } else {
+    return (
+      <View style={[styles.container, styles.receiverBubble]}>
+        <View style={[styles.triangle, styles.receiverTriangle]} />
+        <View style={[styles.bubble, styles.receiverInnerBubble]}>
+          <Text style={styles.text}>{props.message.text}</Text>
+          <Text>{timeStamp}</Text>
+        </View>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
-  senderBubble: {
-    alignSelf: 'flex-end',
-    backgroundColor: 'black',
+  container: {
+    flexDirection: 'row',
+  },
+  bubble: {
     maxWidth: 300,
     padding: 10,
     marginBottom: 5,
     marginTop: 5,
-    borderRadius: 15,
-    borderBottomRightRadius: 0,
+    borderRadius: 10,
+  },
+  senderBubble: {
+    alignSelf: 'flex-end',
   },
   receiverBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: 'white',
-    maxWidth: 300,
-    padding: 10,
-    marginBottom: 5,
-    marginTop: 5,
-    borderRadius: 15,
+  },
+  senderInnerBubble: {
+    backgroundColor: '#DCF1DC',
+    borderTopRightRadius: 0,
+  },
+  receiverInnerBubble: {
+    backgroundColor: '#8BD08B',
     borderBottomLeftRadius: 0,
   },
-  senderText: {
-    color: 'white',
+  text: {
+    fontSize: 16,
   },
-  receiverText: {
-    backgroundColor: 'white',
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderRightWidth: 12,
+    borderTopWidth: 12,
+    borderRightColor: 'transparent',
+    marginTop: 5,
+  },
+  senderTriangle: {
+    borderTopColor: '#DCF1DC',
+  },
+  receiverTriangle: {
+    borderTopColor: '#8BD08B',
+    alignSelf: 'flex-end',
+    marginBottom: 5,
+    transform: [{rotate: '180deg'}],
   },
 })
 
