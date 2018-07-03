@@ -76,7 +76,6 @@ const findOverlap = async (
       contactsHash[user.uid] = user
     }
   })
-  console.log('prevContacts', prevContacts)
   await Promise.all(
     users.map(async user => {
       try {

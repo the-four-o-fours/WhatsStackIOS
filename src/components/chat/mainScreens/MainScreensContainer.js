@@ -27,6 +27,7 @@ class MainScreensContainer extends React.Component {
   }
 
   async componentDidMount() {
+    console.log(this.props.contactsHash)
     this.setTitle()
     try {
       const chats = await this.findChats()
