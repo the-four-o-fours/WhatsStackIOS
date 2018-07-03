@@ -9,6 +9,10 @@ import BottomNavBar from './BottomNavBar'
 import firebase from 'react-native-firebase'
 
 class MainScreensContainer extends React.Component {
+  static navigationOptions = ({navigation}) => ({
+    headerTitle: navigation.getParam('title', 'WhatsStack'),
+  })
+
   state = {
     chats: [],
     displayContacts: false,
@@ -16,7 +20,18 @@ class MainScreensContainer extends React.Component {
     reset: false,
   }
 
+  getTitle = () => {
+    const {setParams} = this.props.navigation
+    if (this.state.displayContacts && !this.state.displayAccountInfo)
+      setParams({title: 'Contacts'})
+    else if (this.state.displayAccountInfo)
+      setParams({title: 'Account Settings'})
+    else setParams({title: 'WhatsStack'})
+  }
+
   async componentDidMount() {
+    this.getTitle()
+    console.log(this.props.navigation)
     try {
       const chats = await this.findChats()
       this.setState({chats})
@@ -83,35 +98,47 @@ class MainScreensContainer extends React.Component {
   }
 
   displayChats = () => {
-    this.setState({
-      displayContacts: false,
-      displayAccountInfo: false,
-      reset: false,
-    })
+    this.setState(
+      {
+        displayContacts: false,
+        displayAccountInfo: false,
+        reset: false,
+      },
+      () => this.getTitle(),
+    )
   }
 
   displayContacts = () => {
-    this.setState({
-      displayContacts: true,
-      displayAccountInfo: false,
-      reset: false,
-    })
+    this.setState(
+      {
+        displayContacts: true,
+        displayAccountInfo: false,
+        reset: false,
+      },
+      () => this.getTitle(),
+    )
   }
 
   displayAccountInfo = () => {
-    this.setState({
-      displayContacts: false,
-      displayAccountInfo: true,
-      reset: false,
-    })
+    this.setState(
+      {
+        displayContacts: false,
+        displayAccountInfo: true,
+        reset: false,
+      },
+      () => this.getTitle(),
+    )
   }
 
   resetScreen = () => {
-    this.setState({
-      displayContacts: false,
-      displayAccountInfo: false,
-      reset: true,
-    })
+    this.setState(
+      {
+        displayContacts: false,
+        displayAccountInfo: false,
+        reset: true,
+      },
+      () => this.getTitle(),
+    )
   }
 
   render() {
