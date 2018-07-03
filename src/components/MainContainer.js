@@ -40,11 +40,7 @@ class MainContainer extends Component {
     try {
       if (
         //this condition populates the messages field in the store with actual message histories, not user data
-        snapshot.key !== 'displayName' &&
-        snapshot.key !== 'phoneNumber' &&
-        snapshot.key !== 'publicKey' &&
-        snapshot.key !== 'uid' &&
-        snapshot.key !== 'img'
+        snapshot.key.length === 28
       ) {
         const convoObj = {}
         convoObj[snapshot.key] = {}

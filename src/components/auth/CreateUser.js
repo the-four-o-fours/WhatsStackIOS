@@ -53,9 +53,14 @@ class CreateUser extends Component {
       this.props.getUser({img: localUrl})
       if (!exists) {
         const [privateKey, publicKey] = this.generateRSAKey()
-        const user = {...this.state, publicKey, img: cloudUrl}
+        const userObj = {
+          ...this.state,
+          publicKey,
+          img: 'default',
+          default: localUrl,
+        }
         AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
-        firebaseUser.set(user)
+        firebaseUser.set(userObj)
       }
       this.props.userCreated()
     } catch (error) {
