@@ -22,7 +22,7 @@ class Chat extends React.Component {
     this.state = {
       receiverUid: '',
       newMessage: '',
-      height: 24,
+      height: 26,
     }
   }
 
@@ -93,7 +93,6 @@ class Chat extends React.Component {
 
   render() {
     const receiverUid = this.state.receiverUid
-    console.log(this.props.messages[receiverUid])
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -133,7 +132,7 @@ class Chat extends React.Component {
           blurOnSubmit={true}
           onChangeText={newMessage => this.setState({newMessage})}
           onContentSizeChange={event => {
-            this.setState({height: event.nativeEvent.contentSize.height})
+            this.setState({height: event.nativeEvent.contentSize.height + 10})
           }}
           onSubmitEditing={() => {
             this.sendMessage()
@@ -149,18 +148,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-  },
-  chats: {
-    paddingLeft: 10,
-    paddingRight: 10,
+    backgroundColor: '#FFFFFF',
   },
   input: {
-    backgroundColor: 'white',
-    borderColor: 'black',
-    borderTopWidth: 1,
-    paddingLeft: 5,
-    paddingRight: 5,
-    fontSize: 24,
+    backgroundColor: '#FFFFFF',
+    borderColor: 'grey',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+    fontSize: 16,
+    margin: 5,
   },
 })
 
