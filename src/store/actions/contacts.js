@@ -94,8 +94,6 @@ const findOverlap = async (
       }
     }),
   )
-  console.log('users', users)
-  console.log('contactsHash', contactsHash)
   return [users, contactsHash]
 }
 
