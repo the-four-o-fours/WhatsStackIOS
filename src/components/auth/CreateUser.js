@@ -8,7 +8,11 @@ import {
 } from 'react-native'
 import {Button} from 'react-native-elements'
 import firebase from 'react-native-firebase'
+import RNFetchBlob from 'rn-fetch-blob'
 import rsa from '../rsa'
+import {connect} from 'react-redux'
+
+import {getUser} from '../../store/actions'
 
 class CreateUser extends Component {
   state = {
@@ -31,14 +35,37 @@ class CreateUser extends Component {
     return [privateKey, publicKey]
   }
 
+  getDefaultImg = async () => {
+    const cloudUrl = await firebase
+      .storage()
+      .ref('/Users/default.jpg')
+      .getDownloadURL()
+    const localUrl = await this.downloadAvatar(cloudUrl)
+    return [cloudUrl, localUrl]
+  }
+
+  downloadAvatar = url => {
+    return new Promise((resolve, reject) => {
+      RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'jpg',
+      })
+        .fetch('GET', url)
+        .then(res => resolve(res.path()))
+        .catch(err => reject(err))
+    })
+  }
+
   addUserToDB = async () => {
     try {
       const firebaseUser = firebase.database().ref(`/Users/${this.state.uid}`)
       const user = await firebaseUser.once('value')
       const exists = await user.exists()
+      const [cloudUrl, localUrl] = await this.getDefaultImg
+      this.props.getUser({img: localUrl})
       if (!exists) {
         const [privateKey, publicKey] = this.generateRSAKey()
-        const user = {...this.state, publicKey}
+        const user = {...this.state, publicKey, img: cloudUrl}
         AsyncStorage.setItem('privateKey', privateKey) //set private keys to async storage
         firebaseUser.set(user)
       }
@@ -115,4 +142,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export default CreateUser
+const mapDispatchToProps = dispatch => ({
+  getUser: user => dispatch(getUser(user)),
+})
+
+export default (null, mapDispatchToProps)(CreateUser)
