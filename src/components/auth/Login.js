@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {
   View,
-  // Button,
   Text,
   TextInput,
   StyleSheet,
@@ -10,7 +9,7 @@ import {
 } from 'react-native'
 import firebase from 'react-native-firebase'
 
-import { Button } from 'react-native-elements'
+import {Button} from 'react-native-elements'
 
 class Login extends Component {
   state = {
@@ -56,38 +55,33 @@ class Login extends Component {
     const {phoneNumber} = this.state
 
     return (
-      // <KeyboardAvoidingView behavior="padding" style={styles.loginContainer}>
-        <View style={styles.loginContainer}>
-          <Text style={styles.whiteFont}>Enter phone number:</Text>
-          <TextInput
-            autoFocus
-            style={{
-              // height: 40,
-              marginTop: 15,
-              marginBottom: 15,
-              backgroundColor: '#fff',
-              borderWidth: 1.33,
-              borderStyle: 'solid',
-              fontSize: 15,
-              borderRadius: 25,
-              width: 200,
-              padding: 10,
-              // opacity: 0.70,
-            }}
-            onChangeText={value => this.setState({phoneNumber: value})}
-            placeholder="Phone number ... "
-            value={phoneNumber}
-            color="black"
-          />
-          <Button
-            title="Sign In"
-            // color="white"
-            buttonStyle={{borderRadius: 25,}}
-            onPress={this.signIn}
-            icon={{name: 'sign-in', type: 'font-awesome'}}
-          />
-        </View>
-      // </KeyboardAvoidingView>
+      <View style={styles.loginContainer}>
+        <Text style={styles.whiteFont}>Enter phone number:</Text>
+        <TextInput
+          autoFocus
+          style={{
+            marginTop: 15,
+            marginBottom: 15,
+            backgroundColor: '#fff',
+            borderWidth: 1.33,
+            borderStyle: 'solid',
+            fontSize: 15,
+            borderRadius: 25,
+            width: 200,
+            padding: 10,
+          }}
+          onChangeText={value => this.setState({phoneNumber: value})}
+          placeholder="Phone number ... "
+          value={phoneNumber}
+          color="black"
+        />
+        <Button
+          title="Sign In"
+          buttonStyle={{borderRadius: 25}}
+          onPress={this.signIn}
+          icon={{name: 'sign-in', type: 'font-awesome'}}
+        />
+      </View>
     )
   }
 
@@ -96,14 +90,7 @@ class Login extends Component {
 
     if (!message.length) return null
 
-    return (
-      <Text
-        style={styles.whiteFont
-        }
-      >
-        {message}
-      </Text>
-    )
+    return <Text style={styles.whiteFont}>{message}</Text>
   }
 
   renderVerificationCodeInput() {
@@ -116,11 +103,7 @@ class Login extends Component {
           padding: 25,
         }}
       >
-        <Text
-        style={styles.whiteFont
-        }>Enter verification code below:
-          
-        </Text>
+        <Text style={styles.whiteFont}>Enter verification code below:</Text>
         <TextInput
           autoFocus
           style={{
@@ -134,9 +117,8 @@ class Login extends Component {
         />
         <Button
           title="Confirm Code"
-          buttonStyle={{borderRadius: 25,}}
+          buttonStyle={{borderRadius: 25}}
           icon={{name: 'sign-in', type: 'hand-o-right'}}
-          // color="#841584"
           onPress={this.confirmCode}
         />
       </View>
@@ -146,9 +128,7 @@ class Login extends Component {
   render() {
     const {user, confirmResult} = this.state
     return (
-      
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-      {/* <View style={styles.container}> */}
         <Image
           style={{flex: 1, width: '66%', padding: 22}}
           source={require('../../Public/whatsStackWhiteLogo1.png')}
@@ -159,9 +139,7 @@ class Login extends Component {
         {this.renderMessage()}
 
         {!user && confirmResult && this.renderVerificationCodeInput()}
-      {/* </View> */}
       </KeyboardAvoidingView>
-      
     )
   }
 }
@@ -190,6 +168,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
-    // justifyContent: 'center',
   },
 })

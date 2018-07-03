@@ -66,7 +66,6 @@ class CreateUser extends Component {
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        {/* <View style={styles.container}> */}
         <Image
           style={{flex: 1, width: '66%', padding: 22}}
           source={require('../../Public/allTeallogo.png')}
@@ -87,7 +86,6 @@ class CreateUser extends Component {
 
         <Button
           title="Choose Display Name"
-          // color="white"
           backgroundColor="#00B183"
           buttonStyle={{borderRadius: 25}}
           onPress={this.addUserToDB}
@@ -99,12 +97,6 @@ class CreateUser extends Component {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: '#fff',
-  //   justifyContent: 'center',
-  //   padding: 10,
-  // },
   container: {
     flex: 1,
     padding: 0,
@@ -126,7 +118,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
-    // justifyContent: 'center',
   },
 })
 
