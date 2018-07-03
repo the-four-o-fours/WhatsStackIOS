@@ -87,6 +87,7 @@ class CreateUser extends Component {
           onChangeText={displayName => this.setState({displayName})}
           placeholder="Display Name"
           placeholderTextColor="#808080"
+          maxLength={20}
         />
 
         <Button

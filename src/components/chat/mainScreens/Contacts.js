@@ -51,6 +51,7 @@ class Contacts extends React.Component {
   }
 
   render() {
+    console.log(this.props.contactsArr)
     return (
       <KeyboardAvoidingView
         enabled
