@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {FlatList, StyleSheet} from 'react-native'
+import {FlatList, StyleSheet, View, Text} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
@@ -22,7 +22,6 @@ export default class AllChats extends Component {
     return trimmed
   }
 
-  extractKey = ({uid}) => uid
   renderItem = ({item}) => {
     const lastSeen = item.seen
       ? this.truncate(item.lastMessage.text)
@@ -44,21 +43,32 @@ export default class AllChats extends Component {
   }
 
   render() {
-    return (
-      <FlatList
-        style={{
-          borderColor: 'white',
-        }}
-        data={this.props.chats}
-        renderItem={this.renderItem}
-        keyExtractor={this.extractKey}
-      />
-    )
+    if (this.props.chats.length) {
+      return (
+        <FlatList
+          style={{
+            borderColor: 'white',
+          }}
+          data={this.props.chats}
+          renderItem={this.renderItem}
+          keyExtractor={({uid}) => uid}
+        />
+      )
+    } else {
+      return (
+        <View>
+          <Text style={styles.noMessages}>No Messages ◉︵◉</Text>
+        </View>
+      )
+    }
   }
 }
 
 const styles = StyleSheet.create({
-  chats: {
-    borderColor: '#fff',
+  noMessages: {
+    fontSize: 32,
+    color: '#006994',
+    alignSelf: 'center',
+    paddingTop: 250,
   },
 })
