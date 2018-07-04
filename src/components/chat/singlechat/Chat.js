@@ -122,6 +122,22 @@ class Chat extends React.Component {
           </TouchableWithoutFeedback>
         </ImageBackground>
         <View style={styles.inputContainer}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              this.sendMessage()
+            }}
+          >
+            <Icon name="ios-camera" size={35} color="#006994" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              this.sendMessage()
+            }}
+          >
+            <Icon name="ios-add" size={35} color="#006994" />
+          </TouchableOpacity>
           <TextInput
             style={[
               styles.input,
@@ -177,7 +193,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   input: {
-    width: 335,
+    width: 280,
     backgroundColor: '#FFFFFF',
     borderColor: 'grey',
     borderWidth: 1,
@@ -188,6 +204,8 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     alignSelf: 'flex-end',
+    paddingRight: 3,
+    paddingLeft: 3,
   },
 })
 
