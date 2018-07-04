@@ -15,9 +15,11 @@ import ReversedFlatList from 'react-native-reversed-flat-list'
 import ChatBubble from './ChatBubble'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
+import ImagePicker from 'react-native-image-crop-picker'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
+import download from '../../download'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -40,9 +42,9 @@ class Chat extends React.Component {
     }
   }
 
-  sendMessage = () => {
+  sendMessage = url => {
     Keyboard.dismiss()
-    const text = this.splitterForRSA(this.state.newMessage)
+    const text = url ? url : this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
     const receiver = {
       uid: this.state.receiverUid,
@@ -86,6 +88,41 @@ class Chat extends React.Component {
     ref.update(message)
   }
 
+  uploadPictureFromGallery = () => {
+    const path = Date.now()
+    const ref = firebase
+      .storage()
+      .ref(
+        `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
+      )
+    return new Promise((resolve, reject) => {
+      ImagePicker.openPicker({multiple: false, mediaType: 'photo'}).then(
+        images => {
+          const metadata = {
+            contentType: images.mime,
+          }
+          ref
+            .putFile(images.sourceURL, metadata)
+            .then(res => {
+              if (res.state === 'success') resolve([images.sourceURL, ref])
+            })
+            .catch(err => reject(err))
+        },
+      )
+    })
+  }
+
+  sendPictureMessage = async (type = 'gallery') => {
+    let localUrl, ref
+    if (type === 'camera') {
+      console.log('camera upload')
+    } else {
+      ;[localUrl, ref] = await this.uploadPictureFromGallery()
+    }
+    const url = await ref.getDownloadURL()
+    // this.sendMessage(localUrl)
+  }
+
   render() {
     const receiverUid = this.state.receiverUid
     return (
@@ -125,7 +162,7 @@ class Chat extends React.Component {
           <TouchableOpacity
             style={styles.submitButton}
             onPress={() => {
-              this.sendMessage()
+              this.sendPictureMessage('camera')
             }}
           >
             <Icon name="ios-camera" size={35} color="#006994" />
@@ -133,7 +170,7 @@ class Chat extends React.Component {
           <TouchableOpacity
             style={styles.submitButton}
             onPress={() => {
-              this.sendMessage()
+              this.sendPictureMessage()
             }}
           >
             <Icon name="ios-add" size={35} color="#006994" />
