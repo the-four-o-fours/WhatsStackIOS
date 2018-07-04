@@ -33,7 +33,6 @@ class Contacts extends React.Component {
     this.setState({matchingContacts})
   }
 
-  keyExtractor = ({uid}) => uid
   renderItem = ({item}) => {
     return (
       <ListItem
@@ -73,7 +72,7 @@ class Contacts extends React.Component {
         <FlatList
           data={this.state.matchingContacts}
           renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
+          keyExtractor={({uid}) => uid}
         />
       </KeyboardAvoidingView>
     )

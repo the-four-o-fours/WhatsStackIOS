@@ -22,7 +22,6 @@ export default class AllChats extends Component {
     return trimmed
   }
 
-  extractKey = ({uid}) => uid
   renderItem = ({item}) => {
     const lastSeen = item.seen
       ? this.truncate(item.lastMessage.text)
@@ -52,7 +51,7 @@ export default class AllChats extends Component {
           }}
           data={this.props.chats}
           renderItem={this.renderItem}
-          keyExtractor={this.extractKey}
+          keyExtractor={({uid}) => uid}
         />
       )
     } else {
