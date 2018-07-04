@@ -9,11 +9,20 @@ import {
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 
+import {populateContacts} from '../../../store/actions'
+
 class Contacts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       matchingContacts: this.props.contactsArr,
+      refreshing: false,
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.contactsArr !== this.props.contactsArr) {
+      this.setState({matchingContacts: this.props.contactsArr})
     }
   }
 
@@ -31,6 +40,11 @@ class Contacts extends React.Component {
       contact.phoneName.toLowerCase().startsWith(contactName.toLowerCase()),
     )
     this.setState({matchingContacts})
+  }
+
+  updateContacts = () => {
+    this.setState({refreshing: true})
+    this.props.populateContacts().then(_ => this.setState({refreshing: false}))
   }
 
   renderItem = ({item}) => {
@@ -73,6 +87,8 @@ class Contacts extends React.Component {
           data={this.state.matchingContacts}
           renderItem={this.renderItem}
           keyExtractor={({uid}) => uid}
+          refreshing={this.state.refreshing}
+          onRefresh={this.updateContacts}
         />
       </KeyboardAvoidingView>
     )
@@ -97,7 +113,11 @@ const mapStateToProps = state => ({
   }),
 })
 
+const mapDispatchToProps = dispatch => ({
+  populateContacts: () => dispatch(populateContacts()),
+})
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(Contacts)
