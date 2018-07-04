@@ -40,6 +40,22 @@ class Chat extends React.Component {
     }
   }
 
+  sendMessage = () => {
+    Keyboard.dismiss()
+    const text = this.splitterForRSA(this.state.newMessage)
+    const sender = this.props.user
+    const receiver = {
+      uid: this.state.receiverUid,
+      publicKey: this.props.navigation.getParam('publicKey'),
+      receiver: true,
+    }
+    const sentAt = Date.now()
+    const senderMessage = this.buildMessage(sender, text, sentAt)
+    const receiverMessage = this.buildMessage(receiver, text, sentAt)
+    this.writeToDB(sender.uid, receiver.uid, senderMessage)
+    this.writeToDB(receiver.uid, sender.uid, receiverMessage)
+  }
+
   // this whole mess is because RSA can only encrypt
   // strings less than 117 characters long
   splitterForRSA = string => {
@@ -52,46 +68,22 @@ class Chat extends React.Component {
     return messageChunks
   }
 
-  sendMessage = () => {
-    Keyboard.dismiss()
-    const text = this.splitterForRSA(this.state.newMessage)
-    const user = this.props.user
-    const receiver = {
-      uid: this.state.receiverUid,
-      publicKey: this.props.navigation.getParam('publicKey'),
-    }
-    rsa.setPublicString(user.publicKey)
-    const senderCopy = text.map(chunk => rsa.encrypt(chunk))
-    rsa.setPublicString(receiver.publicKey)
-    const receiverCopy = text.map(chunk => rsa.encrypt(chunk))
-    const senderMessage = {
-      text: senderCopy,
-      sender: true,
+  buildMessage = (person, text, timeStamp) => {
+    rsa.setPublicString(person.publicKey)
+    const encrypted = text.map(chunk => rsa.encrypt(chunk))
+    const message = {
+      text: encrypted,
+      sender: !person.receiver,
       group: false,
     }
-    const receiverMessage = {
-      text: receiverCopy,
-      sender: false,
-      group: false,
-    }
-    const sentAt = Date.now()
-    const senderRef = firebase
-      .database()
-      .ref(`Users/${user.uid}/${receiver.uid}`)
-    const receiverRef = firebase
-      .database()
-      .ref(`Users/${receiver.uid}/${user.uid}`)
-    const senderMessageObj = {}
-    const receiverMessageObj = {}
-    senderMessageObj[sentAt] = senderMessage
-    receiverMessageObj[sentAt] = receiverMessage
-    senderRef.update(senderMessageObj)
-    receiverRef.update(receiverMessageObj)
+    const messageObj = {}
+    messageObj[timeStamp] = message
+    return messageObj
   }
 
-  keyExtractor = ({timeStamp}) => timeStamp
-  renderItem = ({item}) => {
-    return <ChatBubble style={styles.chatBubble} message={item} />
+  writeToDB = (pathPt1, pathPt2, message) => {
+    const ref = firebase.database().ref(`Users/${pathPt1}/${pathPt2}`)
+    ref.update(message)
   }
 
   render() {
@@ -117,12 +109,14 @@ class Chat extends React.Component {
               <ReversedFlatList
                 style={styles.chats}
                 data={this.props.messages[receiverUid].conversation}
-                renderItem={this.renderItem}
-                keyExtractor={this.keyExtractor}
+                keyExtractor={({timeStamp}) => timeStamp}
+                renderItem={({item}) => (
+                  <ChatBubble style={styles.chatBubble} message={item} />
+                )}
               />
             ) : (
               <View>
-                <Text style={styles.noMessages}>No Messages ◉︵◉</Text>
+                <Text style={styles.noMessages}>Start a conversation ◉‿◉</Text>
               </View>
             )}
           </TouchableWithoutFeedback>
