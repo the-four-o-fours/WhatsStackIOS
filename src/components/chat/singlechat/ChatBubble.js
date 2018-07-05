@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, View, Text, Image} from 'react-native'
+import {StyleSheet, View, Text, Image, ActivityIndicator} from 'react-native'
 
 const ChatBubble = props => {
   const {message, user} = props
@@ -20,6 +20,8 @@ const ChatBubble = props => {
         <View style={[styles.bubble, styles.senderInnerBubble]}>
           {message.img ? (
             <Image
+              resizeMode="contain"
+              loadingIndicatorSource={<ActivityIndicator />}
               style={{width: 300, height: 220}}
               source={{uri: message.text}}
             />
@@ -39,7 +41,12 @@ const ChatBubble = props => {
         <View style={[styles.triangle, styles.receiverTriangle]} />
         <View style={[styles.bubble, styles.receiverInnerBubble]}>
           {message.img ? (
-            <Image source={{uri: message.text}} />
+            <Image
+              resizeMode="contain"
+              loadingIndicatorSource={<ActivityIndicator />}
+              style={{width: 300, height: 220}}
+              source={{uri: message.text}}
+            />
           ) : (
             <Text style={styles.receiverMessageText}>{message.text}</Text>
           )}
