@@ -41,6 +41,7 @@ class Chat extends React.Component {
 
   sendMessage = () => {
     Keyboard.dismiss()
+    console.log('>>>GUID<<<', this.state.gUid)
     const text = this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
     const sentAt = Date.now()
@@ -51,11 +52,12 @@ class Chat extends React.Component {
           uid: memberUid,
           publicKey: this.props.contactsHash[memberUid].publicKey,
         }
+        console.log(receiverObj)
         const message = this.buildMessage(receiverObj, text, sentAt)
-        this.writeToDB(receiverObj.uid, message)
+        this.writeToDB(receiverObj.uid, this.state.gUid, message)
       })
     const senderMessage = this.buildMessage(sender, text, sentAt)
-    this.writeToDB(sender.uid, senderMessage)
+    this.writeToDB(sender.uid, this.state.gUid, senderMessage)
     if (this.state.startsConvo) {
       this.updateMembers()
       this.setState({startsConvo: false})
@@ -79,7 +81,7 @@ class Chat extends React.Component {
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: person.uid,
+      sender: this.props.user.uid,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
@@ -110,6 +112,7 @@ class Chat extends React.Component {
   //Or we could just not support adding people to groups.
 
   render() {
+    console.log(this.state)
     const gUid = this.state.gUid
     return (
       <KeyboardAvoidingView
@@ -217,6 +220,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   user: state.user,
   messages: state.messages,
+  contactsHash: state.contactsHash,
 })
 
 const mapDispatchToProps = dispatch => ({

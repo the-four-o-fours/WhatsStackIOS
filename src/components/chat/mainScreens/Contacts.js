@@ -17,7 +17,7 @@ class Contacts extends React.Component {
     super(props)
     this.state = {
       matchingContacts: this.props.contactsArr,
-      members: [],
+      members: [this.props.user.uid],
       startingGChat: false,
     }
   }
@@ -53,11 +53,9 @@ class Contacts extends React.Component {
     const bits = 1024
     const exponent = '10001' // must be a string
     rsa.generate(bits, exponent)
-    const gUid = rsa.getPublicString().slice(5, 33)
+    const gUid = rsa.getPublicString().slice(6, 34)
+    return gUid
   }
-
-  //startgroup button on top of page under search bar
-  //hitting it flips startingGChat
 
   handleContactPress = item => {
     if (this.state.startingGChat) {
@@ -117,7 +115,7 @@ class Contacts extends React.Component {
           onPress={() => {
             const startingGChat = !this.state.startingGChat
             if (!startingGChat) {
-              this.setState({members: []})
+              this.setState({members: [this.props.user.uid]})
             }
             this.setState({startingGChat})
           }}
@@ -128,6 +126,12 @@ class Contacts extends React.Component {
             <Text style={{fontSize: 16}}>Cancel</Text>
           )}
         </TouchableOpacity>
+        <FlatList
+          data={this.state.matchingContacts}
+          extraData={this.state.members}
+          renderItem={this.renderItem}
+          keyExtractor={({uid}) => uid}
+        />
         {this.state.members.length > 1 ? (
           <TouchableOpacity
             style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
@@ -136,12 +140,6 @@ class Contacts extends React.Component {
             <Text style={{fontSize: 16}}>Go to Group Chat</Text>
           </TouchableOpacity>
         ) : null}
-        <FlatList
-          data={this.state.matchingContacts}
-          extraData={this.state.members}
-          renderItem={this.renderItem}
-          keyExtractor={({uid}) => uid}
-        />
       </KeyboardAvoidingView>
     )
   }
@@ -169,6 +167,7 @@ const mapStateToProps = state => ({
   contactsArr: state.contactsArr.sort((a, b) => {
     return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
   }),
+  user: state.user,
 })
 
 export default connect(
