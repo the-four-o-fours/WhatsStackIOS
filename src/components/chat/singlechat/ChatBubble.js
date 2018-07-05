@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, View, Text, Image, ActivityIndicator} from 'react-native'
+import {StyleSheet, View, Text, Image} from 'react-native'
 
 const ChatBubble = props => {
   const {message, user} = props
@@ -25,9 +25,7 @@ const ChatBubble = props => {
               source={{uri: message.text}}
             />
           ) : (
-            <Text style={styles.senderMessageText}>
-              {message.text.slice(7)}
-            </Text>
+            <Text style={styles.senderMessageText}>{message.text}</Text>
           )}
           <Text style={styles.senderTimeStampText}>{`\n${isToday()}`}</Text>
         </View>
