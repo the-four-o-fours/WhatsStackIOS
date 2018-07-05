@@ -25,13 +25,9 @@ const messagesReducer = (state = initialState, action) => {
         [action.chatId]: {seen: false, conversation: action.conversation},
       }
     case SAW_MESSAGE: {
-      const conversation = state[action.chatId].conversation.slice()
       return {
         ...state,
-        [action.chatId]: {
-          conversation,
-          seen: true,
-        },
+        [action.chatId]: {...state[action.chatId], seen: true},
       }
     }
     default:
