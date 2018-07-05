@@ -107,6 +107,7 @@ class Chat extends React.Component {
   //also slicing them out
   //also a whole sub-comp similar to the contacts arr where you can add members
   //or cancel the add
+  //Or we could just not support adding people to groups.
 
   render() {
     const gUid = this.state.gUid
