@@ -3,6 +3,8 @@ import {
   View,
   StyleSheet,
   TextInput,
+  KeyboardAvoidingView,
+  ActivityIndicator,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native'
@@ -17,6 +19,7 @@ class AccountInfo extends React.Component {
   state = {
     change: false,
     displayName: '',
+    isLoading: false,
   }
 
   signOut = () => {
@@ -36,6 +39,7 @@ class AccountInfo extends React.Component {
   }
 
   setAvatar = async () => {
+    this.setState({isLoading: true})
     const cloudUrl = await this.uploadAvatar()
     const localUrl = await download(cloudUrl)
     const userImageRef = firebase
@@ -43,6 +47,7 @@ class AccountInfo extends React.Component {
       .ref(`/Users/${this.props.user.uid}/img`)
     userImageRef.set(cloudUrl)
     this.props.getUser({img: localUrl})
+    this.setState({isLoading: false})
   }
 
   uploadAvatar = () => {
@@ -79,14 +84,18 @@ class AccountInfo extends React.Component {
           <View style={styles.accountProfile}>
             <View>
               <View style={styles.accountAvatar}>
-                <Avatar
-                  rounded
-                  xlarge
-                  activeOpacity={0.7}
-                  source={{
-                    uri: img,
-                  }}
-                />
+                {this.state.isLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Avatar
+                    rounded
+                    xlarge
+                    activeOpacity={0.7}
+                    source={{
+                      uri: user.img,
+                    }}
+                  />
+                )}
               </View>
             </View>
           </View>
@@ -119,13 +128,14 @@ class AccountInfo extends React.Component {
                     value={this.state.displayName}
                     maxLength={30}
                     autoFocus={true}
-                    placeholder="Change your display name"
+                    placeholder="Change display name"
                     onChangeText={displayName => this.setState({displayName})}
                     onSubmitEditing={this.changeDisplayName}
                   />
                 </View>
                 <View>
                   <Button
+                    disabled={!this.state.displayName.length}
                     title="Save"
                     onPress={this.changeDisplayName}
                     textStyle={{
@@ -187,23 +197,27 @@ class AccountInfo extends React.Component {
               onPress={this.setAvatar}
             />
           </View>
-          {/* <View style={styles.signOut}>
+          <View style={styles.signOut}>
             <Button
               buttonStyle={{
-              backgroundColor: "transparent",
-              borderBottomColor: "#eee",
-              borderBottomWidth: 1
-            }}
+                backgroundColor: 'transparent',
+                borderBottomColor: '#eee',
+                borderBottomWidth: 1,
+              }}
+              textStyle={{
+                fontSize: 20,
+              }}
               icon={{
-              name: 'address-card',
-              type: 'font-awesome',
-              color: '#006994',
-              size: 24
-            }}
-              title='signout'
-              color='#006994'
-              onPress={this.signOut}/>
-          </View> */}
+                name: 'unlink',
+                type: 'font-awesome',
+                color: '#006994',
+                size: 24,
+              }}
+              title="Signout"
+              color="#006994"
+              onPress={this.signOut}
+            />
+          </View>
         </View>
       </View>
     )

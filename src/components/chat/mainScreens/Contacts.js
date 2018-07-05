@@ -1,29 +1,33 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {
-  View,
   FlatList,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
+  Text,
   KeyboardAvoidingView,
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
+
+import {populateContacts} from '../../../store/actions'
+import rsa from '../../rsa'
 
 class Contacts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       matchingContacts: this.props.contactsArr,
+      refreshing: false,
+      members: [],
+      startingGChat: false,
     }
   }
 
-  goToConvo = item => {
-    this.props.resetScreen()
-    this.props.navigation.navigate('Chat', {
-      uid: item.uid,
-      title: item.displayName,
-      publicKey: item.publicKey,
-    })
+  componentDidUpdate(prevProps) {
+    if (prevProps.contactsArr !== this.props.contactsArr) {
+      this.setState({matchingContacts: this.props.contactsArr})
+    }
   }
 
   searchFor = contactName => {
@@ -33,15 +37,73 @@ class Contacts extends React.Component {
     this.setState({matchingContacts})
   }
 
+  goToChat = item => {
+    this.props.resetScreen()
+    this.props.navigation.navigate('Chat', {
+      uid: item.uid,
+      title: item.displayName,
+      publicKey: item.publicKey,
+    })
+  }
+
+  goToGChat = () => {
+    this.props.resetScreen()
+    const gUid = this.generateUid()
+    this.props.navigation.navigate('GChat', {
+      gUid,
+      startsConvo: true,
+      members: this.state.members,
+      title: 'Group Chat',
+    })
+  }
+
+  generateUid = () => {
+    const bits = 1024
+    const exponent = '10001' // must be a string
+    rsa.generate(bits, exponent)
+    const gUid = rsa.getPublicString().slice(5, 33)
+  }
+
+  //startgroup button on top of page under search bar
+  //hitting it flips startingGChat
+
+  handleContactPress = item => {
+    if (this.state.startingGChat) {
+      this.selectOrDeselectMember(item)
+    } else {
+      this.goToChat(item)
+    }
+  }
+
+  selectOrDeselectMember = item => {
+    let members = []
+    if (this.state.members.includes(item.uid)) {
+      members = this.state.members.filter(memberUid => memberUid !== item.uid)
+    } else {
+      members = [...this.state.members, item.uid]
+    }
+    this.setState({members})
+  }
+
+  updateContacts = () => {
+    this.setState({refreshing: true})
+    this.props.populateContacts().then(_ => this.setState({refreshing: false}))
+  }
+
   renderItem = ({item}) => {
     return (
       <ListItem
+        containerStyle={
+          this.state.members.includes(item.uid)
+            ? {backgroundColor: '#AEE8C3'}
+            : {}
+        }
         roundAvatar
         title={`${item.phoneName} (${item.displayName})`}
         avatar={{
           uri: item.img,
         }}
-        onPress={() => this.goToConvo(item)}
+        onPress={() => this.handleContactPress(item)}
         onLongPress={() => {
           console.log('Long press show drawer')
         }}
@@ -56,23 +118,44 @@ class Contacts extends React.Component {
         behavior="padding"
         keyboardVerticalOffset={64}
       >
-        <View
-          style={{
-            padding: 5,
+        <TextInput
+          style={styles.input}
+          autoFocus={false}
+          placeholder="Contact Name"
+          value={this.state.searchFor}
+          onChangeText={contactName => this.searchFor(contactName)}
+        />
+        <TouchableOpacity
+          style={styles.groupButton}
+          onPress={() => {
+            const startingGChat = !this.state.startingGChat
+            if (!startingGChat) {
+              this.setState({members: []})
+            }
+            this.setState({startingGChat})
           }}
         >
-          <TextInput
-            style={styles.input}
-            autoFocus={false}
-            placeholder="Contact Name"
-            value={this.state.searchFor}
-            onChangeText={contactName => this.searchFor(contactName)}
-          />
-        </View>
+          {!this.state.startingGChat ? (
+            <Text style={{fontSize: 16}}>Start Group Chat</Text>
+          ) : (
+            <Text style={{fontSize: 16}}>Cancel</Text>
+          )}
+        </TouchableOpacity>
+        {this.state.members.length > 1 ? (
+          <TouchableOpacity
+            style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
+            onPress={() => this.goToGChat()}
+          >
+            <Text style={{fontSize: 16}}>Go to Group Chat</Text>
+          </TouchableOpacity>
+        ) : null}
         <FlatList
           data={this.state.matchingContacts}
+          extraData={this.state.members}
           renderItem={this.renderItem}
           keyExtractor={({uid}) => uid}
+          refreshing={this.state.refreshing}
+          onRefresh={this.updateContacts}
         />
       </KeyboardAvoidingView>
     )
@@ -89,6 +172,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     margin: 5,
   },
+  groupButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E8FDFF',
+    height: 50,
+  },
 })
 
 const mapStateToProps = state => ({
@@ -97,7 +186,11 @@ const mapStateToProps = state => ({
   }),
 })
 
+const mapDispatchToProps = dispatch => ({
+  populateContacts: () => dispatch(populateContacts()),
+})
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(Contacts)

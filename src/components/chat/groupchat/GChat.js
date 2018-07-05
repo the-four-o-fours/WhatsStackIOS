@@ -12,10 +12,11 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
-import ChatBubble from './ChatBubble'
-import firebase from 'react-native-firebase'
+
 import {connect} from 'react-redux'
-import ImagePicker from 'react-native-image-crop-picker'
+import firebase from 'react-native-firebase'
+
+import GChatBubble from './GChatBubble'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
@@ -24,42 +25,41 @@ class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      receiverUid: this.props.navigation.getParam('uid', false),
+      gUid: this.props.navigation.getParam('gUid', false),
+      members: this.props.navigation.getParam('members', []),
+      startsConvo: this.props.navigation.getParam('startsConvo', false),
       newMessage: '',
       height: 26,
     }
   }
 
   componentWillUnmount() {
-    if (this.props.messages[this.state.receiverUid]) {
-      this.props.seenMessages(this.state.receiverUid)
+    if (this.props.messages[this.state.gUid]) {
+      this.props.seenMessages(this.state.gUid)
     }
   }
 
-  sendMessage = (localUrl = false, cloudUrl) => {
+  sendMessage = () => {
     Keyboard.dismiss()
-    const senderText = localUrl
-      ? this.splitterForRSA(localUrl)
-      : this.splitterForRSA(this.state.newMessage)
-    const receiverText = cloudUrl
-      ? this.splitterForRSA(cloudUrl)
-      : this.splitterForRSA(this.state.newMessage)
+    const text = this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
-    const receiver = {
-      uid: this.state.receiverUid,
-      publicKey: this.props.navigation.getParam('publicKey'),
-    }
     const sentAt = Date.now()
-    const img = !!localUrl
-    const senderMessage = this.buildMessage(sender, senderText, sentAt, img)
-    const receiverMessage = this.buildMessage(
-      receiver,
-      receiverText,
-      sentAt,
-      img,
-    )
-    this.writeToDB(sender.uid, receiver.uid, senderMessage)
-    this.writeToDB(receiver.uid, sender.uid, receiverMessage)
+    this.state.members
+      .filter(memberUid => memberUid !== sender.uid)
+      .forEach(memberUid => {
+        const receiverObj = {
+          uid: memberUid,
+          publicKey: this.props.contactsHash[memberUid].publicKey,
+        }
+        const message = this.buildMessage(receiverObj, text, sentAt)
+        this.writeToDB(receiverObj.uid, message)
+      })
+    const senderMessage = this.buildMessage(sender, text, sentAt)
+    this.writeToDB(sender.uid, senderMessage)
+    if (this.state.startsConvo) {
+      this.updateMembers()
+      this.setState({startsConvo: false})
+    }
   }
 
   // this whole mess is because RSA can only encrypt
@@ -74,13 +74,12 @@ class Chat extends React.Component {
     return messageChunks
   }
 
-  buildMessage = (person, text, timeStamp, img) => {
+  buildMessage = (person, text, timeStamp) => {
     rsa.setPublicString(person.publicKey)
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: this.props.user.uid,
-      img,
+      sender: person.uid,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
@@ -88,74 +87,30 @@ class Chat extends React.Component {
   }
 
   writeToDB = (pathPt1, pathPt2, message) => {
-    const ref = firebase.database().ref(`Users/${pathPt1}/${pathPt2}`)
+    const ref = firebase
+      .database()
+      .ref(`Users/${pathPt1}/${pathPt2}/conversation`)
     ref.update(message)
   }
 
-  getImagesFromGallery = () => {
-    return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({
-        multiple: true,
-        mediaType: 'photo',
-        compressImageQuality: 0.5,
-      }).then(images => {
-        resolve(images)
-      })
-    })
-  }
-
-  getImageFromCamera = () => {
-    return new Promise((resolve, reject) => {
-      ImagePicker.openCamera({
-        mediaType: 'photo',
-        compressImageQuality: 0.5,
-      }).then(images => {
-        resolve([images])
-      })
-    })
-  }
-
-  uploadImage = image => {
-    return new Promise((resolve, reject) => {
-      const metadata = {
-        contentType: image.mime,
-      }
-      const path = Date.now()
+  updateMembers = () => {
+    this.state.members.forEach(memberUid => {
       const ref = firebase
-        .storage()
-        .ref(
-          `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
-        )
-      ref
-        .putFile(image.sourceURL, metadata)
-        .then(res => {
-          if (res.state === 'success') resolve([image.sourceURL, ref])
-        })
-        .catch(err => reject(err))
+        .database()
+        .ref(`Users/${memberUid}/${this.state.gUid}/members`)
+      ref.set(this.state.members)
     })
   }
 
-  sendPictureMessage = async (type = 'gallery') => {
-    let images
-    if (type === 'camera') {
-      console.log('camera upload')
-      images = await this.getImageFromCamera()
-    } else {
-      images = await this.getImagesFromGallery()
-    }
-    const urlArr = await Promise.all(
-      images.map(image => this.uploadImage(image)),
-    )
-    await Promise.all(
-      urlArr.map(async url => {
-        url[1] = await url[1].getDownloadURL()
-        this.sendMessage(url[0], url[1])
-      }),
-    )
-  }
+  //should also run onPress for a button for adding members
+  //needs functions for pushing new members into this.state.members
+  //also slicing them out
+  //also a whole sub-comp similar to the contacts arr where you can add members
+  //or cancel the add
+  //Or we could just not support adding people to groups.
 
   render() {
-    const receiverUid = this.state.receiverUid
+    const gUid = this.state.gUid
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -173,18 +128,13 @@ class Chat extends React.Component {
               Keyboard.dismiss()
             }}
           >
-            {this.props.messages[receiverUid] ? (
+            {this.props.messages[gUid] ? (
               <ReversedFlatList
                 style={styles.chats}
-                data={this.props.messages[receiverUid].conversation}
+                data={this.props.messages[gUid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
-                  <ChatBubble
-                    message={item}
-                    user={this.props.user}
-                    navigation={this.props.navigation}
-                    title={this.props.navigation.getParam('title', false)}
-                  />
+                  <GChatBubble message={item} user={this.props.user} />
                 )}
               />
             ) : (
@@ -195,22 +145,6 @@ class Chat extends React.Component {
           </TouchableWithoutFeedback>
         </ImageBackground>
         <View style={styles.inputContainer}>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => {
-              this.sendPictureMessage('camera')
-            }}
-          >
-            <Icon name="ios-camera" size={35} color="#006994" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => {
-              this.sendPictureMessage()
-            }}
-          >
-            <Icon name="ios-add" size={35} color="#006994" />
-          </TouchableOpacity>
           <TextInput
             style={[
               styles.input,
@@ -266,7 +200,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   input: {
-    width: 280,
+    width: 335,
     backgroundColor: '#FFFFFF',
     borderColor: 'grey',
     borderWidth: 1,
@@ -277,8 +211,6 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     alignSelf: 'flex-end',
-    paddingRight: 3,
-    paddingLeft: 3,
   },
 })
 

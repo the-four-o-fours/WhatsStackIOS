@@ -3,57 +3,75 @@ import {FlatList, StyleSheet, View, Text} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
-  goToConvo = item => {
-    this.props.navigation.navigate('Chat', {
-      uid: item.uid,
-      title: item.displayName,
-      publicKey: item.publicKey,
-    })
+  goToChat = item => {
+    this
+      .props
+      .navigation
+      .navigate('Chat', {
+        uid: item.uid,
+        title: item.displayName,
+        publicKey: item.publicKey
+      })
+  }
+
+  goToGChat = item => {
+    this
+      .props
+      .navigation
+      .navigate('GChat', {
+        gUid: item.gUid,
+        startsConvo: false,
+        members: item.members,
+        title: 'Group Chat'
+      })
   }
 
   truncate = string => {
-    let trimmed = ''
     if (string.length > 30) {
-      trimmed += string.slice(0, 30) + '...'
+      return string.slice(0, 30) + '...'
     } else {
-      trimmed = string
+      return string
     }
-
-    return trimmed
   }
 
   renderItem = ({item}) => {
+    const text = item.lastMessage.img ? 'Image' : item.lastMessage.text
     const lastSeen = item.seen
-      ? this.truncate(item.lastMessage.text)
-      : this.truncate(item.lastMessage.text) + ' \uD83D\uDE00'
-    return (
-      <ListItem
+      ? this.truncate(text)
+      : this.truncate(text) + ' \uD83D\uDE00'
+    if (item.gUid) {
+      return (<ListItem
+        roundAvatar
+        title="Group Chat"
+        subtitle={lastSeen}
+        onPress={() => this.goToGChat(item)}
+        onLongPress={() => {
+        console.log('Long press show drawer')
+      }}/>)
+    } else {
+      return (<ListItem
         roundAvatar
         title={`${item.displayName}`}
         subtitle={lastSeen}
         avatar={{
-          uri: item.img,
-        }}
-        onPress={() => this.goToConvo(item)}
+        uri: item.img
+      }}
+        onPress={() => this.goToChat(item)}
         onLongPress={() => {
-          console.log('Long press show drawer')
-        }}
-      />
-    )
+        console.log('Long press show drawer')
+      }}/>)
+    }
   }
 
   render() {
     if (this.props.chats.length) {
-      return (
-        <FlatList
-          style={{
-            borderColor: 'white',
-          }}
-          data={this.props.chats}
-          renderItem={this.renderItem}
-          keyExtractor={({uid}) => uid}
-        />
-      )
+      return (<FlatList
+        style={{
+        borderColor: 'white'
+      }}
+        data={this.props.chats}
+        renderItem={this.renderItem}
+        keyExtractor={({uid}) => uid}/>)
     } else {
       return (
         <View>
@@ -65,10 +83,13 @@ export default class AllChats extends Component {
 }
 
 const styles = StyleSheet.create({
+  chats: {
+    borderColor: '#fff'
+  },
   noMessages: {
     fontSize: 32,
     color: '#006994',
     alignSelf: 'center',
-    paddingTop: 250,
-  },
+    paddingTop: 250
+  }
 })
