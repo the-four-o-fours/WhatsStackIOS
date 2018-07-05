@@ -94,12 +94,24 @@ class Chat extends React.Component {
 
   getImagesFromGallery = () => {
     return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({multiple: true, mediaType: 'photo'}).then(
-        images => {
-          console.log(images)
-          resolve(images)
-        },
-      )
+      ImagePicker.openPicker({
+        multiple: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.5,
+      }).then(images => {
+        resolve(images)
+      })
+    })
+  }
+
+  getImageFromCamera = () => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.openCamera({
+        mediaType: 'photo',
+        compressImageQuality: 0.5,
+      }).then(images => {
+        resolve([images])
+      })
     })
   }
 
@@ -124,20 +136,22 @@ class Chat extends React.Component {
   }
 
   sendPictureMessage = async (type = 'gallery') => {
+    let images
     if (type === 'camera') {
       console.log('camera upload')
+      images = await this.getImageFromCamera()
     } else {
-      const images = await this.getImagesFromGallery()
-      const urlArr = await Promise.all(
-        images.map(image => this.uploadImage(image)),
-      )
-      await Promise.all(
-        urlArr.map(async url => {
-          url[1] = await url[1].getDownloadURL()
-          this.sendMessage(url[0], url[1])
-        }),
-      )
+      images = await this.getImagesFromGallery()
     }
+    const urlArr = await Promise.all(
+      images.map(image => this.uploadImage(image)),
+    )
+    await Promise.all(
+      urlArr.map(async url => {
+        url[1] = await url[1].getDownloadURL()
+        this.sendMessage(url[0], url[1])
+      }),
+    )
   }
 
   render() {
