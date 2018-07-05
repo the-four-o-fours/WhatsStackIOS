@@ -51,7 +51,6 @@ class Chat extends React.Component {
           uid: memberUid,
           publicKey: this.props.contactsHash[memberUid].publicKey,
         }
-        console.log(receiverObj)
         const message = this.buildMessage(receiverObj, text, sentAt)
         this.writeToDB(receiverObj.uid, this.state.gUid, message)
       })
@@ -111,7 +110,6 @@ class Chat extends React.Component {
   //Or we could just not support adding people to groups.
 
   render() {
-    console.log(this.state)
     const gUid = this.state.gUid
     return (
       <KeyboardAvoidingView
