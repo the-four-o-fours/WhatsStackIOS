@@ -41,7 +41,6 @@ class Chat extends React.Component {
 
   sendMessage = () => {
     Keyboard.dismiss()
-    console.log('>>>GUID<<<', this.state.gUid)
     const text = this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
     const sentAt = Date.now()
