@@ -97,7 +97,7 @@ class Chat extends React.Component {
       ImagePicker.openPicker({
         multiple: true,
         mediaType: 'photo',
-        compressImageQuality: 0.5,
+        compressImageQuality: 0.3,
       }).then(images => {
         resolve(images)
       })
@@ -108,7 +108,7 @@ class Chat extends React.Component {
     return new Promise((resolve, reject) => {
       ImagePicker.openCamera({
         mediaType: 'photo',
-        compressImageQuality: 0.5,
+        compressImageQuality: 0.3,
       }).then(images => {
         resolve([images])
       })
