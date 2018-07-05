@@ -56,7 +56,12 @@ class AccountInfo extends React.Component {
       .storage()
       .ref(`/Users/${this.props.user.uid}/avatar.jpg`)
     return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({multiple: false, mediaType: 'photo'})
+      ImagePicker.openPicker({
+        multiple: false,
+        mediaType: 'photo',
+        compressImageMaxWidth: 500,
+        compressImageQuality: 0.4,
+      })
         .then(images => {
           const metadata = {
             contentType: images.mime,
