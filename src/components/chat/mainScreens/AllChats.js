@@ -29,9 +29,10 @@ export default class AllChats extends Component {
   }
 
   renderItem = ({item}) => {
+    const text = item.lastMessage.img ? 'Image' : item.lastMessage.text
     const lastSeen = item.seen
-      ? this.truncate(item.lastMessage.text)
-      : this.truncate(item.lastMessage.text) + ' \uD83D\uDE00'
+      ? this.truncate(text)
+      : this.truncate(text) + ' \uD83D\uDE00'
     if (item.gUid) {
       return (
         <ListItem
