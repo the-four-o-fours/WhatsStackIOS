@@ -52,6 +52,7 @@ class Chat extends React.Component {
     }
     const sentAt = Date.now()
     const img = !!localUrl
+    console.log('img', img)
     const senderMessage = this.buildMessage(sender, senderText, sentAt, img)
     const receiverMessage = this.buildMessage(
       receiver,
