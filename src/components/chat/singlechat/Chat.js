@@ -37,7 +37,7 @@ class Chat extends React.Component {
     }
   }
 
-  sendMessage = (localUrl, cloudUrl) => {
+  sendMessage = (localUrl = false, cloudUrl) => {
     Keyboard.dismiss()
     const senderText = localUrl
       ? this.splitterForRSA(localUrl)
