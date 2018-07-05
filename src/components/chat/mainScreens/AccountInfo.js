@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TextInput,
-  KeyboardAvoidingView,
   ActivityIndicator,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -41,12 +40,14 @@ class AccountInfo extends React.Component {
   setAvatar = async () => {
     this.setState({isLoading: true})
     const cloudUrl = await this.uploadAvatar()
-    const localUrl = await download(cloudUrl)
-    const userImageRef = firebase
-      .database()
-      .ref(`/Users/${this.props.user.uid}/img`)
-    userImageRef.set(cloudUrl)
-    this.props.getUser({img: localUrl})
+    if (!cloudUrl === 'cancel') {
+      const localUrl = await download(cloudUrl)
+      const userImageRef = firebase
+        .database()
+        .ref(`/Users/${this.props.user.uid}/img`)
+      userImageRef.set(cloudUrl)
+      this.props.getUser({img: localUrl})
+    }
     this.setState({isLoading: false})
   }
 
@@ -55,8 +56,8 @@ class AccountInfo extends React.Component {
       .storage()
       .ref(`/Users/${this.props.user.uid}/avatar.jpg`)
     return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({multiple: false, mediaType: 'photo'}).then(
-        images => {
+      ImagePicker.openPicker({multiple: false, mediaType: 'photo'})
+        .then(images => {
           const metadata = {
             contentType: images.mime,
           }
@@ -66,8 +67,11 @@ class AccountInfo extends React.Component {
               if (res.state === 'success') resolve(res.downloadURL)
             })
             .catch(err => reject(err))
-        },
-      )
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
     })
   }
 
@@ -92,7 +96,7 @@ class AccountInfo extends React.Component {
                     xlarge
                     activeOpacity={0.7}
                     source={{
-                      uri: user.img,
+                      uri: img,
                     }}
                   />
                 )}

@@ -98,9 +98,14 @@ class Chat extends React.Component {
         multiple: true,
         mediaType: 'photo',
         compressImageQuality: 0.3,
-      }).then(images => {
-        resolve(images)
       })
+        .then(images => {
+          resolve(images)
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
     })
   }
 
@@ -109,9 +114,14 @@ class Chat extends React.Component {
       ImagePicker.openCamera({
         mediaType: 'photo',
         compressImageQuality: 0.3,
-      }).then(images => {
-        resolve([images])
       })
+        .then(images => {
+          resolve([images])
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
     })
   }
 
@@ -143,15 +153,17 @@ class Chat extends React.Component {
     } else {
       images = await this.getImagesFromGallery()
     }
-    const urlArr = await Promise.all(
-      images.map(image => this.uploadImage(image)),
-    )
-    await Promise.all(
-      urlArr.map(async url => {
-        url[1] = await url[1].getDownloadURL()
-        this.sendMessage(url[0], url[1])
-      }),
-    )
+    if (images !== 'cancel') {
+      const urlArr = await Promise.all(
+        images.map(image => this.uploadImage(image)),
+      )
+      await Promise.all(
+        urlArr.map(async url => {
+          url[1] = await url[1].getDownloadURL()
+          this.sendMessage(url[0], url[1])
+        }),
+      )
+    }
   }
 
   render() {
