@@ -67,7 +67,7 @@ class Chat extends React.Component {
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: person.uid,
+      sender: this.props.user.uid,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
