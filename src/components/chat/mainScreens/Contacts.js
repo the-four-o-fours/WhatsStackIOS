@@ -53,7 +53,7 @@ class Contacts extends React.Component {
     const bits = 1024
     const exponent = '10001' // must be a string
     rsa.generate(bits, exponent)
-    const gUid = rsa.getPublicString().slice(6, 34)
+    const gUid = 'GROUP' + rsa.getPublicString().slice(6, 29)
     return gUid
   }
 
