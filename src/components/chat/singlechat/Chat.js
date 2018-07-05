@@ -92,38 +92,51 @@ class Chat extends React.Component {
     ref.update(message)
   }
 
-  uploadPictureFromGallery = () => {
-    const path = Date.now()
-    const ref = firebase
-      .storage()
-      .ref(
-        `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
-      )
+  getImagesFromGallery = () => {
     return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({multiple: false, mediaType: 'photo'}).then(
+      ImagePicker.openPicker({multiple: true, mediaType: 'photo'}).then(
         images => {
-          const metadata = {
-            contentType: images.mime,
-          }
-          ref
-            .putFile(images.sourceURL, metadata)
-            .then(res => {
-              if (res.state === 'success') resolve([images.sourceURL, ref])
-            })
-            .catch(err => reject(err))
+          console.log(images)
+          resolve(images)
         },
       )
     })
   }
 
+  uploadImage = image => {
+    return new Promise((resolve, reject) => {
+      const metadata = {
+        contentType: image.mime,
+      }
+      const path = Date.now()
+      const ref = firebase
+        .storage()
+        .ref(
+          `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
+        )
+      ref
+        .putFile(image.sourceURL, metadata)
+        .then(res => {
+          if (res.state === 'success') resolve([image.sourceURL, ref])
+        })
+        .catch(err => reject(err))
+    })
+  }
+
   sendPictureMessage = async (type = 'gallery') => {
-    let localUrl, ref
     if (type === 'camera') {
       console.log('camera upload')
     } else {
-      ;[localUrl, ref] = await this.uploadPictureFromGallery()
-      const cloudUrl = await ref.getDownloadURL()
-      this.sendMessage(localUrl, cloudUrl)
+      const images = await this.getImagesFromGallery()
+      const urlArr = await Promise.all(
+        images.map(image => this.uploadImage(image)),
+      )
+      await Promise.all(
+        urlArr.map(async url => {
+          url[1] = await url[1].getDownloadURL()
+          this.sendMessage(url[0], url[1])
+        }),
+      )
     }
   }
 
