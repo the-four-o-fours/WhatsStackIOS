@@ -19,7 +19,6 @@ import ImagePicker from 'react-native-image-crop-picker'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
-import download from '../../download'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -52,7 +51,6 @@ class Chat extends React.Component {
     }
     const sentAt = Date.now()
     const img = !!localUrl
-    console.log('img', img)
     const senderMessage = this.buildMessage(sender, senderText, sentAt, img)
     const receiverMessage = this.buildMessage(
       receiver,
@@ -81,7 +79,7 @@ class Chat extends React.Component {
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: person.uid,
+      sender: this.props.user.uid,
       img,
     }
     const messageObj = {}
@@ -94,39 +92,66 @@ class Chat extends React.Component {
     ref.update(message)
   }
 
-  uploadPictureFromGallery = () => {
-    const path = Date.now()
-    const ref = firebase
-      .storage()
-      .ref(
-        `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
-      )
+  getImagesFromGallery = () => {
     return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({multiple: false, mediaType: 'photo'}).then(
-        images => {
-          const metadata = {
-            contentType: images.mime,
-          }
-          ref
-            .putFile(images.sourceURL, metadata)
-            .then(res => {
-              if (res.state === 'success') resolve([images.sourceURL, ref])
-            })
-            .catch(err => reject(err))
-        },
-      )
+      ImagePicker.openPicker({
+        multiple: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.5,
+      }).then(images => {
+        resolve(images)
+      })
+    })
+  }
+
+  getImageFromCamera = () => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.openCamera({
+        mediaType: 'photo',
+        compressImageQuality: 0.5,
+      }).then(images => {
+        resolve([images])
+      })
+    })
+  }
+
+  uploadImage = image => {
+    return new Promise((resolve, reject) => {
+      const metadata = {
+        contentType: image.mime,
+      }
+      const path = Date.now()
+      const ref = firebase
+        .storage()
+        .ref(
+          `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
+        )
+      ref
+        .putFile(image.sourceURL, metadata)
+        .then(res => {
+          if (res.state === 'success') resolve([image.sourceURL, ref])
+        })
+        .catch(err => reject(err))
     })
   }
 
   sendPictureMessage = async (type = 'gallery') => {
-    let localUrl, ref
+    let images
     if (type === 'camera') {
       console.log('camera upload')
+      images = await this.getImageFromCamera()
     } else {
-      ;[localUrl, ref] = await this.uploadPictureFromGallery()
-      const cloudUrl = await ref.getDownloadURL()
-      this.sendMessage(localUrl, cloudUrl)
+      images = await this.getImagesFromGallery()
     }
+    const urlArr = await Promise.all(
+      images.map(image => this.uploadImage(image)),
+    )
+    await Promise.all(
+      urlArr.map(async url => {
+        url[1] = await url[1].getDownloadURL()
+        this.sendMessage(url[0], url[1])
+      }),
+    )
   }
 
   render() {
