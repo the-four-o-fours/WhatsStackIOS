@@ -59,6 +59,11 @@ class MainScreensContainer extends React.Component {
           let chat
           if (this.props.contactsHash[id]) {
             chat = this.props.contactsHash[id]
+          } else if (this.props.messages[id].members) {
+            chat = {
+              members: this.props.messages[id].members,
+              gUid: id,
+            }
           } else {
             chat = await this.findAnonymous(id)
           }
