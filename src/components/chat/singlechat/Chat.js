@@ -42,7 +42,6 @@ class Chat extends React.Component {
     const receiver = {
       uid: this.state.receiverUid,
       publicKey: this.props.navigation.getParam('publicKey'),
-      receiver: true,
     }
     const sentAt = Date.now()
     const senderMessage = this.buildMessage(sender, text, sentAt)
@@ -68,8 +67,7 @@ class Chat extends React.Component {
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: !person.receiver,
-      group: false,
+      sender: person.uid,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
@@ -106,7 +104,7 @@ class Chat extends React.Component {
                 data={this.props.messages[receiverUid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
-                  <ChatBubble style={styles.chatBubble} message={item} />
+                  <ChatBubble message={item} user={this.props.user} />
                 )}
               />
             ) : (
@@ -186,7 +184,10 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = state => ({user: state.user, messages: state.messages})
+const mapStateToProps = state => ({
+  user: state.user,
+  messages: state.messages,
+})
 
 const mapDispatchToProps = dispatch => ({
   seenMessages: chatId => dispatch(seenMessages(chatId)),
