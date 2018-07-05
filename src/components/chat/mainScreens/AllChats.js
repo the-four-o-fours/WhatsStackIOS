@@ -29,14 +29,19 @@ export default class AllChats extends Component {
   }
 
   renderItem = ({item}) => {
+    const text = item.lastMessage.img ? 'Image' : item.lastMessage.text
     const lastSeen = item.seen
-      ? this.truncate(item.lastMessage.text)
-      : this.truncate(item.lastMessage.text) + ' \uD83D\uDE00'
+      ? this.truncate(text)
+      : this.truncate(text) + ' \uD83D\uDE00'
     if (item.gUid) {
       return (
         <ListItem
+          roundAvatar
           title="Group Chat"
           subtitle={lastSeen}
+          avatar={{
+            uri: item.img,
+          }}
           onPress={() => this.goToGChat(item)}
           onLongPress={() => {
             console.log('Long press show drawer')
@@ -84,6 +89,9 @@ export default class AllChats extends Component {
 }
 
 const styles = StyleSheet.create({
+  chats: {
+    borderColor: '#fff',
+  },
   noMessages: {
     fontSize: 32,
     color: '#006994',

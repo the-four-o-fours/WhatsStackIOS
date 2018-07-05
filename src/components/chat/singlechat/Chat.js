@@ -15,6 +15,7 @@ import ReversedFlatList from 'react-native-reversed-flat-list'
 import ChatBubble from './ChatBubble'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
+import ImagePicker from 'react-native-image-crop-picker'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
@@ -35,17 +36,28 @@ class Chat extends React.Component {
     }
   }
 
-  sendMessage = () => {
+  sendMessage = (localUrl = false, cloudUrl) => {
     Keyboard.dismiss()
-    const text = this.splitterForRSA(this.state.newMessage)
+    const senderText = localUrl
+      ? this.splitterForRSA(localUrl)
+      : this.splitterForRSA(this.state.newMessage)
+    const receiverText = cloudUrl
+      ? this.splitterForRSA(cloudUrl)
+      : this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
     const receiver = {
       uid: this.state.receiverUid,
       publicKey: this.props.navigation.getParam('publicKey'),
     }
     const sentAt = Date.now()
-    const senderMessage = this.buildMessage(sender, text, sentAt)
-    const receiverMessage = this.buildMessage(receiver, text, sentAt)
+    const img = !!localUrl
+    const senderMessage = this.buildMessage(sender, senderText, sentAt, img)
+    const receiverMessage = this.buildMessage(
+      receiver,
+      receiverText,
+      sentAt,
+      img,
+    )
     this.writeToDB(sender.uid, receiver.uid, senderMessage)
     this.writeToDB(receiver.uid, sender.uid, receiverMessage)
   }
@@ -62,12 +74,13 @@ class Chat extends React.Component {
     return messageChunks
   }
 
-  buildMessage = (person, text, timeStamp) => {
+  buildMessage = (person, text, timeStamp, img) => {
     rsa.setPublicString(person.publicKey)
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
       sender: this.props.user.uid,
+      img,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
@@ -77,6 +90,82 @@ class Chat extends React.Component {
   writeToDB = (pathPt1, pathPt2, message) => {
     const ref = firebase.database().ref(`Users/${pathPt1}/${pathPt2}`)
     ref.update(message)
+  }
+
+  getImagesFromGallery = () => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.openPicker({
+        multiple: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.3,
+        compressImageMaxWidth: 500,
+      })
+        .then(images => {
+          resolve(images)
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
+    })
+  }
+
+  getImageFromCamera = () => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.openCamera({
+        mediaType: 'photo',
+        compressImageQuality: 0.3,
+        compressImageMaxWidth: 500,
+      })
+        .then(images => {
+          resolve([images])
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
+    })
+  }
+
+  uploadImage = image => {
+    return new Promise((resolve, reject) => {
+      const metadata = {
+        contentType: image.mime,
+      }
+      const path = Date.now()
+      const ref = firebase
+        .storage()
+        .ref(
+          `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
+        )
+      ref
+        .putFile(image.sourceURL, metadata)
+        .then(res => {
+          if (res.state === 'success') resolve([image.sourceURL, ref])
+        })
+        .catch(err => reject(err))
+    })
+  }
+
+  sendPictureMessage = async (type = 'gallery') => {
+    let images
+    if (type === 'camera') {
+      console.log('camera upload')
+      images = await this.getImageFromCamera()
+    } else {
+      images = await this.getImagesFromGallery()
+    }
+    if (images !== 'cancel') {
+      const urlArr = await Promise.all(
+        images.map(image => this.uploadImage(image)),
+      )
+      await Promise.all(
+        urlArr.map(async url => {
+          url[1] = await url[1].getDownloadURL()
+          this.sendMessage(url[0], url[1])
+        }),
+      )
+    }
   }
 
   render() {
@@ -104,7 +193,12 @@ class Chat extends React.Component {
                 data={this.props.messages[receiverUid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
-                  <ChatBubble message={item} user={this.props.user} />
+                  <ChatBubble
+                    message={item}
+                    user={this.props.user}
+                    navigation={this.props.navigation}
+                    title={this.props.navigation.getParam('title', false)}
+                  />
                 )}
               />
             ) : (
@@ -115,6 +209,22 @@ class Chat extends React.Component {
           </TouchableWithoutFeedback>
         </ImageBackground>
         <View style={styles.inputContainer}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              this.sendPictureMessage('camera')
+            }}
+          >
+            <Icon name="ios-camera" size={35} color="#006994" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              this.sendPictureMessage()
+            }}
+          >
+            <Icon name="ios-add" size={35} color="#006994" />
+          </TouchableOpacity>
           <TextInput
             style={[
               styles.input,
@@ -170,7 +280,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   input: {
-    width: 335,
+    width: 280,
     backgroundColor: '#FFFFFF',
     borderColor: 'grey',
     borderWidth: 1,
@@ -181,6 +291,8 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     alignSelf: 'flex-end',
+    paddingRight: 3,
+    paddingLeft: 3,
   },
 })
 

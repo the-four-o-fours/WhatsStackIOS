@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 
+import {populateContacts} from '../../../store/actions'
 import rsa from '../../rsa'
 
 class Contacts extends React.Component {
@@ -18,7 +19,14 @@ class Contacts extends React.Component {
     this.state = {
       matchingContacts: this.props.contactsArr,
       members: [this.props.user.uid],
+      refreshing: false,
       startingGChat: false,
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.contactsArr !== this.props.contactsArr) {
+      this.setState({matchingContacts: this.props.contactsArr})
     }
   }
 
@@ -73,6 +81,11 @@ class Contacts extends React.Component {
       members = [...this.state.members, item.uid]
     }
     this.setState({members})
+  }
+
+  updateContacts = () => {
+    this.setState({refreshing: true})
+    this.props.populateContacts().then(_ => this.setState({refreshing: false}))
   }
 
   renderItem = ({item}) => {
@@ -131,6 +144,8 @@ class Contacts extends React.Component {
           extraData={this.state.members}
           renderItem={this.renderItem}
           keyExtractor={({uid}) => uid}
+          refreshing={this.state.refreshing}
+          onRefresh={this.updateContacts}
         />
         {this.state.members.length > 1 ? (
           <TouchableOpacity
@@ -170,7 +185,11 @@ const mapStateToProps = state => ({
   user: state.user,
 })
 
+const mapDispatchToProps = dispatch => ({
+  populateContacts: () => dispatch(populateContacts()),
+})
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(Contacts)
