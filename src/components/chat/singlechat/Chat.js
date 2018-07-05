@@ -23,15 +23,10 @@ class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      receiverUid: '',
+      receiverUid: this.props.navigation.getParam('uid', false),
       newMessage: '',
       height: 26,
     }
-  }
-
-  componentDidMount() {
-    const receiverUid = this.props.navigation.getParam('uid', false)
-    this.setState({receiverUid})
   }
 
   componentWillUnmount() {
