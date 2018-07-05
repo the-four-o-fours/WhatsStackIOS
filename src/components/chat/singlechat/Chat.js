@@ -118,9 +118,10 @@ class Chat extends React.Component {
       console.log('camera upload')
     } else {
       ;[localUrl, ref] = await this.uploadPictureFromGallery()
+      const url = await ref.getDownloadURL()
+      // this.sendMessage(localUrl)
+      console.log('url', url)
     }
-    const url = await ref.getDownloadURL()
-    // this.sendMessage(localUrl)
   }
 
   render() {
