@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, View, Text, Image} from 'react-native'
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native'
 
 const ChatBubble = props => {
   const {message, user} = props
@@ -14,16 +14,27 @@ const ChatBubble = props => {
     }
   }
 
+  const goToImage = () => {
+    const title = props.title
+    const img = message.text
+    props.navigation.navigate('Image', {
+      title,
+      img,
+    })
+  }
+
   if (message.sender === user.uid) {
     return (
       <View style={[styles.container, styles.senderBubble]}>
         <View style={[styles.bubble, styles.senderInnerBubble]}>
           {message.img ? (
-            <Image
-              resizeMode="contain"
-              style={{width: 300, height: 220}}
-              source={{uri: message.text}}
-            />
+            <TouchableOpacity onPress={() => goToImage()}>
+              <Image
+                resizeMode="contain"
+                style={{width: 300, height: 220}}
+                source={{uri: message.text}}
+              />
+            </TouchableOpacity>
           ) : (
             <Text style={styles.senderMessageText}>{message.text}</Text>
           )}
@@ -38,11 +49,13 @@ const ChatBubble = props => {
         <View style={[styles.triangle, styles.receiverTriangle]} />
         <View style={[styles.bubble, styles.receiverInnerBubble]}>
           {message.img ? (
-            <Image
-              resizeMode="contain"
-              style={{width: 300, height: 220}}
-              source={{uri: message.text}}
-            />
+            <TouchableOpacity onPress={() => goToImage()}>
+              <Image
+                resizeMode="contain"
+                style={{width: 300, height: 220}}
+                source={{uri: message.text}}
+              />
+            </TouchableOpacity>
           ) : (
             <Text style={styles.receiverMessageText}>{message.text}</Text>
           )}

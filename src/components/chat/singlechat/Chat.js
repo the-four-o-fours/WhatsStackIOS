@@ -179,7 +179,12 @@ class Chat extends React.Component {
                 data={this.props.messages[receiverUid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
-                  <ChatBubble message={item} user={this.props.user} />
+                  <ChatBubble
+                    message={item}
+                    user={this.props.user}
+                    navigation={this.props.navigation}
+                    title={this.props.navigation.getParam('title', false)}
+                  />
                 )}
               />
             ) : (
