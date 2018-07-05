@@ -19,7 +19,6 @@ import ImagePicker from 'react-native-image-crop-picker'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
-import download from '../../download'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -52,7 +51,6 @@ class Chat extends React.Component {
     }
     const sentAt = Date.now()
     const img = !!localUrl
-    console.log('img', img)
     const senderMessage = this.buildMessage(sender, senderText, sentAt, img)
     const receiverMessage = this.buildMessage(
       receiver,
@@ -81,7 +79,7 @@ class Chat extends React.Component {
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: person.uid,
+      sender: this.props.user.uid,
       img,
     }
     const messageObj = {}
