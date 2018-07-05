@@ -5,11 +5,12 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
   Text,
   KeyboardAvoidingView,
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
+
+import rsa from '.../../../rsa'
 
 class Contacts extends React.Component {
   constructor(props) {
@@ -105,34 +106,27 @@ class Contacts extends React.Component {
           onChangeText={contactName => this.searchFor(contactName)}
         />
         <TouchableOpacity
-          // style={}
+          style={styles.groupButton}
           onPress={() => {
             const startingGChat = !this.state.startingGChat
-            this.setState({startingGChat}, () =>
-              console.log(this.state.startingGChat),
-            )
+            if (!startingGChat) {
+              this.setState({members: []})
+            }
+            this.setState({startingGChat})
           }}
         >
-          <View>
-            <Text>Start Group Chat</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          // style={}
-          onPress={() => console.log(this.state)}
-        >
-          <View>
-            <Text>LOGGING BUTTON</Text>
-          </View>
+          {!this.state.startingGChat ? (
+            <Text style={{fontSize: 16}}>Start Group Chat</Text>
+          ) : (
+            <Text style={{fontSize: 16}}>Cancel</Text>
+          )}
         </TouchableOpacity>
         {this.state.members.length > 1 ? (
           <TouchableOpacity
-            // style={}
+            style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
             onPress={() => this.goToGChat()}
           >
-            <View>
-              <Text>Go to Group Chat</Text>
-            </View>
+            <Text style={{fontSize: 16}}>Go to Group Chat</Text>
           </TouchableOpacity>
         ) : null}
         <FlatList
@@ -155,6 +149,12 @@ const styles = StyleSheet.create({
     padding: 5,
     fontSize: 16,
     margin: 5,
+  },
+  groupButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E8FDFF',
+    height: 50,
   },
 })
 
