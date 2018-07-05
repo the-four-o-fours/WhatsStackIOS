@@ -14,10 +14,19 @@ class Contacts extends React.Component {
     super(props)
     this.state = {
       matchingContacts: this.props.contactsArr,
+      members: [],
+      startingGChat: false,
     }
   }
 
-  goToConvo = item => {
+  searchFor = contactName => {
+    const matchingContacts = this.props.contactsArr.filter(contact =>
+      contact.phoneName.toLowerCase().startsWith(contactName.toLowerCase()),
+    )
+    this.setState({matchingContacts})
+  }
+
+  goToChat = item => {
     this.props.resetScreen()
     this.props.navigation.navigate('Chat', {
       uid: item.uid,
@@ -26,11 +35,35 @@ class Contacts extends React.Component {
     })
   }
 
-  searchFor = contactName => {
-    const matchingContacts = this.props.contactsArr.filter(contact =>
-      contact.phoneName.toLowerCase().startsWith(contactName.toLowerCase()),
-    )
-    this.setState({matchingContacts})
+  goToGChat = () => {
+    this.props.resetScreen()
+    this.props.navigation.navigate('GChat', {
+      gUid: 'a uid', //must auto-generate 28char
+      startsConvo: true,
+      members: this.state.members,
+      title: 'Group Chat',
+    })
+  }
+
+  //startgroup button on top of page under search bar
+  //hitting it flips startingGChat
+
+  handleContactPress = item => {
+    if (this.state.startingGChat) {
+      this.selectOrDeselectMember(item)
+    } else {
+      this.goToChat(item)
+    }
+  }
+
+  selectOrDeselectMember = item => {
+    let members = []
+    if (this.state.members.includes(item.uid)) {
+      members = this.state.members.filter(memberUid => memberUid !== item.uid)
+    } else {
+      members = [...this.state.members, item.uid]
+    }
+    this.setState({members})
   }
 
   renderItem = ({item}) => {
@@ -41,7 +74,7 @@ class Contacts extends React.Component {
         avatar={{
           uri: item.img,
         }}
-        onPress={() => this.goToConvo(item)}
+        onPress={() => this.handleContactPress(item)}
         onLongPress={() => {
           console.log('Long press show drawer')
         }}
