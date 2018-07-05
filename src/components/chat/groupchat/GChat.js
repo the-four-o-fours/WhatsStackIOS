@@ -12,9 +12,11 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
-import ChatBubble from './ChatBubble'
-import firebase from 'react-native-firebase'
+
 import {connect} from 'react-redux'
+import firebase from 'react-native-firebase'
+
+import GChatBubble from './GChatBubble'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
@@ -23,15 +25,17 @@ class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      receiverUid: this.props.navigation.getParam('uid', false),
+      gUid: this.props.navigation.getParam('gUid', false),
+      members: this.props.navigation.getParam('members', []),
+      startsConvo: this.props.navigation.getParam('startsConvo', false),
       newMessage: '',
       height: 26,
     }
   }
 
   componentWillUnmount() {
-    if (this.props.messages[this.state.receiverUid]) {
-      this.props.seenMessages(this.state.receiverUid)
+    if (this.props.messages[this.state.gUid]) {
+      this.props.seenMessages(this.state.gUid)
     }
   }
 
@@ -39,15 +43,23 @@ class Chat extends React.Component {
     Keyboard.dismiss()
     const text = this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
-    const receiver = {
-      uid: this.state.receiverUid,
-      publicKey: this.props.navigation.getParam('publicKey'),
-    }
     const sentAt = Date.now()
+    this.state.members
+      .filter(memberUid => memberUid !== sender.uid)
+      .forEach(memberUid => {
+        const receiverObj = {
+          uid: memberUid,
+          publicKey: this.props.contactsHash[memberUid].publicKey,
+        }
+        const message = this.buildMessage(receiverObj, text, sentAt)
+        this.writeToDB(receiverObj.uid, message)
+      })
     const senderMessage = this.buildMessage(sender, text, sentAt)
-    const receiverMessage = this.buildMessage(receiver, text, sentAt)
-    this.writeToDB(sender.uid, receiver.uid, senderMessage)
-    this.writeToDB(receiver.uid, sender.uid, receiverMessage)
+    this.writeToDB(sender.uid, senderMessage)
+    if (this.state.startsConvo) {
+      this.updateMembers()
+      this.setState({startsConvo: false})
+    }
   }
 
   // this whole mess is because RSA can only encrypt
@@ -75,12 +87,30 @@ class Chat extends React.Component {
   }
 
   writeToDB = (pathPt1, pathPt2, message) => {
-    const ref = firebase.database().ref(`Users/${pathPt1}/${pathPt2}`)
+    const ref = firebase
+      .database()
+      .ref(`Users/${pathPt1}/${pathPt2}/conversation`)
     ref.update(message)
   }
 
+  updateMembers = () => {
+    this.state.members.forEach(memberUid => {
+      const ref = firebase
+        .database()
+        .ref(`Users/${memberUid}/${this.state.gUid}/members`)
+      ref.set(this.state.members)
+    })
+  }
+
+  //should also run onPress for a button for adding members
+  //needs functions for pushing new members into this.state.members
+  //also slicing them out
+  //also a whole sub-comp similar to the contacts arr where you can add members
+  //or cancel the add
+  //Or we could just not support adding people to groups.
+
   render() {
-    const receiverUid = this.state.receiverUid
+    const gUid = this.state.gUid
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -98,13 +128,13 @@ class Chat extends React.Component {
               Keyboard.dismiss()
             }}
           >
-            {this.props.messages[receiverUid] ? (
+            {this.props.messages[gUid] ? (
               <ReversedFlatList
                 style={styles.chats}
-                data={this.props.messages[receiverUid].conversation}
+                data={this.props.messages[gUid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
-                  <ChatBubble message={item} user={this.props.user} />
+                  <GChatBubble message={item} user={this.props.user} />
                 )}
               />
             ) : (

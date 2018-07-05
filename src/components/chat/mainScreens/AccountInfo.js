@@ -72,7 +72,7 @@ class AccountInfo extends React.Component {
                 resolve(res.downloadURL)
             })
             .catch(err => reject(err))
-        })
+        },)
     })
   }
 
@@ -86,7 +86,6 @@ class AccountInfo extends React.Component {
       ? user.default
       : user.img
     return (
-
       <View style={styles.accountContainer}>
         <TouchableWithoutFeedback onPress={this.exitNameChange}>
           <View style={styles.accountProfile}>
@@ -111,15 +110,18 @@ class AccountInfo extends React.Component {
             <TouchableWithoutFeedback style={styles.accountContainer}>
               <View>
                 {!this.state.change
-                  ? <Text
+                  ? (
+                    <Text
                       h4
                       style={{
                       textAlign: 'center',
                       fontFamily: 'Gill Sans',
                       color: '#20AAB2'
-                    }}>{user.displayName}</Text>
-                  : ''}
-
+                    }}>
+                      {user.displayName}
+                    </Text>
+                  )
+                  : ('')}
               </View>
             </TouchableWithoutFeedback>
             {this.state.change
@@ -144,7 +146,7 @@ class AccountInfo extends React.Component {
                       fontSize: 14
                     }}
                       buttonStyle={{
-                      backgroundColor: "#20AAB2",
+                      backgroundColor: '#20AAB2',
                       borderRadius: 8,
                       padding: 4,
                       marginTop: 20
@@ -157,8 +159,8 @@ class AccountInfo extends React.Component {
               )
               : (<Button
                 buttonStyle={{
-                backgroundColor: "transparent",
-                borderBottomColor: "#eee",
+                backgroundColor: 'transparent',
+                borderBottomColor: '#eee',
                 borderBottomWidth: 1
               }}
                 icon={{
@@ -170,15 +172,15 @@ class AccountInfo extends React.Component {
                 textStyle={{
                 fontSize: 20
               }}
-                title='Change display name'
-                color='#006994'
+                title="Change display name"
+                color="#006994"
                 onPress={this.changeView}/>)}
           </View>
           <View style={styles.upLoadAvatar}>
             <Button
               buttonStyle={{
-              backgroundColor: "transparent",
-              borderBottomColor: "#eee",
+              backgroundColor: 'transparent',
+              borderBottomColor: '#eee',
               borderBottomWidth: 1
             }}
               textStyle={{
@@ -190,8 +192,8 @@ class AccountInfo extends React.Component {
               color: '#006994',
               size: 24
             }}
-              title='Upload profile image'
-              color='#006994'
+              title="Upload profile image"
+              color="#006994"
               onPress={this.setAvatar}/>
           </View>
           <View style={styles.signOut}>
@@ -212,7 +214,6 @@ class AccountInfo extends React.Component {
               onPress={this.signOut}/>
           </View>
         </View>
-
       </View>
     )
   }
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   changeName: {
-    borderBottomColor: "#aaa",
+    borderBottomColor: '#aaa',
     borderBottomWidth: 1,
     fontSize: 20,
     marginTop: 20,

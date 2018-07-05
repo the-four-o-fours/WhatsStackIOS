@@ -1,12 +1,14 @@
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
 
-const ChatBubble = props => {
-  const {message, user} = props
+import {connect} from 'react-redux'
 
-  const isToday = () => {
+class GChatBubble extends React.Component {
+  isToday = () => {
     const now = new Date(Date.now()).toString()
-    const messageDate = new Date(Number(message.timeStamp)).toString()
+    const messageDate = new Date(
+      Number(this.props.message.timeStamp),
+    ).toString()
     if (now.slice(0, 15) === messageDate.slice(0, 15)) {
       return `Today ${messageDate.slice(16, 24)}`
     } else {
@@ -14,26 +16,36 @@ const ChatBubble = props => {
     }
   }
 
-  if (message.sender === user.uid) {
-    return (
-      <View style={[styles.container, styles.senderBubble]}>
-        <View style={[styles.bubble, styles.senderInnerBubble]}>
-          <Text style={styles.senderMessageText}>{props.message.text}</Text>
-          <Text style={styles.senderTimeStampText}>{`\n${isToday()}`}</Text>
+  render() {
+    const {message, user, contactsHash} = this.props
+    if (message.sender === user.uid) {
+      return (
+        <View style={[styles.container, styles.senderBubble]}>
+          <View style={[styles.bubble, styles.senderInnerBubble]}>
+            <Text style={styles.senderMessageText}>{props.message.text}</Text>
+            <Text
+              style={styles.senderTimeStampText}
+            >{`\n${this.isToday()}`}</Text>
+          </View>
+          <View style={[styles.triangle, styles.senderTriangle]} />
         </View>
-        <View style={[styles.triangle, styles.senderTriangle]} />
-      </View>
-    )
-  } else {
-    return (
-      <View style={[styles.container, styles.receiverBubble]}>
-        <View style={[styles.triangle, styles.receiverTriangle]} />
-        <View style={[styles.bubble, styles.receiverInnerBubble]}>
-          <Text style={styles.receiverMessageText}>{props.message.text}</Text>
-          <Text style={styles.receiverTimeStampText}>{`\n${isToday()}`}</Text>
+      )
+    } else {
+      return (
+        <View style={[styles.container, styles.receiverBubble]}>
+          <View style={[styles.triangle, styles.receiverTriangle]} />
+          <View style={[styles.bubble, styles.receiverInnerBubble]}>
+            <Text style={styles.receiverTimeStampText}>{`${
+              contactsHash[message.sender].displayName
+            }\n`}</Text>
+            <Text style={styles.receiverMessageText}>{props.message.text}</Text>
+            <Text
+              style={styles.receiverTimeStampText}
+            >{`\n${this.isToday()}`}</Text>
+          </View>
         </View>
-      </View>
-    )
+      )
+    }
   }
 }
 
@@ -103,4 +115,11 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ChatBubble
+const mapStateToProps = state => ({
+  contactsHash: state.contactsHash,
+})
+
+export default connect(
+  mapStateToProps,
+  null,
+)(GChatBubble)
