@@ -9,6 +9,7 @@ import {
   getNewMessage,
   getUser,
   getMessages,
+  getGroupMessages,
   populateContacts,
 } from '../store/actions'
 
@@ -38,10 +39,20 @@ class MainContainer extends Component {
 
   populateStoreAndListenForNewConversation = async snapshot => {
     try {
-      if (
+      //handles group messages
+      if (snapshot.key.length === 28 && snapshot.key.slice(0, 5) === 'GROUP') {
+        const convoObj = {}
+        convoObj[snapshot.key] = {}
+        convoObj[
+          snapshot.key
+        ].conversation = await this.JoinDecryptAndConvertToArr(
+          snapshot.val().conversation,
+        )
+        convoObj[snapshot.key].members = snapshot.val().members
+        convoObj[snapshot.key].seen = true
+        this.props.getGroupMessages(convoObj)
         //this condition populates the messages field in the store with actual message histories, not user data
-        snapshot.key.length === 28
-      ) {
+      } else if (snapshot.key.length === 28) {
         const convoObj = {}
         convoObj[snapshot.key] = {}
         convoObj[
@@ -49,9 +60,9 @@ class MainContainer extends Component {
         ].conversation = await this.JoinDecryptAndConvertToArr(snapshot.val())
         convoObj[snapshot.key].seen = true
         this.props.getMessages(convoObj)
-      } else if (snapshot.key !== 'img') {
         //when you first connect to the database, all pre-existing fields come in as being newly added children
         //we take advantage of this to populate the user field in the store with up to date info
+      } else if (snapshot.key !== 'img') {
         const userField = {}
         userField[snapshot.key] = snapshot.val()
         this.props.getUser(userField)
@@ -64,9 +75,20 @@ class MainContainer extends Component {
   updateOnNewMessageOrNameChange = async snapshot => {
     //both these events trigger a "child changed"
     try {
+      //listening for a changed name
       if (snapshot.key === 'displayName') {
-        //listening for a changed name
         this.props.getUser({[snapshot.key]: snapshot.val()})
+        //listening for a new groupchat
+      } else if (
+        snapshot.key.length === 28 &&
+        snapshot.key.slice(0, 5) === 'GROUP'
+      ) {
+        const conversation = await this.JoinDecryptAndConvertToArr(
+          snapshot.val().conversation,
+        )
+        const chatId = snapshot.key
+        this.props.getNewMessage(conversation, chatId)
+        // listening for a new regular chat
       } else if (snapshot.key !== 'img') {
         //listening for a new message being added to an existing conversation
         const conversation = await this.JoinDecryptAndConvertToArr(
@@ -116,6 +138,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getUser: user => dispatch(getUser(user)),
   getMessages: messages => dispatch(getMessages(messages)),
+  getGroupMessages: groupMessages => dispatch(getGroupMessages(groupMessages)),
   getNewMessage: (message, chatId) => dispatch(getNewMessage(message, chatId)),
   populateContacts: () => dispatch(populateContacts()),
 })
