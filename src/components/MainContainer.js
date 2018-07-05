@@ -7,6 +7,7 @@ import rsa from './rsa'
 
 import {
   getNewMessage,
+  getNewGroupMessage,
   getUser,
   getMessages,
   getGroupMessages,
@@ -86,8 +87,9 @@ class MainContainer extends Component {
         const conversation = await this.JoinDecryptAndConvertToArr(
           snapshot.val().conversation,
         )
+        const members = snapshot.val().members
         const chatId = snapshot.key
-        this.props.getNewMessage(conversation, chatId)
+        this.props.getNewGroupMessage(conversation, members, chatId)
         // listening for a new regular chat
       } else if (snapshot.key !== 'img') {
         //listening for a new message being added to an existing conversation
@@ -140,6 +142,8 @@ const mapDispatchToProps = dispatch => ({
   getMessages: messages => dispatch(getMessages(messages)),
   getGroupMessages: groupMessages => dispatch(getGroupMessages(groupMessages)),
   getNewMessage: (message, chatId) => dispatch(getNewMessage(message, chatId)),
+  getNewGroupMessage: (conversation, members, chatId) =>
+    dispatch(getNewGroupMessage(conversation, members, chatId)),
   populateContacts: () => dispatch(populateContacts()),
 })
 

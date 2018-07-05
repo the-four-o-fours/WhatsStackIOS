@@ -2,6 +2,7 @@ import {
   GOT_MESSAGES,
   GOT_GROUP_MESSAGES,
   GOT_NEW_MESSAGE,
+  GOT_NEW_GROUP_MESSAGE,
   SAW_MESSAGE,
 } from '../actions'
 
@@ -22,7 +23,21 @@ const messagesReducer = (state = initialState, action) => {
     case GOT_NEW_MESSAGE:
       return {
         ...state,
-        [action.chatId]: {seen: false, conversation: action.conversation},
+        [action.chatId]: {
+          ...state[action.chatId],
+          seen: false,
+          conversation: action.conversation,
+        },
+      }
+    case GOT_NEW_GROUP_MESSAGE:
+      return {
+        ...state,
+        [action.chatId]: {
+          ...state[action.chatId],
+          seen: false,
+          conversation: action.conversation,
+          members: action.members,
+        },
       }
     case SAW_MESSAGE: {
       return {
