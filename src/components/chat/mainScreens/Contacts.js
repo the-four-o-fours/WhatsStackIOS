@@ -1,10 +1,12 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {
-  View,
   FlatList,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
+  View,
+  Text,
   KeyboardAvoidingView,
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
@@ -38,7 +40,7 @@ class Contacts extends React.Component {
   goToGChat = () => {
     this.props.resetScreen()
     this.props.navigation.navigate('GChat', {
-      gUid: 'a uid', //must auto-generate 28char
+      gUid: 'a uidhhhhhhhhhhhhhhhhhhhhhhhhhh', //must auto-generate 28char
       startsConvo: true,
       members: this.state.members,
       title: 'Group Chat',
@@ -67,8 +69,14 @@ class Contacts extends React.Component {
   }
 
   renderItem = ({item}) => {
+    console.log(item)
     return (
       <ListItem
+        containerStyle={
+          this.state.members.includes(item.uid)
+            ? {backgroundColor: '#AEE8C3'}
+            : {}
+        }
         roundAvatar
         title={`${item.phoneName} (${item.displayName})`}
         avatar={{
@@ -89,21 +97,47 @@ class Contacts extends React.Component {
         behavior="padding"
         keyboardVerticalOffset={64}
       >
-        <View
-          style={{
-            padding: 5,
+        <TextInput
+          style={styles.input}
+          autoFocus={false}
+          placeholder="Contact Name"
+          value={this.state.searchFor}
+          onChangeText={contactName => this.searchFor(contactName)}
+        />
+        <TouchableOpacity
+          // style={}
+          onPress={() => {
+            const startingGChat = !this.state.startingGChat
+            this.setState({startingGChat}, () =>
+              console.log(this.state.startingGChat),
+            )
           }}
         >
-          <TextInput
-            style={styles.input}
-            autoFocus={false}
-            placeholder="Contact Name"
-            value={this.state.searchFor}
-            onChangeText={contactName => this.searchFor(contactName)}
-          />
-        </View>
+          <View>
+            <Text>Start Group Chat</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          // style={}
+          onPress={() => console.log(this.state)}
+        >
+          <View>
+            <Text>LOGGING BUTTON</Text>
+          </View>
+        </TouchableOpacity>
+        {this.state.members.length > 1 ? (
+          <TouchableOpacity
+            // style={}
+            onPress={() => this.goToGChat()}
+          >
+            <View>
+              <Text>Go to Group Chat</Text>
+            </View>
+          </TouchableOpacity>
+        ) : null}
         <FlatList
           data={this.state.matchingContacts}
+          extraData={this.state.members}
           renderItem={this.renderItem}
           keyExtractor={({uid}) => uid}
         />
