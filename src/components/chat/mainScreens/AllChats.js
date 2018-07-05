@@ -3,7 +3,7 @@ import {FlatList, StyleSheet, View, Text} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
-  goToConvo = item => {
+  goToChat = item => {
     this.props.navigation.navigate('Chat', {
       uid: item.uid,
       title: item.displayName,
@@ -11,35 +11,55 @@ export default class AllChats extends Component {
     })
   }
 
-  truncate = string => {
-    let trimmed = ''
-    if (string.length > 30) {
-      trimmed += string.slice(0, 30) + '...'
-    } else {
-      trimmed = string
-    }
+  goToGChat = item => {
+    this.props.navigation.navigate('GChat', {
+      gUid: item.gUid,
+      startsConvo: false,
+      members: item.members,
+      title: 'Group Chat',
+    })
+  }
 
-    return trimmed
+  truncate = string => {
+    if (string.length > 30) {
+      return string.slice(0, 30) + '...'
+    } else {
+      return string
+    }
   }
 
   renderItem = ({item}) => {
     const lastSeen = item.seen
       ? this.truncate(item.lastMessage.text)
       : this.truncate(item.lastMessage.text) + ' \uD83D\uDE00'
-    return (
-      <ListItem
-        roundAvatar
-        title={`${item.displayName}`}
-        subtitle={lastSeen}
-        avatar={{
-          uri: item.img,
-        }}
-        onPress={() => this.goToConvo(item)}
-        onLongPress={() => {
-          console.log('Long press show drawer')
-        }}
-      />
-    )
+    if (item.gUid) {
+      return (
+        <ListItem
+          roundAvatar
+          title="Group Chat"
+          subtitle={lastSeen}
+          onPress={() => this.goToGChat(item)}
+          onLongPress={() => {
+            console.log('Long press show drawer')
+          }}
+        />
+      )
+    } else {
+      return (
+        <ListItem
+          roundAvatar
+          title={`${item.displayName}`}
+          subtitle={lastSeen}
+          avatar={{
+            uri: item.img,
+          }}
+          onPress={() => this.goToChat(item)}
+          onLongPress={() => {
+            console.log('Long press show drawer')
+          }}
+        />
+      )
+    }
   }
 
   render() {
