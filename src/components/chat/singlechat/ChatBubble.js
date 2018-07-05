@@ -21,7 +21,6 @@ const ChatBubble = props => {
           {message.img ? (
             <Image
               resizeMode="contain"
-              loadingIndicatorSource={<ActivityIndicator />}
               style={{width: 300, height: 220}}
               source={{uri: message.text}}
             />
@@ -43,7 +42,6 @@ const ChatBubble = props => {
           {message.img ? (
             <Image
               resizeMode="contain"
-              loadingIndicatorSource={<ActivityIndicator />}
               style={{width: 300, height: 220}}
               source={{uri: message.text}}
             />

@@ -17,6 +17,7 @@ class AccountInfo extends React.Component {
   state = {
     change: false,
     displayName: '',
+    loading: false,
   }
 
   signOut = () => {
