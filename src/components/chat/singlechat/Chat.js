@@ -37,17 +37,28 @@ class Chat extends React.Component {
     }
   }
 
-  sendMessage = url => {
+  sendMessage = (localUrl, cloudUrl) => {
     Keyboard.dismiss()
-    const text = url ? url : this.splitterForRSA(this.state.newMessage)
+    const senderText = localUrl
+      ? this.splitterForRSA(localUrl)
+      : this.splitterForRSA(this.state.newMessage)
+    const receiverText = cloudUrl
+      ? this.splitterForRSA(cloudUrl)
+      : this.splitterForRSA(this.state.newMessage)
     const sender = this.props.user
     const receiver = {
       uid: this.state.receiverUid,
       publicKey: this.props.navigation.getParam('publicKey'),
     }
     const sentAt = Date.now()
-    const senderMessage = this.buildMessage(sender, text, sentAt)
-    const receiverMessage = this.buildMessage(receiver, text, sentAt)
+    const img = !!localUrl
+    const senderMessage = this.buildMessage(sender, senderText, sentAt, img)
+    const receiverMessage = this.buildMessage(
+      receiver,
+      receiverText,
+      sentAt,
+      img,
+    )
     this.writeToDB(sender.uid, receiver.uid, senderMessage)
     this.writeToDB(receiver.uid, sender.uid, receiverMessage)
   }
@@ -64,12 +75,13 @@ class Chat extends React.Component {
     return messageChunks
   }
 
-  buildMessage = (person, text, timeStamp) => {
+  buildMessage = (person, text, timeStamp, img) => {
     rsa.setPublicString(person.publicKey)
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
       sender: person.uid,
+      img,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
@@ -111,9 +123,8 @@ class Chat extends React.Component {
       console.log('camera upload')
     } else {
       ;[localUrl, ref] = await this.uploadPictureFromGallery()
-      const url = await ref.getDownloadURL()
-      // this.sendMessage(localUrl)
-      console.log('url', url)
+      const cloudUrl = await ref.getDownloadURL()
+      this.sendMessage(localUrl, cloudUrl)
     }
   }
 
