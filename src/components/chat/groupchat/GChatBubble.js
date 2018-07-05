@@ -22,8 +22,10 @@ class GChatBubble extends React.Component {
       return (
         <View style={[styles.container, styles.senderBubble]}>
           <View style={[styles.bubble, styles.senderInnerBubble]}>
-            <Text style={styles.messageText}>{props.message.text}</Text>
-            <Text style={styles.timeStampText}>{`\n${this.isToday()}`}</Text>
+            <Text style={styles.senderMessageText}>{props.message.text}</Text>
+            <Text
+              style={styles.senderTimeStampText}
+            >{`\n${this.isToday()}`}</Text>
           </View>
           <View style={[styles.triangle, styles.senderTriangle]} />
         </View>
@@ -33,11 +35,13 @@ class GChatBubble extends React.Component {
         <View style={[styles.container, styles.receiverBubble]}>
           <View style={[styles.triangle, styles.receiverTriangle]} />
           <View style={[styles.bubble, styles.receiverInnerBubble]}>
-            <Text style={styles.timeStampText}>{`${
+            <Text style={styles.receiverTimeStampText}>{`${
               contactsHash[message.sender].displayName
             }\n`}</Text>
-            <Text style={styles.text}>{props.message.text}</Text>
-            <Text style={styles.timeStampText}>{`\n${this.isToday()}`}</Text>
+            <Text style={styles.receiverMessageText}>{props.message.text}</Text>
+            <Text
+              style={styles.receiverTimeStampText}
+            >{`\n${this.isToday()}`}</Text>
           </View>
         </View>
       )
@@ -70,13 +74,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#AEE8C3',
     borderBottomLeftRadius: 0,
   },
-  messageText: {
+  senderMessageText: {
     fontSize: 16,
     color: 'white',
   },
-  timeStampText: {
+  senderTimeStampText: {
     fontSize: 12,
-    color: '#E8FDFF',
+    color: 'white',
+  },
+  receiverMessageText: {
+    fontSize: 16,
+    color: '#4a4c4f',
+  },
+  receiverTimeStampText: {
+    fontSize: 12,
+    color: '#4a4c4f',
   },
   triangle: {
     width: 0,
