@@ -4,26 +4,37 @@ const initialState = {}
 
 const messagesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case GOT_MESSAGES: {
-      const chatId = Object.keys(action.messages)[0]
-      if (!state[chatId]) action.messages[chatId].seen = false
-      return {...state, ...action.messages}
-    }
+    case GOT_MESSAGES:
+      {
+        const chatId = Object.keys(action.messages)[0]
+        if (!state[chatId]) 
+          action.messages[chatId].seen = false
+        return {
+          ...state,
+          ...action.messages
+        }
+      }
     case GOT_NEW_MESSAGE:
       return {
         ...state,
-        [action.chatId]: {seen: false, conversation: action.conversation},
-      }
-    case SAW_MESSAGE: {
-      const conversation = state[action.chatId].conversation.slice()
-      return {
-        ...state,
         [action.chatId]: {
-          conversation,
-          seen: true,
-        },
+          seen: false,
+          conversation: action.conversation
+        }
       }
-    }
+    case SAW_MESSAGE:
+      {
+        const conversation = state[action.chatId]
+          .conversation
+          .slice()
+        return {
+          ...state,
+          [action.chatId]: {
+            conversation,
+            seen: true
+          }
+        }
+      }
     default:
       return state
   }
