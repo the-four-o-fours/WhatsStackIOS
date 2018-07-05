@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 
-import rsa from '.../../../rsa'
+import rsa from '../../rsa'
 
 class Contacts extends React.Component {
   constructor(props) {
@@ -40,12 +40,20 @@ class Contacts extends React.Component {
 
   goToGChat = () => {
     this.props.resetScreen()
+    const gUid = this.generateUid()
     this.props.navigation.navigate('GChat', {
-      gUid: 'a uidhhhhhhhhhhhhhhhhhhhhhhhhhh', //must auto-generate 28char
+      gUid,
       startsConvo: true,
       members: this.state.members,
       title: 'Group Chat',
     })
+  }
+
+  generateUid = () => {
+    const bits = 1024
+    const exponent = '10001' // must be a string
+    rsa.generate(bits, exponent)
+    const gUid = rsa.getPublicString().slice(5, 33)
   }
 
   //startgroup button on top of page under search bar
@@ -70,7 +78,6 @@ class Contacts extends React.Component {
   }
 
   renderItem = ({item}) => {
-    console.log(item)
     return (
       <ListItem
         containerStyle={
