@@ -35,7 +35,7 @@ export default class AllChats extends Component {
     if (item.gUid) {
       return (
         <ListItem
-          roundAvatar
+          key={item.gUid}
           title="Group Chat"
           subtitle={lastSeen}
           onPress={() => this.goToGChat(item)}
@@ -47,6 +47,7 @@ export default class AllChats extends Component {
     } else {
       return (
         <ListItem
+          key={item.uid}
           roundAvatar
           title={`${item.displayName}`}
           subtitle={lastSeen}
@@ -71,7 +72,7 @@ export default class AllChats extends Component {
           }}
           data={this.props.chats}
           renderItem={this.renderItem}
-          keyExtractor={({uid}) => uid}
+          // keyExtractor={({uid}) => uid}
         />
       )
     } else {
