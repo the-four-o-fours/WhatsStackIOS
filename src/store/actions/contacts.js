@@ -57,7 +57,17 @@ const downloadedImgUrl = async id => {
     .storage()
     .ref(`/Users/${id}/avatar.jpg`)
     .getDownloadURL()
-  const localUrl = await download(cloudUrl)
+    .catch(err => {
+      console.log(err)
+      return 'exceeded'
+    })
+  let localUrl
+  if (cloudUrl === 'exceeded') {
+    localUrl =
+      'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Penguin-512.png'
+  } else {
+    localUrl = await download(cloudUrl)
+  }
   return localUrl
 }
 

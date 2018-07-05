@@ -51,7 +51,6 @@ class CreateUser extends Component {
     } else {
       localUrl = await download(cloudUrl)
     }
-    console.log(localUrl)
     return [cloudUrl, localUrl]
   }
 
