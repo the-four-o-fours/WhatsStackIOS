@@ -12,7 +12,6 @@ import ImagePicker from 'react-native-image-crop-picker'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 import {getUser} from '../../../store/actions'
-import download from '../../download'
 
 class AccountInfo extends React.Component {
   state = {
