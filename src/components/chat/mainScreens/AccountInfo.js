@@ -94,7 +94,7 @@ class AccountInfo extends React.Component {
             <View>
               <View style={styles.accountAvatar}>
                 {this.state.isLoading ? (
-                  <ActivityIndicator />
+                  <ActivityIndicator size="large" />
                 ) : (
                   <Avatar
                     rounded
