@@ -12,7 +12,6 @@ import ImagePicker from 'react-native-image-crop-picker'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 import {getUser} from '../../../store/actions'
-import download from '../../download'
 
 class AccountInfo extends React.Component {
   state = {
@@ -39,9 +38,9 @@ class AccountInfo extends React.Component {
 
   setAvatar = async () => {
     this.setState({isLoading: true})
-    const cloudUrl = await this.uploadAvatar()
-    if (!cloudUrl === 'cancel') {
-      const localUrl = await download(cloudUrl)
+    const arr = await this.uploadAvatar()
+    if (Array.isArray(arr)) {
+      const [localUrl, cloudUrl] = arr
       const userImageRef = firebase
         .database()
         .ref(`/Users/${this.props.user.uid}/img`)
@@ -59,8 +58,8 @@ class AccountInfo extends React.Component {
       ImagePicker.openPicker({
         multiple: false,
         mediaType: 'photo',
-        compressImageMaxWidth: 500,
-        compressImageQuality: 0.4,
+        compressImageMaxWidth: 100,
+        compressImageQuality: 0.1,
       })
         .then(images => {
           const metadata = {
@@ -69,9 +68,12 @@ class AccountInfo extends React.Component {
           ref
             .putFile(images.sourceURL, metadata)
             .then(res => {
-              if (res.state === 'success') resolve(res.downloadURL)
+              if (res.state === 'success')
+                resolve([images.sourceURL, res.downloadURL])
             })
-            .catch(err => reject(err))
+            .catch(err => {
+              reject(err)
+            })
         })
         .catch(err => {
           resolve('cancel')
@@ -94,7 +96,7 @@ class AccountInfo extends React.Component {
             <View>
               <View style={styles.accountAvatar}>
                 {this.state.isLoading ? (
-                  <ActivityIndicator />
+                  <ActivityIndicator size="large" />
                 ) : (
                   <Avatar
                     rounded

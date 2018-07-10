@@ -32,7 +32,7 @@ class Login extends Component {
       )
       .catch(
         this.setState({
-          message: `Sorry invalid phone number`,
+          message: ``,
         }),
       )
   }
@@ -45,7 +45,7 @@ class Login extends Component {
         .then(_ => {
           this.setState({message: 'Code Confirmed!'})
         })
-        .catch(this.setState({message: `Sorry invalid code`}))
+        .catch(this.setState({message: ``}))
     }
   }
 
@@ -104,10 +104,11 @@ class Login extends Component {
         />
         <Button
           title="Confirm Code"
-          buttonStyle={{borderRadius: 25}}
+          buttonStyle={{borderRadius: 25, backgroundColor: '#20AAB2'}}
           textStyle={{fontSize: 20, fontWeight: 'bold'}}
           icon={{name: 'hand-o-right', type: 'font-awesome', size: 20}}
           onPress={this.confirmCode}
+          disabled={!this.state.codeInput.length === 6}
         />
       </View>
     )

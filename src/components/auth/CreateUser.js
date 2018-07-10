@@ -23,7 +23,7 @@ class CreateUser extends Component {
 
   componentDidMount() {
     const {uid, phoneNumber} = firebase.auth().currentUser
-    this.setState({uid, phoneNumber}, () => console.log(this.state))
+    this.setState({uid, phoneNumber})
   }
 
   generateRSAKey = () => {
@@ -40,7 +40,17 @@ class CreateUser extends Component {
       .storage()
       .ref('/Users/default.jpg')
       .getDownloadURL()
-    const localUrl = await download(cloudUrl)
+      .catch(err => {
+        console.log(err)
+        return 'exceeded'
+      })
+    let localUrl
+    if (cloudUrl === 'exceeded') {
+      localUrl =
+        'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Penguin-512.png'
+    } else {
+      localUrl = await download(cloudUrl)
+    }
     return [cloudUrl, localUrl]
   }
 
@@ -70,9 +80,14 @@ class CreateUser extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.loginContainer}>
         <Image
-          style={{flex: 1, width: '66%', padding: 22}}
+          style={{
+            flex: 0.5,
+            width: '77%',
+            padding: 22,
+            marginTop: 125,
+          }}
           source={require('../../Public/fullLogo20AAB2.png')}
           resizeMode="contain"
         />
@@ -105,6 +120,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
     backgroundColor: '#fff',
+    width: 'auto',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -121,7 +137,7 @@ const styles = StyleSheet.create({
   },
   loginContainer: {
     alignItems: 'center',
-    flexGrow: 1,
+    flexGrow: 0.5,
     justifyContent: 'center',
     padding: 25,
   },
@@ -132,7 +148,7 @@ const styles = StyleSheet.create({
   },
   directionsFont: {
     color: 'grey',
-    fontSize: 19,
+    fontSize: 20,
   },
 })
 

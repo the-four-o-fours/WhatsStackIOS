@@ -18,8 +18,8 @@ class Contacts extends React.Component {
     super(props)
     this.state = {
       matchingContacts: this.props.contactsArr,
+      members: [this.props.user.uid],
       refreshing: false,
-      members: [],
       startingGChat: false,
     }
   }
@@ -61,11 +61,9 @@ class Contacts extends React.Component {
     const bits = 1024
     const exponent = '10001' // must be a string
     rsa.generate(bits, exponent)
-    const gUid = rsa.getPublicString().slice(5, 33)
+    const gUid = 'GROUP' + rsa.getPublicString().slice(6, 29)
+    return gUid
   }
-
-  //startgroup button on top of page under search bar
-  //hitting it flips startingGChat
 
   handleContactPress = item => {
     if (this.state.startingGChat) {
@@ -130,7 +128,7 @@ class Contacts extends React.Component {
           onPress={() => {
             const startingGChat = !this.state.startingGChat
             if (!startingGChat) {
-              this.setState({members: []})
+              this.setState({members: [this.props.user.uid]})
             }
             this.setState({startingGChat})
           }}
@@ -141,14 +139,6 @@ class Contacts extends React.Component {
             <Text style={{fontSize: 16}}>Cancel</Text>
           )}
         </TouchableOpacity>
-        {this.state.members.length > 1 ? (
-          <TouchableOpacity
-            style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
-            onPress={() => this.goToGChat()}
-          >
-            <Text style={{fontSize: 16}}>Go to Group Chat</Text>
-          </TouchableOpacity>
-        ) : null}
         <FlatList
           data={this.state.matchingContacts}
           extraData={this.state.members}
@@ -157,6 +147,14 @@ class Contacts extends React.Component {
           refreshing={this.state.refreshing}
           onRefresh={this.updateContacts}
         />
+        {this.state.members.length > 1 ? (
+          <TouchableOpacity
+            style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
+            onPress={() => this.goToGChat()}
+          >
+            <Text style={{fontSize: 16}}>Go to Group Chat</Text>
+          </TouchableOpacity>
+        ) : null}
       </KeyboardAvoidingView>
     )
   }
@@ -184,6 +182,7 @@ const mapStateToProps = state => ({
   contactsArr: state.contactsArr.sort((a, b) => {
     return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
   }),
+  user: state.user,
 })
 
 const mapDispatchToProps = dispatch => ({

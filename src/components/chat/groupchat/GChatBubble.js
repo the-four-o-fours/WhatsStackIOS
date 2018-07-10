@@ -22,7 +22,9 @@ class GChatBubble extends React.Component {
       return (
         <View style={[styles.container, styles.senderBubble]}>
           <View style={[styles.bubble, styles.senderInnerBubble]}>
-            <Text style={styles.senderMessageText}>{props.message.text}</Text>
+            <Text style={styles.senderMessageText}>
+              {this.props.message.text}
+            </Text>
             <Text
               style={styles.senderTimeStampText}
             >{`\n${this.isToday()}`}</Text>
@@ -38,7 +40,9 @@ class GChatBubble extends React.Component {
             <Text style={styles.receiverTimeStampText}>{`${
               contactsHash[message.sender].displayName
             }\n`}</Text>
-            <Text style={styles.receiverMessageText}>{props.message.text}</Text>
+            <Text style={styles.receiverMessageText}>
+              {this.props.message.text}
+            </Text>
             <Text
               style={styles.receiverTimeStampText}
             >{`\n${this.isToday()}`}</Text>

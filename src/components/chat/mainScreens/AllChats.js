@@ -4,26 +4,20 @@ import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
   goToChat = item => {
-    this
-      .props
-      .navigation
-      .navigate('Chat', {
-        uid: item.uid,
-        title: item.displayName,
-        publicKey: item.publicKey
-      })
+    this.props.navigation.navigate('Chat', {
+      uid: item.uid,
+      title: item.displayName,
+      publicKey: item.publicKey,
+    })
   }
 
   goToGChat = item => {
-    this
-      .props
-      .navigation
-      .navigate('GChat', {
-        gUid: item.gUid,
-        startsConvo: false,
-        members: item.members,
-        title: 'Group Chat'
-      })
+    this.props.navigation.navigate('GChat', {
+      gUid: item.gUid,
+      startsConvo: false,
+      members: item.members,
+      title: 'Group Chat',
+    })
   }
 
   truncate = string => {
@@ -40,38 +34,50 @@ export default class AllChats extends Component {
       ? this.truncate(text)
       : this.truncate(text) + ' \uD83D\uDE00'
     if (item.gUid) {
-      return (<ListItem
-        roundAvatar
-        title="Group Chat"
-        subtitle={lastSeen}
-        onPress={() => this.goToGChat(item)}
-        onLongPress={() => {
-        console.log('Long press show drawer')
-      }}/>)
+      return (
+        <ListItem
+          roundAvatar
+          title="Group Chat"
+          subtitle={lastSeen}
+          avatar={{
+            uri: item.img,
+          }}
+          onPress={() => this.goToGChat(item)}
+          onLongPress={() => {
+            console.log('Long press show drawer')
+          }}
+        />
+      )
     } else {
-      return (<ListItem
-        roundAvatar
-        title={`${item.displayName}`}
-        subtitle={lastSeen}
-        avatar={{
-        uri: item.img
-      }}
-        onPress={() => this.goToChat(item)}
-        onLongPress={() => {
-        console.log('Long press show drawer')
-      }}/>)
+      return (
+        <ListItem
+          roundAvatar
+          title={`${item.displayName}`}
+          subtitle={lastSeen}
+          avatar={{
+            uri: item.img,
+          }}
+          onPress={() => this.goToChat(item)}
+          onLongPress={() => {
+            console.log('Long press show drawer')
+          }}
+        />
+      )
     }
   }
 
   render() {
     if (this.props.chats.length) {
-      return (<FlatList
-        style={{
-        borderColor: 'white'
-      }}
-        data={this.props.chats}
-        renderItem={this.renderItem}
-        keyExtractor={({uid}) => uid}/>)
+      return (
+        <FlatList
+          style={{
+            borderColor: 'white',
+          }}
+          data={this.props.chats}
+          renderItem={this.renderItem}
+          keyExtractor={({lastMessage}) => lastMessage.timeStamp}
+        />
+      )
     } else {
       return (
         <View>
@@ -84,12 +90,12 @@ export default class AllChats extends Component {
 
 const styles = StyleSheet.create({
   chats: {
-    borderColor: '#fff'
+    borderColor: '#fff',
   },
   noMessages: {
     fontSize: 32,
     color: '#006994',
     alignSelf: 'center',
-    paddingTop: 250
-  }
+    paddingTop: 250,
+  },
 })

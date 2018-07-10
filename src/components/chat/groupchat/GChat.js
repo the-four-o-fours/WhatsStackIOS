@@ -52,10 +52,10 @@ class Chat extends React.Component {
           publicKey: this.props.contactsHash[memberUid].publicKey,
         }
         const message = this.buildMessage(receiverObj, text, sentAt)
-        this.writeToDB(receiverObj.uid, message)
+        this.writeToDB(receiverObj.uid, this.state.gUid, message)
       })
     const senderMessage = this.buildMessage(sender, text, sentAt)
-    this.writeToDB(sender.uid, senderMessage)
+    this.writeToDB(sender.uid, this.state.gUid, senderMessage)
     if (this.state.startsConvo) {
       this.updateMembers()
       this.setState({startsConvo: false})
@@ -79,7 +79,7 @@ class Chat extends React.Component {
     const encrypted = text.map(chunk => rsa.encrypt(chunk))
     const message = {
       text: encrypted,
-      sender: person.uid,
+      sender: this.props.user.uid,
     }
     const messageObj = {}
     messageObj[timeStamp] = message
@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   user: state.user,
   messages: state.messages,
+  contactsHash: state.contactsHash,
 })
 
 const mapDispatchToProps = dispatch => ({

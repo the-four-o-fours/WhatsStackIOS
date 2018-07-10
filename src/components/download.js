@@ -8,5 +8,8 @@ export default (url, type = 'jpg') =>
     })
       .fetch('GET', url)
       .then(res => resolve(res.path()))
-      .catch(err => reject(err))
+      .catch(err => {
+        resolve('bandwidth')
+        reject(err)
+      })
   })
