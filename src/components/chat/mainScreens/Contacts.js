@@ -178,12 +178,18 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = state => ({
-  contactsArr: state.contactsArr.sort((a, b) => {
-    return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
-  }),
-  user: state.user,
-})
+const mapStateToProps = state => {
+  const contactsArr = []
+  Object.keys(state.contactsHash).forEach(key => {
+    contactsArr.push(state.contactsHash[key])
+  })
+  return {
+    contactsArr: contactsArr.sort((a, b) => {
+      return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
+    }),
+    user: state.user,
+  }
+}
 
 const mapDispatchToProps = dispatch => ({
   populateContacts: () => dispatch(populateContacts()),
