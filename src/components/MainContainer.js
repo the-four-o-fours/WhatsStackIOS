@@ -130,13 +130,6 @@ class MainContainer extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  user: state.user,
-  contactsArr: state.contactsArr,
-  contactsHash: state.contactsHash,
-  messages: state.messages,
-})
-
 const mapDispatchToProps = dispatch => ({
   getUser: user => dispatch(getUser(user)),
   getMessages: messages => dispatch(getMessages(messages)),
@@ -148,6 +141,6 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(MainContainer)
