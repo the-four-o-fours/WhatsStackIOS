@@ -183,10 +183,11 @@ const mapStateToProps = state => {
   Object.keys(state.contactsHash).forEach(key => {
     contactsArr.push(state.contactsHash[key])
   })
+  contactsArr.sort((a, b) => {
+    return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
+  })
   return {
-    contactsArr: contactsArr.sort((a, b) => {
-      return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1
-    }),
+    contactsArr,
     user: state.user,
   }
 }

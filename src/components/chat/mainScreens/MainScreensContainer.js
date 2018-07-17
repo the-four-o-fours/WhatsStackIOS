@@ -118,6 +118,10 @@ class MainScreensContainer extends React.Component {
   }
 
   render() {
+    console.log('USER', this.props.user)
+    console.log('MSGS', this.props.messages)
+    console.log('HASH', this.props.contactsHash)
+    console.log(Object.keys(this.props.contactsHash))
     return (
       <KeyboardAvoidingView
         enabled
