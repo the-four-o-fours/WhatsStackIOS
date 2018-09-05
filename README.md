@@ -2,7 +2,7 @@
 
 ## The App
 
-WhatsStack is an end to end ecrypted messaging app for IOS. End to end encryption means that the messages are encrypted before they are sent in such a way that only the sender and receiver can decrypt them. Even someone with total access to the database and source code cannot decrypt a user's messages without the user's private key, which makes E2EE exceptionally secure. Of course, because this was a three week project that relied on a lot of third-party software and npm modules we didn't have the time or expertise to vet, we can't promise WhatsStack has the same level of security as other E2EE apps like Signal or WhatsApp (in fact, I can almost guarantee it's worse). That said, this app is both a completely functional messaging app, and a faithful implementation of the core concepts of E2EE.
+WhatsStack is an end to end ecrypted messaging app for IOS. End to end encryption means that the messages are encrypted before they are sent in such a way that only the sender and receiver can decrypt them. Even someone with total access to the database and source code cannot decrypt a user's messages without the user's private key, which makes E2EE exceptionally secure. his app is both a completely functional messaging app, and a faithful implementation of the core concepts of E2EE.
 
 It cross references the user's contacts with our database and automatically connects you to all your contacts who also have an account with us and allows you to quickly and easily send them secure messages through the app.
 
