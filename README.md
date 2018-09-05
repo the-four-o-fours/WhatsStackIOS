@@ -1,3 +1,5 @@
+![Preview1](./src/public/WhatsStackSS.jpg)
+
 # WhatsStack (An end to end encrypted ios messaging app)
 
 ## The App
