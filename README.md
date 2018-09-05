@@ -1,4 +1,4 @@
-![Preview1](./src/Public/capture.png)
+![Preview1](./capture.png)
 
 # WhatsStack (An end to end encrypted ios messaging app)
 
