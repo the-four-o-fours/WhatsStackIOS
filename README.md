@@ -10,7 +10,7 @@ It cross references the user's contacts with our database and automatically conn
 
 ## Tech stack
 
-React Native for front end
+React Native for front end &
 React-Native-Firebase for authentication and its database.
 
 ### More on end to end encryption
