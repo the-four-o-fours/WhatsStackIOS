@@ -111,11 +111,7 @@ class Contacts extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView
-        enabled
-        behavior="padding"
-        keyboardVerticalOffset={64}
-      >
+      <KeyboardAvoidingView enabled behavior="padding">
         <TextInput
           style={styles.input}
           autoFocus={false}

@@ -112,12 +112,7 @@ class Chat extends React.Component {
   render() {
     const gUid = this.state.gUid
     return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        enabled
-        behavior="padding"
-        keyboardVerticalOffset={64}
-      >
+      <KeyboardAvoidingView style={styles.container} enabled behavior="padding">
         <ImageBackground
           style={{flex: 1}}
           source={require('../../../Public/bgtile.png')}

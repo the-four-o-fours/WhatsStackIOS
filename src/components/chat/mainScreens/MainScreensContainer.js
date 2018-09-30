@@ -122,12 +122,7 @@ class MainScreensContainer extends React.Component {
     console.log('MESSAGES', this.props.messages)
     console.log('CONTACTS', this.props.contacts)
     return (
-      <KeyboardAvoidingView
-        enabled
-        behavior="padding"
-        keyboardVerticalOffset={64}
-        style={styles.container}
-      >
+      <KeyboardAvoidingView enabled behavior="padding" style={styles.container}>
         {this.state.screen === 'AllChats' ? (
           <AllChats
             navigation={this.props.navigation}
