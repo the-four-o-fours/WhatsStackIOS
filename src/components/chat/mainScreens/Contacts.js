@@ -92,9 +92,7 @@ class Contacts extends React.Component {
     return (
       <ListItem
         containerStyle={
-          this.state.members.includes(item.uid)
-            ? {backgroundColor: '#AEE8C3'}
-            : {}
+          this.state.members.includes(item.uid) && {backgroundColor: '#AEE8C3'}
         }
         roundAvatar
         title={`${item.phoneName} (${item.displayName})`}
@@ -143,14 +141,14 @@ class Contacts extends React.Component {
           refreshing={this.state.refreshing}
           onRefresh={this.updateContacts}
         />
-        {this.state.members.length > 1 ? (
+        {this.state.members.length > 2 && (
           <TouchableOpacity
             style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
             onPress={() => this.goToGChat()}
           >
             <Text style={{fontSize: 16}}>Go to Group Chat</Text>
           </TouchableOpacity>
-        ) : null}
+        )}
       </KeyboardAvoidingView>
     )
   }
