@@ -2,10 +2,10 @@ import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
 import download from '../../components/download'
 
-export const GOT_CONTACTS_HASH = 'GOT_CONTACTS_HASH'
+export const GOT_CONTACTS = 'GOT_CONTACTS'
 
-const getContactsHash = contacts => ({
-  type: GOT_CONTACTS_HASH,
+const getContacts = contacts => ({
+  type: GOT_CONTACTS,
   contacts,
 })
 
@@ -71,16 +71,16 @@ const findOverlap = async (
   prevContacts,
   defaultImg,
 ) => {
-  const contactsHash = {}
+  const contacts = {}
   firebaseUsers.forEach(user => {
     if (contactsObj[user.phoneNumber]) {
       user.phoneName = contactsObj[user.phoneNumber]
-      contactsHash[user.uid] = user
+      contacts[user.uid] = user
     }
   })
   await Promise.all(
-    Object.keys(contactsHash).map(async key => {
-      const user = contactsHash[key]
+    Object.keys(contacts).map(async key => {
+      const user = contacts[key]
       try {
         const id = user.uid
         if (prevContacts[id]) {
@@ -105,21 +105,21 @@ const findOverlap = async (
       }
     }),
   )
-  return contactsHash
+  return contacts
 }
 
 export const populateContacts = () => async (dispatch, getState) => {
   try {
     const firebaseUsers = await getAllUsers()
     const contactsObj = await getAllContacts()
-    const {user, contactsHash} = getState()
-    const newContactsHash = await findOverlap(
+    const {user, contacts} = getState()
+    const newContacts = await findOverlap(
       firebaseUsers,
       contactsObj,
-      contactsHash,
+      contacts,
       user.default,
     )
-    dispatch(getContactsHash(newContactsHash))
+    dispatch(getContacts(newContacts))
   } catch (error) {
     console.log(error)
   }

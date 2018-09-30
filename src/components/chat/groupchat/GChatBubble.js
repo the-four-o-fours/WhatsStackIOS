@@ -17,7 +17,7 @@ class GChatBubble extends React.Component {
   }
 
   render() {
-    const {message, user, contactsHash} = this.props
+    const {message, user, contacts} = this.props
     if (message.sender === user.uid) {
       return (
         <View style={[styles.container, styles.senderBubble]}>
@@ -38,7 +38,7 @@ class GChatBubble extends React.Component {
           <View style={[styles.triangle, styles.receiverTriangle]} />
           <View style={[styles.bubble, styles.receiverInnerBubble]}>
             <Text style={styles.receiverTimeStampText}>{`${
-              contactsHash[message.sender].displayName
+              contacts[message.sender].displayName
             }\n`}</Text>
             <Text style={styles.receiverMessageText}>
               {this.props.message.text}
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-  contactsHash: state.contactsHash,
+  contacts: state.contacts,
 })
 
 export default connect(

@@ -49,7 +49,7 @@ class Chat extends React.Component {
       .forEach(memberUid => {
         const receiverObj = {
           uid: memberUid,
-          publicKey: this.props.contactsHash[memberUid].publicKey,
+          publicKey: this.props.contacts[memberUid].publicKey,
         }
         const message = this.buildMessage(receiverObj, text, sentAt)
         this.writeToDB(receiverObj.uid, this.state.gUid, message)
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   user: state.user,
   messages: state.messages,
-  contactsHash: state.contactsHash,
+  contacts: state.contacts,
 })
 
 const mapDispatchToProps = dispatch => ({

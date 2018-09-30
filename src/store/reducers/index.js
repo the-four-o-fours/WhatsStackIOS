@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux'
 import user from './user'
-import contactsHash from './contactsHash'
+import contacts from './contacts'
 import messages from './messages'
 
-export default combineReducers({user, contactsHash, messages})
+export default combineReducers({user, contacts, messages})
