@@ -1,8 +1,8 @@
 import {GOT_CONTACTS} from '../actions'
 
-const initialState = []
+const initialState = {}
 
-const contactsReducer = (state = initialState, action) => {
+const contacts = (state = initialState, action) => {
   switch (action.type) {
     case GOT_CONTACTS:
       return action.contacts
@@ -11,4 +11,4 @@ const contactsReducer = (state = initialState, action) => {
   }
 }
 
-export default contactsReducer
+export default contacts

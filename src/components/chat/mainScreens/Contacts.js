@@ -180,8 +180,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   const contactsArr = []
-  Object.keys(state.contactsHash).forEach(key => {
-    contactsArr.push(state.contactsHash[key])
+  Object.keys(state.contacts).forEach(key => {
+    contactsArr.push(state.contacts[key])
   })
   contactsArr.sort((a, b) => {
     return a.phoneName.toLowerCase() >= b.phoneName.toLowerCase() ? 1 : -1

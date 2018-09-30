@@ -57,8 +57,8 @@ class MainScreensContainer extends React.Component {
       friendIds.map(async id => {
         try {
           let chat
-          if (this.props.contactsHash[id]) {
-            chat = this.props.contactsHash[id]
+          if (this.props.contacts[id]) {
+            chat = this.props.contacts[id]
           } else if (id.slice(0, 5) === 'GROUP') {
             //this chaos is because members is undefined for a second before updating from the
             //store and getting an accurate array and having members be undefined redscreens it
@@ -119,9 +119,8 @@ class MainScreensContainer extends React.Component {
 
   render() {
     console.log('USER', this.props.user)
-    console.log('MSGS', this.props.messages)
-    console.log('HASH', this.props.contactsHash)
-    console.log(Object.keys(this.props.contactsHash))
+    console.log('MESSAGES', this.props.messages)
+    console.log('CONTACTS', this.props.contacts)
     return (
       <KeyboardAvoidingView
         enabled
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.user,
-  contactsHash: state.contactsHash,
+  contacts: state.contacts,
   messages: state.messages,
 })
 
