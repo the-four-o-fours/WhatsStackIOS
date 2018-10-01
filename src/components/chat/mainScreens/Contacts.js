@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 
@@ -100,9 +101,6 @@ class Contacts extends React.Component {
           uri: item.img,
         }}
         onPress={() => this.handleContactPress(item)}
-        onLongPress={() => {
-          console.log('Long press show drawer')
-        }}
       />
     )
   }
@@ -120,6 +118,7 @@ class Contacts extends React.Component {
         <TouchableOpacity
           style={styles.groupButton}
           onPress={() => {
+            Keyboard.dismiss()
             const startingGChat = !this.state.startingGChat
             if (!startingGChat) {
               this.setState({members: [this.props.user.uid]})
