@@ -79,9 +79,9 @@ class Login extends Component {
   renderMessage() {
     const {message} = this.state
 
-    if (!message.length) return null
-
-    return <Text style={styles.whiteFont}>{message}</Text>
+    return message.length ? (
+      <Text style={styles.whiteFont}>{message}</Text>
+    ) : null
   }
 
   renderVerificationCodeInput() {
@@ -120,7 +120,6 @@ class Login extends Component {
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <Image
           style={{flex: 1, width: '77%', padding: 22, marginTop: 125}}
-          // source={require('../../Public/wLogoT.png')}
           source={require('../../Public/fullLogo20AAB2.png')}
           resizeMode="contain"
         />

@@ -171,17 +171,13 @@ class Chat extends React.Component {
   render() {
     const receiverUid = this.state.receiverUid
     return (
-      <KeyboardAvoidingView style={styles.container} enabled behavior="padding">
+      <KeyboardAvoidingView style={{flex: 1}} enabled behavior="padding">
         <ImageBackground
           style={{flex: 1}}
           source={require('../../../Public/bgtile.png')}
           resizeMode="repeat"
         >
-          <TouchableWithoutFeedback
-            onPress={() => {
-              Keyboard.dismiss()
-            }}
-          >
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             {this.props.messages[receiverUid] ? (
               <ReversedFlatList
                 style={styles.chats}
@@ -197,7 +193,7 @@ class Chat extends React.Component {
                 )}
               />
             ) : (
-              <View>
+              <View style={styles.noMessagesContainer}>
                 <Text style={styles.noMessages}>Start a conversation ◉‿◉</Text>
               </View>
             )}
@@ -221,12 +217,7 @@ class Chat extends React.Component {
             <Icon name="ios-add" size={35} color="#006994" />
           </TouchableOpacity>
           <TextInput
-            style={[
-              styles.input,
-              {
-                height: this.state.height,
-              },
-            ]}
+            style={[styles.input, {height: this.state.height}]}
             value={this.state.newMessage}
             multiline={true}
             autoFocus={false}
@@ -260,15 +251,14 @@ class Chat extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  noMessagesContainer: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   noMessages: {
+    textAlign: 'center',
     fontSize: 32,
     color: '#006994',
-    alignSelf: 'center',
-    paddingTop: 250,
   },
   inputContainer: {
     flexDirection: 'row',

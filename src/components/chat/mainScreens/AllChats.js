@@ -43,9 +43,6 @@ export default class AllChats extends Component {
             uri: item.img,
           }}
           onPress={() => this.goToGChat(item)}
-          onLongPress={() => {
-            console.log('Long press show drawer')
-          }}
         />
       )
     } else {
@@ -58,9 +55,6 @@ export default class AllChats extends Component {
             uri: item.img,
           }}
           onPress={() => this.goToChat(item)}
-          onLongPress={() => {
-            console.log('Long press show drawer')
-          }}
         />
       )
     }

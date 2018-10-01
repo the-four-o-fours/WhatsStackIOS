@@ -118,11 +118,7 @@ class Chat extends React.Component {
           source={require('../../../Public/bgtile.png')}
           resizeMode="repeat"
         >
-          <TouchableWithoutFeedback
-            onPress={() => {
-              Keyboard.dismiss()
-            }}
-          >
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             {this.props.messages[gUid] ? (
               <ReversedFlatList
                 style={styles.chats}

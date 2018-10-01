@@ -31,13 +31,13 @@ const getAllUsers = async () => {
       .ref(`/Users/`)
       .once('value')
     snapshot.forEach(childSnap => {
-      const childData = childSnap.val()
+      const firebaseUser = childSnap.val()
       firebaseUsers.push({
-        displayName: childData.displayName,
-        phoneNumber: childData.phoneNumber,
-        uid: childData.uid,
-        publicKey: childData.publicKey,
-        url: childData.img || 'default',
+        displayName: firebaseUser.displayName,
+        phoneNumber: firebaseUser.phoneNumber,
+        uid: firebaseUser.uid,
+        publicKey: firebaseUser.publicKey,
+        url: firebaseUser.img,
       })
     })
     return firebaseUsers
@@ -83,22 +83,20 @@ const findOverlap = async (
       const user = contacts[key]
       try {
         const id = user.uid
-        if (prevContacts[id]) {
-          // We have seen this user before
-          if (prevContacts[id].url === user.url) {
-            user.img = prevContacts[id].img // Do not need to download new avatar
-          } else {
-            const localUrl = await downloadedImgUrl(id) // Download new image
-            user.img = localUrl
-          }
+        if (prevContacts[id] && prevContacts[id].url === user.url) {
+          // We have seen this user before and we do not need to download a new avatar
+          user.img = prevContacts[id].img
+        } else if (prevContacts[id]) {
+          // We have seen this user before but we need to download a new avatar
+          const localUrl = await downloadedImgUrl(id)
+          user.img = localUrl
+        } else if (user.url === 'default') {
+          // This is a new person added to our contacts with no specified image, so set to device's default
+          user.img = defaultImg
         } else {
-          // This is a new person added to our contacts
-          if (user.url === 'default') {
-            user.img = defaultImg // Set default image on our device
-          } else {
-            const localUrl = await downloadedImgUrl(id) // Download new image
-            user.img = localUrl
-          }
+          // This is a new person added to our contacts with a specified image, so download it and set it
+          const localUrl = await downloadedImgUrl(id)
+          user.img = localUrl
         }
       } catch (err) {
         console.log(err)
