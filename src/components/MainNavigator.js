@@ -1,7 +1,7 @@
 import {createStackNavigator} from 'react-navigation'
 
 import MainScreensContainer from './chat/mainScreens/MainScreensContainer'
-import Chat from './chat/groupchat/GChat'
+import Chat from './chat/chatScreen/Chat'
 import SingleImage from './chat/singleImage/SingleImage'
 
 const MainNavigator = createStackNavigator({

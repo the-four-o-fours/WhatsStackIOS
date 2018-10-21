@@ -16,7 +16,7 @@ import ReversedFlatList from 'react-native-reversed-flat-list'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
-import ChatBubble from './GChatBubble'
+import ChatBubble from './ChatBubble'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
