@@ -35,8 +35,8 @@ class MainScreensContainer extends React.Component {
     try {
       const chats = await this.findChats()
       this.setState({chats})
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -46,8 +46,8 @@ class MainScreensContainer extends React.Component {
         const chats = await this.findChats()
         this.setState({chats})
       }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -75,8 +75,8 @@ class MainScreensContainer extends React.Component {
           chat.lastMessage = messages[messages.length - 1]
           chat.seen = this.props.messages[chatId].seen
           return chat
-        } catch (error) {
-          console.log(error)
+        } catch (err) {
+          console.log(err)
         }
       }),
     )
@@ -100,8 +100,8 @@ class MainScreensContainer extends React.Component {
           user.img = defaultImg
         })
       return user
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 

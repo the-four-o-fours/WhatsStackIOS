@@ -53,8 +53,8 @@ class MainContainer extends Component {
         userField[snapshot.key] = snapshot.val()
         this.props.getUser(userField)
       }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -73,8 +73,8 @@ class MainContainer extends Component {
         )
         this.props.getNewMessage(chatId, members, conversation)
       }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -90,8 +90,8 @@ class MainContainer extends Component {
       })
       arr.sort((a, b) => a.timeStamp - b.timeStamp)
       return arr
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 

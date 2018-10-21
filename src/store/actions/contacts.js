@@ -41,8 +41,8 @@ const getAllUsers = async () => {
       })
     })
     return firebaseUsers
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    console.log(err)
   }
 }
 
@@ -120,7 +120,7 @@ export const populateContacts = () => async (dispatch, getState) => {
       user.default,
     )
     dispatch(getContacts(newContacts))
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    console.log(err)
   }
 }

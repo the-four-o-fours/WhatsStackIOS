@@ -73,8 +73,8 @@ class CreateUser extends Component {
         firebaseUser.set(userObj)
       }
       this.props.userCreated()
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
