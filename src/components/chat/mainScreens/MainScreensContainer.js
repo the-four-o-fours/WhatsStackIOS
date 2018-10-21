@@ -111,7 +111,7 @@ class MainScreensContainer extends React.Component {
 
   render() {
     // console.log('USER', this.props.user)
-    console.log('MESSAGES', this.props.messages)
+    // console.log('MESSAGES', this.props.messages)
     // console.log('CONTACTS', this.props.contacts)
     return (
       <KeyboardAvoidingView enabled behavior="padding" style={styles.container}>
