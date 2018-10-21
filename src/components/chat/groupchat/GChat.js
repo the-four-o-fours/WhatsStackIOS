@@ -16,7 +16,7 @@ import ReversedFlatList from 'react-native-reversed-flat-list'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 
-import GChatBubble from './GChatBubble'
+import ChatBubble from './GChatBubble'
 
 import rsa from '../../rsa'
 import {seenMessages} from '../../../store/actions'
@@ -28,8 +28,51 @@ class Chat extends React.Component {
       uid: this.props.navigation.getParam('uid', false),
       members: this.props.navigation.getParam('members', []),
       startsConvo: this.props.navigation.getParam('startsConvo', false),
+      displayNames: {},
       newMessage: '',
       height: 29.5, //MagicNo RN always sets hight to this no matter what
+    }
+  }
+
+  async componentDidMount() {
+    try {
+      const displayNames = {}
+      const promises = []
+      this.state.members
+        .filter(member => member.uid !== this.props.user.uid)
+        .forEach(member => {
+          const contact = this.props.contacts[member.uid]
+          if (contact) {
+            displayNames[member.uid] = contact.displayName
+          } else {
+            promises.push(this.findAnonymous(member.uid))
+          }
+        })
+      const anonymouses = await Promise.all(promises)
+      anonymouses.forEach(anon => {
+        displayNames[anon.uid] = anon.displayName
+      })
+      this.setState({displayNames})
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  findAnonymous = async id => {
+    try {
+      const defaultImg = this.props.user.default
+      const user = {
+        uid: id,
+        img: defaultImg,
+      }
+      const snapshot = await firebase
+        .database()
+        .ref(`/Users/${id}`)
+        .once('value')
+      user.displayName = snapshot.val().displayName
+      return user
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -103,6 +146,7 @@ class Chat extends React.Component {
   //Or we could just not support adding people to groups.
 
   render() {
+    const {uid, members, displayNames, newMessage, height} = this.state
     return (
       <KeyboardAvoidingView style={styles.container} enabled behavior="padding">
         <ImageBackground
@@ -111,13 +155,19 @@ class Chat extends React.Component {
           resizeMode="repeat"
         >
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            {this.props.messages[this.state.uid] ? (
+            {this.props.messages[uid] &&
+            Object.keys(displayNames).length > 0 ? (
               <ReversedFlatList
                 style={styles.chats}
-                data={this.props.messages[this.state.uid].conversation}
+                data={this.props.messages[uid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
-                  <GChatBubble message={item} user={this.props.user} />
+                  <ChatBubble
+                    message={item}
+                    displayName={displayNames[item.sender]}
+                    isGChat={members.length > 2}
+                    user={this.props.user}
+                  />
                 )}
               />
             ) : (
@@ -129,15 +179,15 @@ class Chat extends React.Component {
         </ImageBackground>
         <View style={styles.inputContainer}>
           <TextInput
-            style={[styles.input, {height: this.state.height}]}
-            value={this.state.newMessage}
+            style={[styles.input, {height}]}
+            value={newMessage}
             multiline={true}
             autoFocus={false}
             enablesReturnKeyAutomatically={true}
             returnKeyType="send"
             placeholder="..."
             blurOnSubmit={true}
-            onChangeText={newMessage => this.setState({newMessage})}
+            onChangeText={newText => this.setState({newMessage: newText})}
             onContentSizeChange={event => {
               this.setState({height: event.nativeEvent.contentSize.height + 10})
             }}
@@ -148,7 +198,7 @@ class Chat extends React.Component {
           />
           <TouchableOpacity
             style={styles.submitButton}
-            disabled={this.state.newMessage.length === 0}
+            disabled={newMessage.length === 0}
             onPress={() => {
               this.sendMessage()
               this.setState({newMessage: '', height: 29.5})
