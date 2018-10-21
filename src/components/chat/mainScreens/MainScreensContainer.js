@@ -89,16 +89,13 @@ class MainScreensContainer extends React.Component {
       const defaultImg = this.props.user.default
       const user = {
         uid: id,
+        img: defaultImg,
       }
-      await firebase
+      const snapshot = await firebase
         .database()
         .ref(`/Users/${id}`)
         .once('value')
-        .then(snapshot => {
-          const data = snapshot.val()
-          user.displayName = data.displayName
-          user.img = defaultImg
-        })
+      user.displayName = snapshot.val().displayName
       return user
     } catch (err) {
       console.log(err)
