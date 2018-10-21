@@ -42,7 +42,7 @@ class Contacts extends React.Component {
 
   goToChat = item => {
     this.props.resetScreen()
-    this.props.navigation.navigate('GChat', {
+    this.props.navigation.navigate('Chat', {
       uid: this.state.startingGChat ? uuidv4() : item.uid,
       title: this.state.startingGChat ? 'Group Chat' : item.displayName,
       members: this.state.members,

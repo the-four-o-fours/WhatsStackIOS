@@ -35,8 +35,8 @@ class MainScreensContainer extends React.Component {
     try {
       const chats = await this.findChats()
       this.setState({chats})
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -46,8 +46,8 @@ class MainScreensContainer extends React.Component {
         const chats = await this.findChats()
         this.setState({chats})
       }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -75,8 +75,8 @@ class MainScreensContainer extends React.Component {
           chat.lastMessage = messages[messages.length - 1]
           chat.seen = this.props.messages[chatId].seen
           return chat
-        } catch (error) {
-          console.log(error)
+        } catch (err) {
+          console.log(err)
         }
       }),
     )
@@ -89,19 +89,16 @@ class MainScreensContainer extends React.Component {
       const defaultImg = this.props.user.default
       const user = {
         uid: id,
+        img: defaultImg,
       }
-      await firebase
+      const snapshot = await firebase
         .database()
         .ref(`/Users/${id}`)
         .once('value')
-        .then(snapshot => {
-          const data = snapshot.val()
-          user.displayName = data.displayName
-          user.img = defaultImg
-        })
+      user.displayName = snapshot.val().displayName
       return user
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -111,7 +108,7 @@ class MainScreensContainer extends React.Component {
 
   render() {
     // console.log('USER', this.props.user)
-    console.log('MESSAGES', this.props.messages)
+    // console.log('MESSAGES', this.props.messages)
     // console.log('CONTACTS', this.props.contacts)
     return (
       <KeyboardAvoidingView enabled behavior="padding" style={styles.container}>

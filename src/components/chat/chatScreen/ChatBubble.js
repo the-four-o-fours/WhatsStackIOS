@@ -1,9 +1,7 @@
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
 
-import {connect} from 'react-redux'
-
-class GChatBubble extends React.Component {
+class ChatBubble extends React.Component {
   isToday = () => {
     const now = new Date(Date.now()).toString()
     const messageDate = new Date(
@@ -17,7 +15,7 @@ class GChatBubble extends React.Component {
   }
 
   render() {
-    const {message, user, contacts} = this.props
+    const {message, displayName, isGChat, user} = this.props
     if (message.sender === user.uid) {
       return (
         <View style={[styles.container, styles.senderBubble]}>
@@ -37,9 +35,11 @@ class GChatBubble extends React.Component {
         <View style={[styles.container, styles.receiverBubble]}>
           <View style={[styles.triangle, styles.receiverTriangle]} />
           <View style={[styles.bubble, styles.receiverInnerBubble]}>
-            <Text style={styles.receiverTimeStampText}>{`${
-              contacts[message.sender].displayName
-            }\n`}</Text>
+            {isGChat && (
+              <Text style={styles.receiverTimeStampText}>
+                {`${displayName}\n`}
+              </Text>
+            )}
             <Text style={styles.receiverMessageText}>
               {this.props.message.text}
             </Text>
@@ -119,11 +119,4 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = state => ({
-  contacts: state.contacts,
-})
-
-export default connect(
-  mapStateToProps,
-  null,
-)(GChatBubble)
+export default ChatBubble

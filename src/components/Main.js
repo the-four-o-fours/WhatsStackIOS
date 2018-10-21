@@ -35,8 +35,8 @@ class Main extends Component {
             loading: false,
           })
         }
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
+        console.log(err)
       }
     })
   }
@@ -51,8 +51,8 @@ class Main extends Component {
       const user = await firebaseUser.once('value')
       const exists = await user.exists()
       return exists
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 

@@ -3,8 +3,8 @@ import {FlatList, StyleSheet, View, Text} from 'react-native'
 import {ListItem} from 'react-native-elements'
 
 export default class AllChats extends Component {
-  goToGChat = item => {
-    this.props.navigation.navigate('GChat', {
+  goToChat = item => {
+    this.props.navigation.navigate('Chat', {
       uid: item.uid,
       members: item.members,
       startsConvo: false,
@@ -25,7 +25,7 @@ export default class AllChats extends Component {
         avatar={{
           uri: item.img,
         }}
-        onPress={() => this.goToGChat(item)}
+        onPress={() => this.goToChat(item)}
       />
     )
   }
