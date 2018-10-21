@@ -10,16 +10,18 @@ import {
   Keyboard,
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
+import uuidv4 from 'uuid/v4'
 
 import {populateContacts} from '../../../store/actions'
-import rsa from '../../rsa'
 
 class Contacts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       matchingContacts: this.props.contactsArr,
-      members: [this.props.user.uid],
+      members: [
+        {uid: this.props.user.uid, publicKey: this.props.user.publicKey},
+      ],
       refreshing: false,
       startingGChat: false,
     }
@@ -40,72 +42,51 @@ class Contacts extends React.Component {
 
   goToChat = item => {
     this.props.resetScreen()
-    this.props.navigation.navigate('Chat', {
-      uid: item.uid,
-      title: item.displayName,
-      publicKey: item.publicKey,
-    })
-  }
-
-  goToGChat = () => {
-    this.props.resetScreen()
-    const gUid = this.generateUid()
     this.props.navigation.navigate('GChat', {
-      gUid,
-      startsConvo: true,
+      uid: this.state.startingGChat ? uuidv4() : item.uid,
+      title: this.state.startingGChat ? 'Group Chat' : item.displayName,
       members: this.state.members,
-      title: 'Group Chat',
+      startsConvo: true,
     })
-  }
-
-  generateUid = () => {
-    const bits = 1024
-    const exponent = '10001' // must be a string
-    rsa.generate(bits, exponent)
-    const gUid = 'GROUP' + rsa.getPublicString().slice(6, 29)
-    return gUid
   }
 
   handleContactPress = item => {
-    if (this.state.startingGChat) {
-      this.selectOrDeselectMember(item)
-    } else {
-      this.goToChat(item)
+    const members = this.state.members.filter(member => member.uid !== item.uid)
+    if (members.length === this.state.members.length) {
+      members.push({uid: item.uid, publicKey: item.publicKey})
     }
-  }
-
-  selectOrDeselectMember = item => {
-    let members = []
-    if (this.state.members.includes(item.uid)) {
-      members = this.state.members.filter(memberUid => memberUid !== item.uid)
-    } else {
-      members = [...this.state.members, item.uid]
-    }
-    this.setState({members})
+    this.setState({members}, () => {
+      if (!this.state.startingGChat) {
+        this.goToChat(item)
+      }
+    })
   }
 
   updateContacts = () => {
-    this.setState({refreshing: true})
-    this.props.populateContacts().then(_ => this.setState({refreshing: false}))
+    this.setState({refreshing: true}, async () => {
+      await this.props.populateContacts()
+      this.setState({refreshing: false})
+    })
   }
 
-  renderItem = ({item}) => {
-    return (
-      <ListItem
-        containerStyle={
-          this.state.members.includes(item.uid) && {backgroundColor: '#AEE8C3'}
+  renderItem = ({item}) => (
+    <ListItem
+      containerStyle={
+        this.state.members.some(member => member.uid === item.uid) && {
+          backgroundColor: '#AEE8C3',
         }
-        roundAvatar
-        title={`${item.phoneName} (${item.displayName})`}
-        avatar={{
-          uri: item.img,
-        }}
-        onPress={() => this.handleContactPress(item)}
-      />
-    )
-  }
+      }
+      roundAvatar
+      title={`${item.phoneName} (${item.displayName})`}
+      avatar={{
+        uri: item.img,
+      }}
+      onPress={() => this.handleContactPress(item)}
+    />
+  )
 
   render() {
+    console.log(this.state)
     return (
       <KeyboardAvoidingView enabled behavior="padding">
         <TextInput
@@ -119,11 +100,17 @@ class Contacts extends React.Component {
           style={styles.groupButton}
           onPress={() => {
             Keyboard.dismiss()
-            const startingGChat = !this.state.startingGChat
-            if (!startingGChat) {
-              this.setState({members: [this.props.user.uid]})
-            }
-            this.setState({startingGChat})
+            this.setState(state => {
+              const members = state.startingGChat
+                ? [
+                    {
+                      uid: this.props.user.uid,
+                      publicKey: this.props.user.publicKey,
+                    },
+                  ]
+                : state.members
+              return {startingGChat: !state.startingGChat, members}
+            })
           }}
         >
           {!this.state.startingGChat ? (
@@ -143,7 +130,7 @@ class Contacts extends React.Component {
         {this.state.members.length > 2 && (
           <TouchableOpacity
             style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
-            onPress={() => this.goToGChat()}
+            onPress={() => this.goToChat()}
           >
             <Text style={{fontSize: 16}}>Go to Group Chat</Text>
           </TouchableOpacity>

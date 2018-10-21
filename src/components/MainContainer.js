@@ -6,11 +6,9 @@ import MainNavigator from './MainNavigator'
 import rsa from './rsa'
 
 import {
-  getNewMessage,
-  getNewGroupMessage,
-  getUser,
   getMessages,
-  getGroupMessages,
+  getNewMessage,
+  getUser,
   populateContacts,
 } from '../store/actions'
 
@@ -40,30 +38,17 @@ class MainContainer extends Component {
 
   populateStoreAndListenForNewConversation = async snapshot => {
     try {
-      //handles group messages
-      if (snapshot.key.length === 28 && snapshot.key.slice(0, 5) === 'GROUP') {
-        const convoObj = {}
-        convoObj[snapshot.key] = {}
-        convoObj[
-          snapshot.key
-        ].conversation = await this.JoinDecryptAndConvertToArr(
+      if (snapshot.key.length >= 28) {
+        //handles messages
+        const chatId = snapshot.key
+        const members = snapshot.val().members
+        const conversation = await this.JoinDecryptAndConvertToArr(
           snapshot.val().conversation,
         )
-        convoObj[snapshot.key].members = snapshot.val().members
-        convoObj[snapshot.key].seen = true
-        this.props.getGroupMessages(convoObj)
-        //this condition populates the messages field in the store with actual message histories, not user data
-      } else if (snapshot.key.length === 28) {
-        const convoObj = {}
-        convoObj[snapshot.key] = {}
-        convoObj[
-          snapshot.key
-        ].conversation = await this.JoinDecryptAndConvertToArr(snapshot.val())
-        convoObj[snapshot.key].seen = true
-        this.props.getMessages(convoObj)
+        this.props.getMessages(chatId, members, conversation)
+      } else if (snapshot.key !== 'img') {
         //when you first connect to the database, all pre-existing fields come in as being newly added children
         //we take advantage of this to populate the user field in the store with up to date info
-      } else if (snapshot.key !== 'img') {
         const userField = {}
         userField[snapshot.key] = snapshot.val()
         this.props.getUser(userField)
@@ -76,28 +61,17 @@ class MainContainer extends Component {
   updateOnNewMessageOrNameChange = async snapshot => {
     //both these events trigger a "child changed"
     try {
-      //listening for a changed name
       if (snapshot.key === 'displayName') {
+        //listening for changed name
         this.props.getUser({[snapshot.key]: snapshot.val()})
-        //listening for a new groupchat
-      } else if (
-        snapshot.key.length === 28 &&
-        snapshot.key.slice(0, 5) === 'GROUP'
-      ) {
+      } else if (snapshot.key !== 'img') {
+        //listening for new messages
+        const chatId = snapshot.key
+        const members = snapshot.val().members
         const conversation = await this.JoinDecryptAndConvertToArr(
           snapshot.val().conversation,
         )
-        const members = snapshot.val().members
-        const chatId = snapshot.key
-        this.props.getNewGroupMessage(conversation, members, chatId)
-        // listening for a new regular chat
-      } else if (snapshot.key !== 'img') {
-        //listening for a new message being added to an existing conversation
-        const conversation = await this.JoinDecryptAndConvertToArr(
-          snapshot.val(),
-        )
-        const chatId = snapshot.key
-        this.props.getNewMessage(conversation, chatId)
+        this.props.getNewMessage(chatId, members, conversation)
       }
     } catch (error) {
       console.log(error)
@@ -131,12 +105,12 @@ class MainContainer extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
+  getMessages: (conversation, members, chatId) =>
+    dispatch(getMessages(conversation, members, chatId)),
+  getNewMessage: (conversation, members, chatId) =>
+    dispatch(getNewMessage(conversation, members, chatId)),
+
   getUser: user => dispatch(getUser(user)),
-  getMessages: messages => dispatch(getMessages(messages)),
-  getGroupMessages: groupMessages => dispatch(getGroupMessages(groupMessages)),
-  getNewMessage: (message, chatId) => dispatch(getNewMessage(message, chatId)),
-  getNewGroupMessage: (conversation, members, chatId) =>
-    dispatch(getNewGroupMessage(conversation, members, chatId)),
   populateContacts: () => dispatch(populateContacts()),
 })
 

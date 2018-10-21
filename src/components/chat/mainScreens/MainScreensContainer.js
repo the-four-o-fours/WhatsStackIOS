@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, KeyboardAvoidingView, View} from 'react-native'
+import {StyleSheet, KeyboardAvoidingView} from 'react-native'
 import {connect} from 'react-redux'
 
 import AllChats from './AllChats'
@@ -52,34 +52,28 @@ class MainScreensContainer extends React.Component {
   }
 
   findChats = async () => {
-    const friendIds = Object.keys(this.props.messages)
     const chats = await Promise.all(
-      friendIds.map(async id => {
+      Object.keys(this.props.messages).map(async chatId => {
         try {
-          let chat
-          if (this.props.contacts[id]) {
-            chat = this.props.contacts[id]
-          } else if (id.slice(0, 5) === 'GROUP') {
-            //this chaos is because members is undefined for a second before updating from the
-            //store and getting an accurate array and having members be undefined redscreens it
-            //you GOTTA fix this later, perhaps by dispatching an action that just sets members in redux
-            if (this.props.messages[id].members) {
-              chat = {
-                members: this.props.messages[id].members,
-                gUid: id,
-              }
-            } else {
-              chat = {
-                members: [],
-                gUid: id,
-              }
-            }
-          } else {
-            chat = await this.findAnonymous(id)
+          const chat = {
+            uid: chatId,
+            members: this.props.messages[chatId].members,
           }
-          const messages = this.props.messages[id].conversation
-          chat.seen = this.props.messages[id].seen
+          if (chatId.length === 28) {
+            //11Chat
+            const contactInfo = this.props.contacts[chatId]
+              ? this.props.contacts[chatId]
+              : await this.findAnonymous(chatId)
+            chat.displayName = contactInfo.displayName
+            chat.img = contactInfo.img
+          } else {
+            //GChat
+            chat.displayName = 'Group Chat'
+            // chat.img = //TODO ADD GENERIC GROUP IMAGE
+          }
+          const messages = this.props.messages[chatId].conversation
           chat.lastMessage = messages[messages.length - 1]
+          chat.seen = this.props.messages[chatId].seen
           return chat
         } catch (error) {
           console.log(error)
@@ -103,8 +97,6 @@ class MainScreensContainer extends React.Component {
         .then(snapshot => {
           const data = snapshot.val()
           user.displayName = data.displayName
-          user.publicKey = data.publicKey
-          user.phoneNumber = data.phoneNumber
           user.img = defaultImg
         })
       return user
@@ -118,9 +110,9 @@ class MainScreensContainer extends React.Component {
   }
 
   render() {
-    console.log('USER', this.props.user)
+    // console.log('USER', this.props.user)
     console.log('MESSAGES', this.props.messages)
-    console.log('CONTACTS', this.props.contacts)
+    // console.log('CONTACTS', this.props.contacts)
     return (
       <KeyboardAvoidingView enabled behavior="padding" style={styles.container}>
         {this.state.screen === 'AllChats' ? (
