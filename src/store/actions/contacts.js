@@ -108,8 +108,10 @@ const findOverlap = async (
 
 export const populateContacts = () => async (dispatch, getState) => {
   try {
-    const firebaseUsers = await getAllUsers()
-    const contactsObj = await getAllContacts()
+    const [firebaseUsers, contactsObj] = await Promise.all([
+      getAllUsers(),
+      getAllContacts(),
+    ])
     const {user, contacts} = getState()
     const newContacts = await findOverlap(
       firebaseUsers,
