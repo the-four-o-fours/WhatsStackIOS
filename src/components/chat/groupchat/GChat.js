@@ -25,37 +25,44 @@ class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      gUid: this.props.navigation.getParam('gUid', false),
+      uid: this.props.navigation.getParam('uid', false),
       members: this.props.navigation.getParam('members', []),
       startsConvo: this.props.navigation.getParam('startsConvo', false),
       newMessage: '',
-      height: 26,
+      height: 29.5, //MagicNo RN always sets hight to this no matter what
     }
   }
 
   componentWillUnmount() {
-    if (this.props.messages[this.state.gUid]) {
-      this.props.seenMessages(this.state.gUid)
+    if (this.props.messages[this.state.uid]) {
+      this.props.seenMessages(this.state.uid)
     }
   }
 
   sendMessage = () => {
     Keyboard.dismiss()
     const text = this.splitterForRSA(this.state.newMessage)
-    const sender = this.props.user
-    const sentAt = Date.now()
-    this.state.members
-      .filter(memberUid => memberUid !== sender.uid)
-      .forEach(memberUid => {
-        const receiverObj = {
-          uid: memberUid,
-          publicKey: this.props.contacts[memberUid].publicKey,
-        }
-        const message = this.buildMessage(receiverObj, text, sentAt)
-        this.writeToDB(receiverObj.uid, this.state.gUid, message)
-      })
-    const senderMessage = this.buildMessage(sender, text, sentAt)
-    this.writeToDB(sender.uid, this.state.gUid, senderMessage)
+    const timeStamp = Date.now()
+    this.state.members.forEach(member => {
+      //create message obj
+      rsa.setPublicString(member.publicKey)
+      const encrypted = text.map(chunk => rsa.encrypt(chunk))
+      const message = {}
+      message[timeStamp] = {
+        text: encrypted,
+        sender: this.props.user.uid,
+      }
+      //send message
+      firebase
+        .database()
+        .ref(
+          `Users/${member.uid}/${
+            //write to your id field in their db entry or their id field in your db entry in 1-1, or the groupconvo id in gchat
+            this.state.uid === member.uid ? this.props.user.uid : this.state.uid
+          }/conversation`,
+        )
+        .update(message)
+    })
     if (this.state.startsConvo) {
       this.updateMembers()
       this.setState({startsConvo: false})
@@ -64,41 +71,27 @@ class Chat extends React.Component {
 
   // this whole mess is because RSA can only encrypt
   // strings less than 117 characters long
-  splitterForRSA = string => {
+  splitterForRSA = message => {
     const messageChunks = []
     let tracker = 0
-    while (tracker < string.length) {
-      messageChunks.push(string.slice(tracker, tracker + 117))
+    while (tracker < message.length) {
+      messageChunks.push(message.slice(tracker, tracker + 117))
       tracker += 117
     }
     return messageChunks
   }
 
-  buildMessage = (person, text, timeStamp) => {
-    rsa.setPublicString(person.publicKey)
-    const encrypted = text.map(chunk => rsa.encrypt(chunk))
-    const message = {
-      text: encrypted,
-      sender: this.props.user.uid,
-    }
-    const messageObj = {}
-    messageObj[timeStamp] = message
-    return messageObj
-  }
-
-  writeToDB = (pathPt1, pathPt2, message) => {
-    const ref = firebase
-      .database()
-      .ref(`Users/${pathPt1}/${pathPt2}/conversation`)
-    ref.update(message)
-  }
-
   updateMembers = () => {
-    this.state.members.forEach(memberUid => {
-      const ref = firebase
+    this.state.members.forEach(member => {
+      firebase
         .database()
-        .ref(`Users/${memberUid}/${this.state.gUid}/members`)
-      ref.set(this.state.members)
+        .ref(
+          `Users/${member.uid}/${
+            //write to your id field in their db entry or their id field in your db entry in 1-1, or the groupconvo id in gchat
+            this.state.uid === member.uid ? this.props.user.uid : this.state.uid
+          }/members`,
+        )
+        .set(this.state.members)
     })
   }
 
@@ -110,7 +103,6 @@ class Chat extends React.Component {
   //Or we could just not support adding people to groups.
 
   render() {
-    const gUid = this.state.gUid
     return (
       <KeyboardAvoidingView style={styles.container} enabled behavior="padding">
         <ImageBackground
@@ -119,10 +111,10 @@ class Chat extends React.Component {
           resizeMode="repeat"
         >
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            {this.props.messages[gUid] ? (
+            {this.props.messages[this.state.uid] ? (
               <ReversedFlatList
                 style={styles.chats}
-                data={this.props.messages[gUid].conversation}
+                data={this.props.messages[this.state.uid].conversation}
                 keyExtractor={({timeStamp}) => timeStamp}
                 renderItem={({item}) => (
                   <GChatBubble message={item} user={this.props.user} />
@@ -137,12 +129,7 @@ class Chat extends React.Component {
         </ImageBackground>
         <View style={styles.inputContainer}>
           <TextInput
-            style={[
-              styles.input,
-              {
-                height: this.state.height,
-              },
-            ]}
+            style={[styles.input, {height: this.state.height}]}
             value={this.state.newMessage}
             multiline={true}
             autoFocus={false}
@@ -156,7 +143,7 @@ class Chat extends React.Component {
             }}
             onSubmitEditing={() => {
               this.sendMessage()
-              this.setState({newMessage: '', height: 16})
+              this.setState({newMessage: '', height: 29.5})
             }}
           />
           <TouchableOpacity
@@ -164,7 +151,7 @@ class Chat extends React.Component {
             disabled={this.state.newMessage.length === 0}
             onPress={() => {
               this.sendMessage()
-              this.setState({newMessage: '', height: 16})
+              this.setState({newMessage: '', height: 29.5})
             }}
           >
             <Icon name="ios-send" size={35} color="#006994" />
