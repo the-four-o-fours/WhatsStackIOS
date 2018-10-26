@@ -2,7 +2,6 @@ import {createStackNavigator} from 'react-navigation'
 
 import MainScreensContainer from './chat/mainScreens/MainScreensContainer'
 import Chat from './chat/chatScreen/Chat'
-import SingleImage from './chat/singleImage/SingleImage'
 
 const MainNavigator = createStackNavigator({
   Main: {
@@ -14,17 +13,6 @@ const MainNavigator = createStackNavigator({
   },
   Chat: {
     screen: Chat,
-    navigationOptions: ({navigation}) => ({
-      title: navigation.state.params.title,
-      headerBackTitle: null,
-      headerStyle: {
-        backgroundColor: '#20AAB2',
-      },
-      headerTintColor: '#fff',
-    }),
-  },
-  Image: {
-    screen: SingleImage,
     navigationOptions: ({navigation}) => ({
       title: navigation.state.params.title,
       headerBackTitle: null,
