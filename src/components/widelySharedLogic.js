@@ -1,6 +1,10 @@
+import RSAKey from 'react-native-rsa'
+
+const rsa = new RSAKey()
+
 import RNFetchBlob from 'rn-fetch-blob'
 
-export default (url, type = 'jpg') =>
+const downloadBlob = (url, type = 'jpg') =>
   new Promise((resolve, reject) => {
     RNFetchBlob.config({
       fileCache: true,
@@ -13,3 +17,5 @@ export default (url, type = 'jpg') =>
         reject(err)
       })
   })
+
+export {rsa, downloadBlob}

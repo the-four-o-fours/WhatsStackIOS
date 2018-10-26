@@ -3,7 +3,7 @@ import {AsyncStorage} from 'react-native'
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
 import MainNavigator from './MainNavigator'
-import rsa from './rsa'
+import {rsa} from './widelySharedLogic'
 
 import {
   getMessages,

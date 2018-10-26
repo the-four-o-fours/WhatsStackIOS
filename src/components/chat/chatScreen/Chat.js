@@ -18,7 +18,7 @@ import firebase from 'react-native-firebase'
 
 import ChatBubble from './ChatBubble'
 
-import rsa from '../../rsa'
+import {rsa} from '../../widelySharedLogic'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
