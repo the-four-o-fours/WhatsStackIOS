@@ -18,7 +18,7 @@ import firebase from 'react-native-firebase'
 
 import ChatBubble from './ChatBubble'
 
-import {rsa} from '../../widelySharedLogic'
+import {rsa, findAnonymous} from '../../../logic'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
@@ -32,6 +32,8 @@ class Chat extends React.Component {
       newMessage: '',
       height: 29.5, //MagicNo RN always sets hight to this no matter what
     }
+
+    this.findAnonymous = findAnonymous.bind(this)
   }
 
   async componentDidMount() {
@@ -53,24 +55,6 @@ class Chat extends React.Component {
         displayNames[anon.uid] = anon.displayName
       })
       this.setState({displayNames})
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  findAnonymous = async id => {
-    try {
-      const defaultImg = this.props.user.default
-      const user = {
-        uid: id,
-        img: defaultImg,
-      }
-      const snapshot = await firebase
-        .database()
-        .ref(`/Users/${id}`)
-        .once('value')
-      user.displayName = snapshot.val().displayName
-      return user
     } catch (err) {
       console.log(err)
     }
