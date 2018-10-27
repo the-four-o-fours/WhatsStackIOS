@@ -126,85 +126,62 @@ class Chat extends React.Component {
     })
   }
 
-  getImagesFromGallery = () => {
-    return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({
-        multiple: true,
-        mediaType: 'photo',
-        compressImageQuality: 0.1,
-        compressImageMaxWidth: 500,
-      })
-        .then(images => {
-          resolve(images)
-        })
-        .catch(err => {
-          resolve('cancel')
-          reject(err)
-        })
-    })
+  uploadImage = (image, path, i) => {
+    const metadata = {contentType: image.mime}
+    return firebase
+      .storage()
+      .ref(
+        `/Users/${this.props.user.uid}/${this.state.uid}/${path}imgNo${i}.jpg`,
+      )
+      .putFile(image.sourceURL, metadata)
   }
 
-  getImageFromCamera = () => {
-    return new Promise((resolve, reject) => {
-      ImagePicker.openCamera({
-        mediaType: 'photo',
-        compressImageQuality: 0.1,
-        compressImageMaxWidth: 500,
-      })
-        .then(images => {
-          resolve([images])
-        })
-        .catch(err => {
-          resolve('cancel')
-          reject(err)
-        })
-    })
+  getDownloadUrl = uploadResult =>
+    firebase
+      .storage()
+      .ref(`${uploadResult.ref}`)
+      .getDownloadURL()
+
+  prepAndCallsendMessage = downloadUrl => {
+    this.setState(
+      {
+        newMessage: downloadUrl,
+        isSendingImg: true,
+      },
+      () => this.sendMessage(),
+    )
   }
 
-  uploadImage = image => {
-    return new Promise((resolve, reject) => {
-      const metadata = {
-        contentType: image.mime,
+  sendImage = async type => {
+    try {
+      //select images
+      let images
+      let optionsObj = {
+        mediaType: 'photo',
+        compressImageQuality: 0.1,
       }
+      if (type === 'gallery') {
+        optionsObj.multiple = true
+        images = await ImagePicker.openPicker(optionsObj)
+      } else if (type === 'camera') {
+        console.log('camera upload')
+        images = await ImagePicker.openCamera(optionsObj)
+      }
+      //upload images to firebase
       const path = Date.now()
-      const ref = firebase
-        .storage()
-        .ref(
-          `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
-        )
-      ref
-        .putFile(image.sourceURL, metadata)
-        .then(res => {
-          if (res.state === 'success') resolve([image.sourceURL, ref])
-        })
-        .catch(err => reject(err))
-    })
-  }
-
-  sendPictureMessage = async (type = 'gallery') => {
-    let images
-    if (type === 'camera') {
-      console.log('camera upload')
-      images = await this.getImageFromCamera()
-    } else {
-      images = await this.getImagesFromGallery()
-    }
-    if (images !== 'cancel') {
-      const urlArr = await Promise.all(
-        images.map(image => this.uploadImage(image)),
+      const uploadResults = await Promise.all(
+        images.map((image, i) => this.uploadImage(image, path, i)),
       )
-      await Promise.all(
-        urlArr.map(async url => {
-          url[1] = await url[1].getDownloadURL()
-          this.setState(
-            {
-              newMessage: url[1],
-              isSendingImg: true,
-            },
-            () => this.sendMessage(),
-          )
-        }),
+      //get download urls for the uploaded images
+      const downloadUrls = await Promise.all(
+        uploadResults.map(uploadResult => this.getDownloadUrl(uploadResult)),
       )
+      //send the download urls out as image messages
+      downloadUrls.forEach(downloadUrl =>
+        this.prepAndCallsendMessage(downloadUrl),
+      )
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -251,7 +228,7 @@ class Chat extends React.Component {
           <TouchableOpacity
             style={styles.submitButton}
             onPress={() => {
-              this.sendPictureMessage('camera')
+              this.sendImage('camera')
             }}
           >
             <Icon name="ios-camera" size={35} color="#006994" />
@@ -259,7 +236,7 @@ class Chat extends React.Component {
           <TouchableOpacity
             style={styles.submitButton}
             onPress={() => {
-              this.sendPictureMessage()
+              this.sendImage('gallery')
             }}
           >
             <Icon name="ios-add" size={35} color="#006994" />
