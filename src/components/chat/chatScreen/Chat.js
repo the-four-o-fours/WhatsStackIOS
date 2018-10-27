@@ -102,6 +102,7 @@ class Chat extends React.Component {
                     displayName={displayNames[item.sender]}
                     isGChat={members.length > 2}
                     user={this.props.user}
+                    navigation={this.props.navigation}
                   />
                 )}
               />
