@@ -1,12 +1,12 @@
 import React from 'react'
 import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native'
 
-class ChatBubble extends React.Component {
-  isToday = () => {
+const ChatBubble = props => {
+  const {message, title, displayName, isGChat, user} = props
+
+  const isToday = () => {
     const now = new Date(Date.now()).toString()
-    const messageDate = new Date(
-      Number(this.props.message.timeStamp),
-    ).toString()
+    const messageDate = new Date(Number(message.timeStamp)).toString()
     if (now.slice(0, 15) === messageDate.slice(0, 15)) {
       return `Today ${messageDate.slice(16, 24)}`
     } else {
@@ -14,64 +14,59 @@ class ChatBubble extends React.Component {
     }
   }
 
-  render() {
-    const {message, displayName, isGChat, user} = this.props
-    if (message.sender === user.uid) {
-      return (
-        <View style={[styles.container, styles.senderBubble]}>
-          <View style={[styles.bubble, styles.senderInnerBubble]}>
-            {/* TODO replace dummy function with way to view image (possibly as screen (if so, consult old singleimage bubble on github), ideally as modal) */}
-            {message.img ? (
-              <TouchableOpacity onPress={() => console.log('pressed')}>
-                <Image
-                  resizeMode="contain"
-                  style={styles.image}
-                  source={{uri: message.text}}
-                />
-              </TouchableOpacity>
-            ) : (
-              <Text style={styles.senderMessageText}>
-                {this.props.message.text}
-              </Text>
-            )}
-            <Text
-              style={styles.senderTimeStampText}
-            >{`\n${this.isToday()}`}</Text>
-          </View>
-          <View style={[styles.triangle, styles.senderTriangle]} />
+  const goToImage = () => {
+    const img = message.text
+    props.navigation.navigate('ImageView', {
+      title,
+      img,
+    })
+  }
+
+  if (message.sender === user.uid) {
+    return (
+      <View style={[styles.container, styles.senderBubble]}>
+        <View style={[styles.bubble, styles.senderInnerBubble]}>
+          {message.img ? (
+            <TouchableOpacity onPress={goToImage}>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={{uri: message.text}}
+              />
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.senderMessageText}>{message.text}</Text>
+          )}
+          <Text style={styles.senderTimeStampText}>{`\n${isToday()}`}</Text>
         </View>
-      )
-    } else {
-      return (
-        <View style={[styles.container, styles.receiverBubble]}>
-          <View style={[styles.triangle, styles.receiverTriangle]} />
-          <View style={[styles.bubble, styles.receiverInnerBubble]}>
-            {isGChat && (
-              <Text style={styles.receiverTimeStampText}>
-                {`${displayName}\n`}
-              </Text>
-            )}
-            {/* TODO replace dummy function with way to view image (possibly as screen (if so, consult old singleimage bubble on github), ideally as modal) */}
-            {message.img ? (
-              <TouchableOpacity onPress={() => console.log('pressed')}>
-                <Image
-                  resizeMode="contain"
-                  style={styles.image}
-                  source={{uri: message.text}}
-                />
-              </TouchableOpacity>
-            ) : (
-              <Text style={styles.receiverMessageText}>
-                {this.props.message.text}
-              </Text>
-            )}
-            <Text
-              style={styles.receiverTimeStampText}
-            >{`\n${this.isToday()}`}</Text>
-          </View>
+        <View style={[styles.triangle, styles.senderTriangle]} />
+      </View>
+    )
+  } else {
+    return (
+      <View style={[styles.container, styles.receiverBubble]}>
+        <View style={[styles.triangle, styles.receiverTriangle]} />
+        <View style={[styles.bubble, styles.receiverInnerBubble]}>
+          {isGChat && (
+            <Text style={styles.receiverTimeStampText}>
+              {`${displayName}\n`}
+            </Text>
+          )}
+          {message.img ? (
+            <TouchableOpacity onPress={goToImage}>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={{uri: message.text}}
+              />
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.receiverMessageText}>{message.text}</Text>
+          )}
+          <Text style={styles.receiverTimeStampText}>{`\n${isToday()}`}</Text>
         </View>
-      )
-    }
+      </View>
+    )
   }
 }
 
