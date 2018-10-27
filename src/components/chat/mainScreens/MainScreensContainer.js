@@ -7,7 +7,7 @@ import Contacts from './Contacts'
 import AccountInfo from './AccountInfo'
 import BottomNavBar from './BottomNavBar'
 
-import {findAnonymous} from '../../../logic'
+import {findAnonymous, formatDate} from '../../../logic'
 
 class MainScreensContainer extends React.Component {
   constructor(props) {
@@ -79,6 +79,7 @@ class MainScreensContainer extends React.Component {
           }
           const messages = this.props.messages[chatId].conversation
           chat.lastMessage = messages[messages.length - 1]
+          chat.time = formatDate(chat.lastMessage.timeStamp)
           chat.seen = this.props.messages[chatId].seen
           return chat
         } catch (err) {

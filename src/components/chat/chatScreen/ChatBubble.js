@@ -1,18 +1,12 @@
 import React from 'react'
 import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native'
 
+import {formatDate} from '../../../logic'
+
 const ChatBubble = props => {
   const {message, title, displayName, isGChat, user} = props
 
-  const isToday = () => {
-    const now = new Date(Date.now()).toString()
-    const messageDate = new Date(Number(message.timeStamp)).toString()
-    if (now.slice(0, 15) === messageDate.slice(0, 15)) {
-      return `Today ${messageDate.slice(16, 24)}`
-    } else {
-      return messageDate.slice(0, 24)
-    }
-  }
+  const formattedDate = formatDate(message.timeStamp)
 
   const goToImage = () => {
     const img = message.text
@@ -37,7 +31,7 @@ const ChatBubble = props => {
           ) : (
             <Text style={styles.senderMessageText}>{message.text}</Text>
           )}
-          <Text style={styles.senderTimeStampText}>{`\n${isToday()}`}</Text>
+          <Text style={styles.senderTimeStampText}>{`\n${formattedDate}`}</Text>
         </View>
         <View style={[styles.triangle, styles.senderTriangle]} />
       </View>
@@ -63,7 +57,9 @@ const ChatBubble = props => {
           ) : (
             <Text style={styles.receiverMessageText}>{message.text}</Text>
           )}
-          <Text style={styles.receiverTimeStampText}>{`\n${isToday()}`}</Text>
+          <Text
+            style={styles.receiverTimeStampText}
+          >{`\n${formattedDate}`}</Text>
         </View>
       </View>
     )
