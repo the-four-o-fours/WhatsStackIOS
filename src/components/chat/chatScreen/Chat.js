@@ -12,19 +12,20 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
-import ImagePicker from 'react-native-image-crop-picker'
 
 import {connect} from 'react-redux'
-import firebase from 'react-native-firebase'
 
 import ChatBubble from './ChatBubble'
 
-import {rsa, findAnonymous} from '../../../logic'
+import {sendMessage, updateMembers, sendImage} from './chatLogic'
+import {findAnonymous} from '../../../logic'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
   constructor(props) {
     super(props)
+    /* eslint-disable react/no-unused-state */
+    //They're used in the imported logic functions
     this.state = {
       uid: this.props.navigation.getParam('uid', false),
       members: this.props.navigation.getParam('members', []),
@@ -32,10 +33,14 @@ class Chat extends React.Component {
       displayNames: {},
       isSendingImg: false,
       newMessage: '',
-      height: 29.5, //MagicNo RN always sets hight to this no matter what
+      height: 29.5, //MagicNo RN always sets height to this no matter what
     }
+    /* eslint-enable react/no-unused-state */
 
     this.findAnonymous = findAnonymous.bind(this)
+    this.sendMessage = sendMessage.bind(this)
+    this.updateMembers = updateMembers.bind(this)
+    this.sendImage = sendImage.bind(this)
   }
 
   async componentDidMount() {
@@ -65,123 +70,6 @@ class Chat extends React.Component {
   componentWillUnmount() {
     if (this.props.messages[this.state.uid]) {
       this.props.seenMessages(this.state.uid)
-    }
-  }
-
-  sendMessage = () => {
-    Keyboard.dismiss()
-    const text = this.splitterForRSA(this.state.newMessage)
-    const timeStamp = Date.now()
-    this.state.members.forEach(member => {
-      //create message obj
-      rsa.setPublicString(member.publicKey)
-      const encrypted = text.map(chunk => rsa.encrypt(chunk))
-      const message = {}
-      message[timeStamp] = {
-        text: encrypted,
-        sender: this.props.user.uid,
-        img: this.state.isSendingImg,
-      }
-      //send message
-      firebase
-        .database()
-        .ref(
-          `Users/${member.uid}/${
-            //write to your id field in their db entry or their id field in your db entry in 1-1, or the groupconvo id in gchat
-            this.state.uid === member.uid ? this.props.user.uid : this.state.uid
-          }/conversation`,
-        )
-        .update(message)
-    })
-    if (this.state.startsConvo) {
-      this.updateMembers()
-      this.setState({startsConvo: false})
-    }
-    this.setState({newMessage: '', isSendingImg: false})
-  }
-
-  // this whole mess is because RSA can only encrypt
-  // strings less than 117 characters long
-  splitterForRSA = message => {
-    const messageChunks = []
-    let tracker = 0
-    while (tracker < message.length) {
-      messageChunks.push(message.slice(tracker, tracker + 117))
-      tracker += 117
-    }
-    return messageChunks
-  }
-
-  updateMembers = () => {
-    this.state.members.forEach(member => {
-      firebase
-        .database()
-        .ref(
-          `Users/${member.uid}/${
-            //write to your id field in their db entry or their id field in your db entry in 1-1, or the groupconvo id in gchat
-            this.state.uid === member.uid ? this.props.user.uid : this.state.uid
-          }/members`,
-        )
-        .set(this.state.members)
-    })
-  }
-
-  uploadImage = (image, path, i) => {
-    const metadata = {contentType: image.mime}
-    return firebase
-      .storage()
-      .ref(
-        `/Users/${this.props.user.uid}/${this.state.uid}/${path}imgNo${i}.jpg`,
-      )
-      .putFile(image.sourceURL, metadata)
-  }
-
-  getDownloadUrl = uploadResult =>
-    firebase
-      .storage()
-      .ref(`${uploadResult.ref}`)
-      .getDownloadURL()
-
-  prepAndCallsendMessage = downloadUrl => {
-    this.setState(
-      {
-        newMessage: downloadUrl,
-        isSendingImg: true,
-      },
-      () => this.sendMessage(),
-    )
-  }
-
-  sendImage = async type => {
-    try {
-      //select images
-      let images
-      let optionsObj = {
-        mediaType: 'photo',
-        compressImageQuality: 0.1,
-      }
-      if (type === 'gallery') {
-        optionsObj.multiple = true
-        images = await ImagePicker.openPicker(optionsObj)
-      } else if (type === 'camera') {
-        console.log('camera upload')
-        images = await ImagePicker.openCamera(optionsObj)
-      }
-      //upload images to firebase
-      const path = Date.now()
-      const uploadResults = await Promise.all(
-        images.map((image, i) => this.uploadImage(image, path, i)),
-      )
-      //get download urls for the uploaded images
-      const downloadUrls = await Promise.all(
-        uploadResults.map(uploadResult => this.getDownloadUrl(uploadResult)),
-      )
-      //send the download urls out as image messages
-      downloadUrls.forEach(downloadUrl =>
-        this.prepAndCallsendMessage(downloadUrl),
-      )
-    } catch (err) {
-      console.log(err)
     }
   }
 
@@ -256,7 +144,7 @@ class Chat extends React.Component {
             }}
             onSubmitEditing={() => {
               this.sendMessage()
-              this.setState({newMessage: '', height: 29.5})
+              this.setState({height: 29.5})
             }}
           />
           <TouchableOpacity
@@ -264,7 +152,7 @@ class Chat extends React.Component {
             disabled={newMessage.length === 0}
             onPress={() => {
               this.sendMessage()
-              this.setState({newMessage: '', height: 29.5})
+              this.setState({height: 29.5})
             }}
           >
             <Icon name="ios-send" size={35} color="#006994" />
