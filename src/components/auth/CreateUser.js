@@ -10,7 +10,7 @@ import {Button} from 'react-native-elements'
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 
-import {rsa, downloadBlob} from '../widelySharedLogic'
+import {rsa, downloadBlob} from '../../logic'
 import {getUser} from '../../store/actions'
 
 class CreateUser extends Component {

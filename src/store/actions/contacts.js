@@ -1,6 +1,6 @@
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
-import {downloadBlob} from '../../components/widelySharedLogic'
+import {downloadBlob} from '../../logic'
 
 export const GOT_CONTACTS = 'GOT_CONTACTS'
 

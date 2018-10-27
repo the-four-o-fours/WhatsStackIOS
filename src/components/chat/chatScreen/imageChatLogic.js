@@ -17,7 +17,7 @@ import firebase from 'react-native-firebase'
 import {connect} from 'react-redux'
 import ImagePicker from 'react-native-image-crop-picker'
 
-import {rsa} from '../../widelySharedLogic'
+import {rsa} from '../../../logic'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
