@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native'
 
 class ChatBubble extends React.Component {
   isToday = () => {
@@ -20,9 +20,20 @@ class ChatBubble extends React.Component {
       return (
         <View style={[styles.container, styles.senderBubble]}>
           <View style={[styles.bubble, styles.senderInnerBubble]}>
-            <Text style={styles.senderMessageText}>
-              {this.props.message.text}
-            </Text>
+            {/* TODO replace dummy function with way to view image (possibly as screen (if so, consult old singleimage bubble on github), ideally as modal) */}
+            {message.img ? (
+              <TouchableOpacity onPress={() => console.log('pressed')}>
+                <Image
+                  resizeMode="contain"
+                  style={styles.image}
+                  source={{uri: message.text}}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.senderMessageText}>
+                {this.props.message.text}
+              </Text>
+            )}
             <Text
               style={styles.senderTimeStampText}
             >{`\n${this.isToday()}`}</Text>
@@ -40,9 +51,20 @@ class ChatBubble extends React.Component {
                 {`${displayName}\n`}
               </Text>
             )}
-            <Text style={styles.receiverMessageText}>
-              {this.props.message.text}
-            </Text>
+            {/* TODO replace dummy function with way to view image (possibly as screen (if so, consult old singleimage bubble on github), ideally as modal) */}
+            {message.img ? (
+              <TouchableOpacity onPress={() => console.log('pressed')}>
+                <Image
+                  resizeMode="contain"
+                  style={styles.image}
+                  source={{uri: message.text}}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.receiverMessageText}>
+                {this.props.message.text}
+              </Text>
+            )}
             <Text
               style={styles.receiverTimeStampText}
             >{`\n${this.isToday()}`}</Text>
@@ -116,6 +138,10 @@ const styles = StyleSheet.create({
         rotate: '180deg',
       },
     ],
+  },
+  image: {
+    width: 300,
+    height: 220,
   },
 })
 

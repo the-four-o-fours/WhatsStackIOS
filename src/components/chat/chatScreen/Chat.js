@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
+import ImagePicker from 'react-native-image-crop-picker'
 
 import {connect} from 'react-redux'
 import firebase from 'react-native-firebase'
@@ -29,6 +30,7 @@ class Chat extends React.Component {
       members: this.props.navigation.getParam('members', []),
       startsConvo: this.props.navigation.getParam('startsConvo', false),
       displayNames: {},
+      isSendingImg: false,
       newMessage: '',
       height: 29.5, //MagicNo RN always sets hight to this no matter what
     }
@@ -78,6 +80,7 @@ class Chat extends React.Component {
       message[timeStamp] = {
         text: encrypted,
         sender: this.props.user.uid,
+        img: this.state.isSendingImg,
       }
       //send message
       firebase
@@ -94,6 +97,7 @@ class Chat extends React.Component {
       this.updateMembers()
       this.setState({startsConvo: false})
     }
+    this.setState({newMessage: '', isSendingImg: false})
   }
 
   // this whole mess is because RSA can only encrypt
@@ -120,6 +124,88 @@ class Chat extends React.Component {
         )
         .set(this.state.members)
     })
+  }
+
+  getImagesFromGallery = () => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.openPicker({
+        multiple: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.1,
+        compressImageMaxWidth: 500,
+      })
+        .then(images => {
+          resolve(images)
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
+    })
+  }
+
+  getImageFromCamera = () => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.openCamera({
+        mediaType: 'photo',
+        compressImageQuality: 0.1,
+        compressImageMaxWidth: 500,
+      })
+        .then(images => {
+          resolve([images])
+        })
+        .catch(err => {
+          resolve('cancel')
+          reject(err)
+        })
+    })
+  }
+
+  uploadImage = image => {
+    return new Promise((resolve, reject) => {
+      const metadata = {
+        contentType: image.mime,
+      }
+      const path = Date.now()
+      const ref = firebase
+        .storage()
+        .ref(
+          `/Users/${this.props.user.uid}/${this.state.receiverUid}/${path}.jpg`,
+        )
+      ref
+        .putFile(image.sourceURL, metadata)
+        .then(res => {
+          if (res.state === 'success') resolve([image.sourceURL, ref])
+        })
+        .catch(err => reject(err))
+    })
+  }
+
+  sendPictureMessage = async (type = 'gallery') => {
+    let images
+    if (type === 'camera') {
+      console.log('camera upload')
+      images = await this.getImageFromCamera()
+    } else {
+      images = await this.getImagesFromGallery()
+    }
+    if (images !== 'cancel') {
+      const urlArr = await Promise.all(
+        images.map(image => this.uploadImage(image)),
+      )
+      await Promise.all(
+        urlArr.map(async url => {
+          url[1] = await url[1].getDownloadURL()
+          this.setState(
+            {
+              newMessage: url[1],
+              isSendingImg: true,
+            },
+            () => this.sendMessage(),
+          )
+        }),
+      )
+    }
   }
 
   //should also run onPress for a button for adding members
