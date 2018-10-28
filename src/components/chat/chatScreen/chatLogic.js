@@ -45,7 +45,11 @@ export const sendMessage = function() {
     this.updateMembers()
     this.setState({startsConvo: false})
   }
-  this.setState({newMessage: '', isSendingImg: false})
+  this.setState({
+    isSendingImg: false,
+    newMessage: '',
+    height: 29.5,
+  })
 }
 
 export const updateMembers = function() {

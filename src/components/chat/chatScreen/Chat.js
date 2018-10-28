@@ -2,20 +2,18 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
-  TextInput,
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  TouchableOpacity,
   View,
   ImageBackground,
 } from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
 
 import {connect} from 'react-redux'
 
 import ChatBubble from './ChatBubble'
+import ChatInput from './ChatInput'
 
 import {sendMessage, updateMembers, sendImage} from './chatLogic'
 import {findAnonymous} from '../../../logic'
@@ -73,6 +71,14 @@ class Chat extends React.Component {
     }
   }
 
+  handleSizeChange = event => {
+    this.setState({height: event.nativeEvent.contentSize.height + 10})
+  }
+
+  handleTextChange = newMessage => {
+    this.setState({newMessage})
+  }
+
   //should also run onPress for a button for adding members
   //needs functions for pushing new members into this.state.members
   //also slicing them out
@@ -113,52 +119,14 @@ class Chat extends React.Component {
             )}
           </TouchableWithoutFeedback>
         </ImageBackground>
-        <View style={styles.inputContainer}>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => {
-              this.sendImage('camera')
-            }}
-          >
-            <Icon name="ios-camera" size={35} color="#006994" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => {
-              this.sendImage('gallery')
-            }}
-          >
-            <Icon name="ios-add" size={35} color="#006994" />
-          </TouchableOpacity>
-          <TextInput
-            style={[styles.input, {height}]}
-            value={newMessage}
-            multiline={true}
-            autoFocus={false}
-            enablesReturnKeyAutomatically={true}
-            returnKeyType="send"
-            placeholder="..."
-            blurOnSubmit={true}
-            onChangeText={newText => this.setState({newMessage: newText})}
-            onContentSizeChange={event => {
-              this.setState({height: event.nativeEvent.contentSize.height + 10})
-            }}
-            onSubmitEditing={() => {
-              this.sendMessage()
-              this.setState({height: 29.5})
-            }}
-          />
-          <TouchableOpacity
-            style={styles.submitButton}
-            disabled={newMessage.length === 0}
-            onPress={() => {
-              this.sendMessage()
-              this.setState({height: 29.5})
-            }}
-          >
-            <Icon name="ios-send" size={35} color="#006994" />
-          </TouchableOpacity>
-        </View>
+        <ChatInput
+          handleTextChange={this.handleTextChange}
+          handleSizeChange={this.handleSizeChange}
+          newMessage={newMessage}
+          height={height}
+          sendImage={this.sendImage}
+          sendMessage={this.sendMessage}
+        />
       </KeyboardAvoidingView>
     )
   }
@@ -174,25 +142,6 @@ const styles = StyleSheet.create({
     color: '#006994',
     alignSelf: 'center',
     paddingTop: 250,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignContent: 'center',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderColor: 'grey',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-    fontSize: 16,
-    margin: 5,
-  },
-  submitButton: {
-    alignSelf: 'flex-end',
-    paddingRight: 5,
-    paddingLeft: 5,
   },
 })
 
