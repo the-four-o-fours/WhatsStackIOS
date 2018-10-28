@@ -4,14 +4,14 @@ import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native'
 import {formatDate} from '../../../logic'
 
 const ChatBubble = props => {
-  const {message, title, displayName, isGChat, user} = props
+  const {message, displayName, isGChat, user} = props
 
   const formattedDate = formatDate(message.timeStamp)
 
   const goToImage = () => {
     const img = message.text
     props.navigation.navigate('ImageView', {
-      title,
+      title: 'Image',
       img,
     })
   }
