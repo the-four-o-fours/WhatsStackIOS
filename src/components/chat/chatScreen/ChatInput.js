@@ -14,22 +14,26 @@ const ChatInput = props => {
   } = props
   return (
     <View style={styles.inputContainer}>
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => {
-          sendImage('camera')
-        }}
-      >
-        <Icon name="ios-camera" size={35} color="#006994" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => {
-          sendImage('gallery')
-        }}
-      >
-        <Icon name="ios-add" size={35} color="#006994" />
-      </TouchableOpacity>
+      {newMessage.length === 0 && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              sendImage('camera')
+            }}
+          >
+            <Icon name="ios-camera" size={35} color="#006994" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              sendImage('gallery')
+            }}
+          >
+            <Icon name="ios-add" size={35} color="#006994" />
+          </TouchableOpacity>
+        </View>
+      )}
       <TextInput
         style={[styles.input, {height}]}
         value={newMessage}
@@ -55,6 +59,9 @@ const ChatInput = props => {
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    flexDirection: 'row',
+  },
   inputContainer: {
     flexDirection: 'row',
     alignContent: 'center',
@@ -67,12 +74,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 5,
     fontSize: 16,
-    margin: 5,
+    marginTop: 5,
+    marginBottom: 5,
   },
   submitButton: {
-    alignSelf: 'flex-end',
-    paddingRight: 5,
-    paddingLeft: 5,
+    marginLeft: 5,
+    marginRight: 5,
+    alignSelf: 'center',
   },
 })
 
