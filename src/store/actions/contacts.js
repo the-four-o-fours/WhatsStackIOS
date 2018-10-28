@@ -1,6 +1,6 @@
 import Contacts from 'react-native-unified-contacts'
 import firebase from 'react-native-firebase'
-import download from '../../components/download'
+import {downloadBlob} from '../../logic'
 
 export const GOT_CONTACTS = 'GOT_CONTACTS'
 
@@ -60,7 +60,7 @@ const downloadedImgUrl = async id => {
     localUrl =
       'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Penguin-512.png'
   } else {
-    localUrl = await download(cloudUrl)
+    localUrl = await downloadBlob(cloudUrl)
   }
   return localUrl
 }

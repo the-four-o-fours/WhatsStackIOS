@@ -8,10 +8,9 @@ import {
 } from 'react-native'
 import {Button} from 'react-native-elements'
 import firebase from 'react-native-firebase'
-import rsa from '../rsa'
 import {connect} from 'react-redux'
 
-import download from '../download'
+import {rsa, downloadBlob} from '../../logic'
 import {getUser} from '../../store/actions'
 
 class CreateUser extends Component {
@@ -49,7 +48,7 @@ class CreateUser extends Component {
       localUrl =
         'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Penguin-512.png'
     } else {
-      localUrl = await download(cloudUrl)
+      localUrl = await downloadBlob(cloudUrl)
     }
     return [cloudUrl, localUrl]
   }

@@ -2,36 +2,43 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
-  TextInput,
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  TouchableOpacity,
   View,
   ImageBackground,
 } from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
 import ReversedFlatList from 'react-native-reversed-flat-list'
 
 import {connect} from 'react-redux'
-import firebase from 'react-native-firebase'
 
 import ChatBubble from './ChatBubble'
+import ChatInput from './ChatInput'
 
-import rsa from '../../rsa'
+import {sendMessage, updateMembers, sendImage} from './chatLogic'
+import {findAnonymous} from '../../../logic'
 import {seenMessages} from '../../../store/actions'
 
 class Chat extends React.Component {
   constructor(props) {
     super(props)
+    /* eslint-disable react/no-unused-state */
+    //They're used in the imported logic functions
     this.state = {
       uid: this.props.navigation.getParam('uid', false),
       members: this.props.navigation.getParam('members', []),
       startsConvo: this.props.navigation.getParam('startsConvo', false),
       displayNames: {},
+      isSendingImg: false,
       newMessage: '',
-      height: 29.5, //MagicNo RN always sets hight to this no matter what
+      height: 29.5, //MagicNo RN always sets height to this no matter what
     }
+    /* eslint-enable react/no-unused-state */
+
+    this.findAnonymous = findAnonymous.bind(this)
+    this.sendMessage = sendMessage.bind(this)
+    this.updateMembers = updateMembers.bind(this)
+    this.sendImage = sendImage.bind(this)
   }
 
   async componentDidMount() {
@@ -58,84 +65,18 @@ class Chat extends React.Component {
     }
   }
 
-  findAnonymous = async id => {
-    try {
-      const defaultImg = this.props.user.default
-      const user = {
-        uid: id,
-        img: defaultImg,
-      }
-      const snapshot = await firebase
-        .database()
-        .ref(`/Users/${id}`)
-        .once('value')
-      user.displayName = snapshot.val().displayName
-      return user
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
   componentWillUnmount() {
     if (this.props.messages[this.state.uid]) {
       this.props.seenMessages(this.state.uid)
     }
   }
 
-  sendMessage = () => {
-    Keyboard.dismiss()
-    const text = this.splitterForRSA(this.state.newMessage)
-    const timeStamp = Date.now()
-    this.state.members.forEach(member => {
-      //create message obj
-      rsa.setPublicString(member.publicKey)
-      const encrypted = text.map(chunk => rsa.encrypt(chunk))
-      const message = {}
-      message[timeStamp] = {
-        text: encrypted,
-        sender: this.props.user.uid,
-      }
-      //send message
-      firebase
-        .database()
-        .ref(
-          `Users/${member.uid}/${
-            //write to your id field in their db entry or their id field in your db entry in 1-1, or the groupconvo id in gchat
-            this.state.uid === member.uid ? this.props.user.uid : this.state.uid
-          }/conversation`,
-        )
-        .update(message)
-    })
-    if (this.state.startsConvo) {
-      this.updateMembers()
-      this.setState({startsConvo: false})
-    }
+  handleSizeChange = event => {
+    this.setState({height: event.nativeEvent.contentSize.height + 10})
   }
 
-  // this whole mess is because RSA can only encrypt
-  // strings less than 117 characters long
-  splitterForRSA = message => {
-    const messageChunks = []
-    let tracker = 0
-    while (tracker < message.length) {
-      messageChunks.push(message.slice(tracker, tracker + 117))
-      tracker += 117
-    }
-    return messageChunks
-  }
-
-  updateMembers = () => {
-    this.state.members.forEach(member => {
-      firebase
-        .database()
-        .ref(
-          `Users/${member.uid}/${
-            //write to your id field in their db entry or their id field in your db entry in 1-1, or the groupconvo id in gchat
-            this.state.uid === member.uid ? this.props.user.uid : this.state.uid
-          }/members`,
-        )
-        .set(this.state.members)
-    })
+  handleTextChange = newMessage => {
+    this.setState({newMessage})
   }
 
   //should also run onPress for a button for adding members
@@ -167,6 +108,7 @@ class Chat extends React.Component {
                     displayName={displayNames[item.sender]}
                     isGChat={members.length > 2}
                     user={this.props.user}
+                    navigation={this.props.navigation}
                   />
                 )}
               />
@@ -177,36 +119,14 @@ class Chat extends React.Component {
             )}
           </TouchableWithoutFeedback>
         </ImageBackground>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, {height}]}
-            value={newMessage}
-            multiline={true}
-            autoFocus={false}
-            enablesReturnKeyAutomatically={true}
-            returnKeyType="send"
-            placeholder="..."
-            blurOnSubmit={true}
-            onChangeText={newText => this.setState({newMessage: newText})}
-            onContentSizeChange={event => {
-              this.setState({height: event.nativeEvent.contentSize.height + 10})
-            }}
-            onSubmitEditing={() => {
-              this.sendMessage()
-              this.setState({newMessage: '', height: 29.5})
-            }}
-          />
-          <TouchableOpacity
-            style={styles.submitButton}
-            disabled={newMessage.length === 0}
-            onPress={() => {
-              this.sendMessage()
-              this.setState({newMessage: '', height: 29.5})
-            }}
-          >
-            <Icon name="ios-send" size={35} color="#006994" />
-          </TouchableOpacity>
-        </View>
+        <ChatInput
+          handleTextChange={this.handleTextChange}
+          handleSizeChange={this.handleSizeChange}
+          newMessage={newMessage}
+          height={height}
+          sendImage={this.sendImage}
+          sendMessage={this.sendMessage}
+        />
       </KeyboardAvoidingView>
     )
   }
@@ -222,23 +142,6 @@ const styles = StyleSheet.create({
     color: '#006994',
     alignSelf: 'center',
     paddingTop: 250,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignContent: 'center',
-  },
-  input: {
-    width: 335,
-    backgroundColor: '#FFFFFF',
-    borderColor: 'grey',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-    fontSize: 16,
-    margin: 5,
-  },
-  submitButton: {
-    alignSelf: 'flex-end',
   },
 })
 

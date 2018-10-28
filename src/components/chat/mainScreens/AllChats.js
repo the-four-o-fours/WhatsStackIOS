@@ -13,15 +13,12 @@ export default class AllChats extends Component {
   }
 
   renderItem = ({item}) => {
-    const text = item.lastMessage.img ? 'Image' : item.lastMessage.text
-    let lastMessage = text.slice(0, 27)
-    lastMessage += lastMessage.length === 27 ? '...' : ''
-    lastMessage += item.seen ? '' : ' \uD83D\uDE00'
+    const lastMessage = item.lastMessage.img ? 'Image' : item.lastMessage.text
     return (
       <ListItem
         roundAvatar
-        title={`${item.displayName}`}
-        subtitle={lastMessage}
+        title={`${item.seen ? '' : '\uD83D\uDE00 '}${item.displayName}`}
+        subtitle={`${item.time}: ${lastMessage}`}
         avatar={{
           uri: item.img,
         }}

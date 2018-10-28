@@ -6,9 +6,20 @@ import AllChats from './AllChats'
 import Contacts from './Contacts'
 import AccountInfo from './AccountInfo'
 import BottomNavBar from './BottomNavBar'
-import firebase from 'react-native-firebase'
+
+import {findAnonymous, formatDate} from '../../../logic'
 
 class MainScreensContainer extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      chats: [],
+      screen: 'AllChats',
+    }
+
+    this.findAnonymous = findAnonymous.bind(this)
+  }
+
   static navigationOptions = ({navigation}) => ({
     headerTitle: navigation.getParam('title', 'WhatsStack'),
     headerStyle: {
@@ -16,11 +27,6 @@ class MainScreensContainer extends React.Component {
     },
     headerTintColor: '#fff',
   })
-
-  state = {
-    chats: [],
-    screen: 'AllChats',
-  }
 
   setTitle = () => {
     const {setParams} = this.props.navigation
@@ -73,6 +79,7 @@ class MainScreensContainer extends React.Component {
           }
           const messages = this.props.messages[chatId].conversation
           chat.lastMessage = messages[messages.length - 1]
+          chat.time = formatDate(chat.lastMessage.timeStamp)
           chat.seen = this.props.messages[chatId].seen
           return chat
         } catch (err) {
@@ -82,24 +89,6 @@ class MainScreensContainer extends React.Component {
     )
     chats.sort((a, b) => b.lastMessage.timeStamp - a.lastMessage.timeStamp)
     return chats
-  }
-
-  findAnonymous = async id => {
-    try {
-      const defaultImg = this.props.user.default
-      const user = {
-        uid: id,
-        img: defaultImg,
-      }
-      const snapshot = await firebase
-        .database()
-        .ref(`/Users/${id}`)
-        .once('value')
-      user.displayName = snapshot.val().displayName
-      return user
-    } catch (err) {
-      console.log(err)
-    }
   }
 
   setScreen = screen => {

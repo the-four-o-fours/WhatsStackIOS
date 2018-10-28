@@ -86,7 +86,6 @@ class Contacts extends React.Component {
   )
 
   render() {
-    console.log(this.state)
     return (
       <KeyboardAvoidingView enabled behavior="padding">
         <TextInput
@@ -96,6 +95,14 @@ class Contacts extends React.Component {
           value={this.state.searchFor}
           onChangeText={contactName => this.searchFor(contactName)}
         />
+        {this.state.members.length > 2 && (
+          <TouchableOpacity
+            style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
+            onPress={() => this.goToChat()}
+          >
+            <Text style={{fontSize: 16}}>Go to Group Chat</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.groupButton}
           onPress={() => {
@@ -127,14 +134,6 @@ class Contacts extends React.Component {
           refreshing={this.state.refreshing}
           onRefresh={this.updateContacts}
         />
-        {this.state.members.length > 2 && (
-          <TouchableOpacity
-            style={[styles.groupButton, {backgroundColor: '#20AAB2'}]}
-            onPress={() => this.goToChat()}
-          >
-            <Text style={{fontSize: 16}}>Go to Group Chat</Text>
-          </TouchableOpacity>
-        )}
       </KeyboardAvoidingView>
     )
   }

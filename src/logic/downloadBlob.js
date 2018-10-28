@@ -1,6 +1,6 @@
 import RNFetchBlob from 'rn-fetch-blob'
 
-export default (url, type = 'jpg') =>
+export const downloadBlob = (url, type = 'jpg') =>
   new Promise((resolve, reject) => {
     RNFetchBlob.config({
       fileCache: true,
