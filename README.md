@@ -2,6 +2,14 @@
 
 ![](./capture.PNG)
 
+## Team Members
+
+Chloe Chong
+Ian Knepper 
+Phanousit Syhakhom
+Spencer Whitehead
+
+
 ## The App
 
 WhatsStack is an end to end encrypted messaging app for IOS. End to end encryption means that the messages are encrypted before they are sent in such a way that only the sender and receiver can decrypt them. Even someone with total access to the database and source code cannot decrypt a user's messages without the user's private key, which makes E2EE exceptionally secure. This app is both a completely functional messaging app, and a faithful implementation of the core concepts of E2EE.
